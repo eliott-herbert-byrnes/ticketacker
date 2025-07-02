@@ -1,10 +1,6 @@
-
-import Link from "next/link";
-import { ticketsPath } from "@/app/paths";
-import { Placeholder } from "@/components/Placeholder";
-import { Button } from "@/components/ui/button";
-import { ticketData } from "@/data/data";
-import { TicketItem } from "@/features/ticket/components/ticket-item";
+import { notFound } from "next/navigation";
+import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
+import { getTicket } from "@/features/ticket/queries/get-ticket";
 
 type TicketPageProps = {
   params: Promise<{
@@ -14,25 +10,15 @@ type TicketPageProps = {
 
 const TicketPage = async ({ params }: TicketPageProps) => {
   const { ticketId } = await params;
+  const ticket = await getTicket(ticketId);
 
-  const ticket = ticketData.find((ticket) => ticket.id === ticketId)
-
-  if(!ticket){
-    return (
-    <Placeholder 
-    label='Ticket Not Found'
-    button={
-      <Button asChild>
-        <Link href={ticketsPath()}>Go to Tickets</Link>
-      </Button>
-    }
-    />
-  )
+  if (!ticket) {
+    notFound()
   }
-
+  
   return (
     <div className="flex justify-center animate-fade-from-top">
-      <TicketItem ticket={ticket} isDetail={true}/>
+      <TicketItem ticket={ticket} isDetail={true} />
     </div>
   );
 };
