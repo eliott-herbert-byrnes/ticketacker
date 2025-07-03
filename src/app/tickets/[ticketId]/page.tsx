@@ -3,9 +3,9 @@ import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 
 type TicketPageProps = {
-  params: Promise<{
+  params:{
     ticketId: string;
-  }>;
+  };
 };
 
 const TicketPage = async ({ params }: TicketPageProps) => {
