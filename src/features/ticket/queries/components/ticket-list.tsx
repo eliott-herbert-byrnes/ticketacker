@@ -1,3 +1,4 @@
+
 import { getTickets } from "../get-tickets";
 import { TicketItem } from "./ticket-item";
 

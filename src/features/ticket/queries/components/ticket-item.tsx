@@ -1,4 +1,3 @@
-'use client'
 import { Ticket } from "@prisma/client";
 import clsx from "clsx";
 import { LucideArrowUpRight, LucideTrash } from "lucide-react";
@@ -17,7 +16,7 @@ type TicketItemProps = {
 const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
   const buttonElement = (
     <Button variant="outline" asChild size="icon">
-      <Link href={ticketPath(ticket.id)}>
+      <Link prefetch href={ticketPath(ticket.id)}>
         <LucideArrowUpRight />
       </Link>
     </Button>

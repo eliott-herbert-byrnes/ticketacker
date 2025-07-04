@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Heading } from "@/components/Heading";
 import { ticketsPath } from "./paths";

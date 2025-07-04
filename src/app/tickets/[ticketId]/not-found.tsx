@@ -1,4 +1,5 @@
 
+
 import Link from "next/link";
 import { ticketsPath } from "@/app/paths";
 import { Placeholder } from "@/components/Placeholder";

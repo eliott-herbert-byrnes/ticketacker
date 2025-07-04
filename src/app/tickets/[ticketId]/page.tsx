@@ -1,11 +1,13 @@
+
+
 import { notFound } from "next/navigation";
 import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 
 type TicketPageProps = {
-  params:{
+  params: Promise<{
     ticketId: string;
-  };
+  }>;
 };
 
 const TicketPage = async ({ params }: TicketPageProps) => {
