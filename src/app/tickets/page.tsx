@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import { CardCompact } from "@/components/card-compact";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/spinner";
-import { CreateTicketForm } from "@/features/ticket/queries/components/ticket-create-form";
 import { TicketList } from "@/features/ticket/queries/components/ticket-list";
+import { TicketUpsertForm } from "@/features/ticket/queries/components/ticket-upsert-form";
 
 const TicketsPage = () => {
   return (
@@ -13,7 +13,7 @@ const TicketsPage = () => {
       <CardCompact 
         title='Create Ticket'
         description='A new ticket will be created' 
-        content={<CreateTicketForm />} 
+        content={<TicketUpsertForm />} 
         className={"self-center w-full max-w-[420px]"}
       />
 
