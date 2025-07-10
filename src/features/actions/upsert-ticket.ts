@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { ticketPath, ticketsPath } from "@/app/paths";
-import { ActionState, fromErrorToActionState } from "@/components/form/utils/to-action-state";
+import { ActionState, fromErrorToActionState, ToActionState } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 
 const UpsertTicketSchema = z.object({
@@ -44,7 +44,7 @@ const UpsertTicket = async (
     return fromErrorToActionState(error, formData)
   }
 
-  return { message: "Ticket created", fieldErrors: {} };
+  return ToActionState('SUCCESS', 'Ticket Created');
 };
 
 export { UpsertTicket };
