@@ -3,9 +3,9 @@
 import { Ticket } from "@prisma/client";
 import { useActionState } from "react";
 import { FieldError } from "@/components/form/field-error";
+import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/sumit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionFeedback } from "@/components/hooks/use-action-feedback";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,17 +21,8 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
     EMPTY_ACTION_STATE
   );
 
-  useActionFeedback(actionState, {
-    onSuccess: ({actionState}) => {
-      console.log(actionState.message)
-    },
-    onError: ({actionState}) => {
-      console.log(actionState.message)
-    },
-  })
-
   return (
-    <form action={action} className="flex flex-col gap-y-3">
+    <Form action={action} actionState={actionState}>
       <Label htmlFor="title">Title</Label>
       <Input
         id="title"
@@ -57,7 +48,7 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
 
       <SubmitButton label={ticket ? "Edit" : "Create"} />
 
-    </form>
+    </Form>
   );
 };
 

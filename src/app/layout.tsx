@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const InterSans = Inter({
   variable: "--font-inter-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
           "
           >
             {children}
+          <Toaster expand />
           </main>
         </ThemeProvider>
       </body>

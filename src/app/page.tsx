@@ -5,6 +5,7 @@ import { ticketsPath } from "./paths";
 
 const Homepage = () => {
   return (
+
     <div className="flex-1 flex flex-col gap-y-8">
 
       <Heading 
