@@ -1,12 +1,17 @@
 import { Ticket } from "@prisma/client";
 import clsx from "clsx";
-import { LucideArrowUpRight, LucidePencil, LucideTrash } from "lucide-react";
+import {
+  LucideArrowUpRight,
+  LucideMoreVertical,
+  LucidePencil,
+} from "lucide-react";
 import Link from "next/link";
 import { editPath, ticketPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { deleteTicket } from "@/features/actions/delete-ticket";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { toCurrencyFromCent } from "@/utils/currency";
 import { TICKET_ICONS } from "./constants";
+import { TicketMoreMenu } from "./ticket-more-menu";
 
 type TicketItemProps = {
   ticket: Ticket;
@@ -14,7 +19,6 @@ type TicketItemProps = {
 };
 
 const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
-  
   const buttonElement = (
     <Button variant="outline" asChild size="icon">
       <Link prefetch href={ticketPath(ticket.id)}>
@@ -24,27 +28,31 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
   );
 
   const editButton = (
-    <Button variant='outline' asChild size='icon'>
+    <Button variant="outline" asChild size="icon">
       <Link prefetch href={editPath(ticket.id)}>
-      <LucidePencil className="h-4 w-4"/>
+        <LucidePencil className="h-4 w-4" />
       </Link>
     </Button>
-  )
+  );
 
-  const deleteButton = (
-    <form action={deleteTicket.bind(null, ticket.id)}>
-      <Button variant='outline' size='icon' className="cursor-pointer">
-        <LucideTrash className='h-4 w-4' />
-      </Button>
-    </form>
-  )
+  const moreMenu = (
+    <TicketMoreMenu
+      ticket={ticket}
+      trigger={
+        <Button variant="outline" size="icon" className="cursor-pointer">
+          <LucideMoreVertical className="h-4 w-4" />
+        </Button>
+      }
+    />
+  );
 
   return (
-    <div className={clsx("w-full flex gap-x-1", {
-      "max-w-[580px]": isDetail,
-      "max-w-[420px]": !isDetail,
-    }
-    )}>
+    <div
+      className={clsx("w-full flex gap-x-1", {
+        "max-w-[580px]": isDetail,
+        "max-w-[420px]": !isDetail,
+      })}
+    >
       <Card className="w-full ">
         <CardTitle className="flex gap-x-2 px-4">
           <span>{TICKET_ICONS[ticket.status]}</span>
@@ -56,21 +64,27 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
             {ticket.content}
           </span>
         </CardContent>
+        <CardFooter className="flex justify-between">
+          <p className="text-sm text-muted-foreground">{ticket.deadline}</p>
+          <p className="text-sm text-muted-foreground">
+            {toCurrencyFromCent(ticket.bounty / 100)}
+          </p>
+        </CardFooter>
       </Card>
 
       <div className="flex flex-col gap-y-1">
-        {isDetail ? 
-        <>
-        {editButton}
-        {deleteButton}  
-        </>
-        :
-        <>
-        {buttonElement}
-        {editButton}
-        </>
-        }
-        </div>
+        {isDetail ? (
+          <>
+            {editButton}
+            {moreMenu}
+          </>
+        ) : (
+          <>
+            {buttonElement}
+            {editButton}
+          </>
+        )}
+      </div>
     </div>
   );
 };

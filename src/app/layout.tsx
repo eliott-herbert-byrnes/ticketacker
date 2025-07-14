@@ -1,5 +1,3 @@
-
-
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -23,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning lang="en" >
+    <html suppressHydrationWarning lang="en">
       <body className={`${InterSans.variable} antialiased`}>
         <ThemeProvider>
           <Header />
@@ -34,8 +32,8 @@ export default function RootLayout({
           "
           >
             {children}
-          <Toaster expand />
           </main>
+          <Toaster expand />
         </ThemeProvider>
       </body>
     </html>

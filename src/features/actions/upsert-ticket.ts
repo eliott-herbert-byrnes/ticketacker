@@ -4,12 +4,15 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { setCookieByKey } from "@/app/actions/cookies";
 import { ticketPath, ticketsPath } from "@/app/paths";
-import { ActionState, fromErrorToActionState, ToActionState } from "@/components/form/utils/to-action-state";
+import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
+import { toCent } from "@/utils/currency";
 
 const UpsertTicketSchema = z.object({
   title: z.string().min(1).max(191),
   content: z.string().min(1).max(1024),
+  deadline: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Is required"),
+  bounty: z.coerce.number().positive(),
 });
 
 const UpsertTicket = async (
@@ -21,32 +24,39 @@ const UpsertTicket = async (
     const data = UpsertTicketSchema.parse({
       title: formData.get("title"),
       content: formData.get("content"),
+      deadline: formData.get("deadline"),
+      bounty: formData.get("bounty"),
     });
 
-    const ticket = await prisma.ticket.findFirst({
-      where: { title: data.title, content: data.content },
-      orderBy: { createdAt: "desc" },
-    });
+    const dbData = {
+      ...data,
+      bounty: toCent(data.bounty)
+    }
 
-    await prisma.ticket.upsert({
-      where: {
-        id: id || "",
-      },
-      update: data,
-      create: data,
-    });
-
-    revalidatePath(ticketsPath());
-  if (ticket?.id) {
-      await setCookieByKey('toast', 'Ticket updated')
-     redirect(ticketPath(ticket.id))  ;
-  }
-
+    if (id) {
+      await prisma.ticket.upsert({
+        where: { id },
+        update: dbData,
+        create: dbData, 
+      });
+    } else {
+      await prisma.ticket.create({
+        data: dbData,
+      });
+    }
   } catch (error) {
+    console.error("UpsertTicket error:", error); 
     return fromErrorToActionState(error, formData)
   }
 
-  return ToActionState('SUCCESS', 'Ticket Created');
+  revalidatePath(ticketsPath());
+
+  if (id) {
+    await setCookieByKey('toast', 'Ticket updated')
+    redirect(ticketPath(id));
+  }
+
+  return toActionState('SUCCESS', 'Ticket Created');
 };
 
 export { UpsertTicket };
