@@ -16,7 +16,7 @@ const CardCompact = ({title, description, content, className, footer}: CardCompa
           <CardDescription>{description}</CardDescription>
         </CardHeader>
         <CardContent>{content}</CardContent>
-        {footer && <CardFooter>{footer}</CardFooter>}
+        {footer && <CardFooter className="flex justify-between">{footer}</CardFooter>}
       </Card>
     )
 }

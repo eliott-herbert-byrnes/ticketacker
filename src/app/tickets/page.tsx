@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import { CardCompact } from "@/components/card-compact";
 import { Heading } from "@/components/Heading";
