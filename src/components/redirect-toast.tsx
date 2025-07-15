@@ -1,21 +1,21 @@
 'use client'
 
-// import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 import { toast } from "sonner"
 import { deleteCookieByKey, getCookieByKey } from "@/app/actions/cookies"
 
 const ReDirectToast = () => {
 
-    // const pathname = usePathname()
-
     useEffect(() => {
         const showCookieToast = async () => {
-            const message = getCookieByKey('toast')
+            // READ cookie
+            const message = await getCookieByKey('toast')
     
             if(message) {
+                // SHOW toast
                 toast.success(message)
-                deleteCookieByKey('toast')
+                // CLEAN up
+                await deleteCookieByKey('toast')
             }
         }
         showCookieToast()
