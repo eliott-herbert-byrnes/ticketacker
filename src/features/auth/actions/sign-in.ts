@@ -1,6 +1,6 @@
 "use server";
+
 import { verify } from "@node-rs/argon2";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { ticketsPath } from "@/app/paths";
@@ -9,7 +9,6 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { lucia } from "@/lib/lucia";
 import { prisma } from "@/lib/prisma";
 
 const signInSchema = z.object({
@@ -23,31 +22,24 @@ export const signIn = async (_actionState: ActionState, formData: FormData) => {
       Object.fromEntries(formData)
     );
 
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+    const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
       return toActionState("ERROR", "Incorrect email or password", formData);
     }
 
-    const validPassword = await verify(user.passwordHash, password);
-
-    if (!validPassword) {
+    const valid = await verify(user.passwordHash, password);
+    if (!valid) {
       return toActionState("ERROR", "Incorrect email or password", formData);
     }
 
-    const session = await lucia.createSession(user.id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
+    const params = new URLSearchParams();
+    params.set("callbackUrl", ticketsPath());
+    params.set("email", email);
+    params.set("password", password);
 
-    (await cookies()).set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    );
+    redirect(`/api/auth/callback/credentials?${params.toString()}`);
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
-
-  redirect(ticketsPath());
 };

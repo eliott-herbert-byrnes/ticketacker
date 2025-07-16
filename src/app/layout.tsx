@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import Providers from "./providers"; // 👈 Add this
 
 const InterSans = Inter({
   variable: "--font-inter-sans",
@@ -20,22 +21,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html suppressHydrationWarning lang="en">
       <body className={`${InterSans.variable} antialiased`}>
-        <ThemeProvider>
-          <Header />
-
-          <main
-            className="
-          min-h-screen flex-1 overflow-y-auto overflow-x-hidden py-24 px-8 bg-secondary/20 flex flex-col
-          "
-          >
-            {children}
-          </main>
-          <Toaster expand />
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider>
+            <Header />
+            <main
+              className="min-h-screen flex-1 overflow-y-auto overflow-x-hidden py-24 px-8 bg-secondary/20 flex flex-col"
+            >
+              {children}
+            </main>
+            <Toaster expand />
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

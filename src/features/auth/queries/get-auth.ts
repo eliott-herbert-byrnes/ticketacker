@@ -1,42 +1,13 @@
-'use server'
-import { cookies } from "next/headers";
-import { cache } from "react";
-import { lucia } from "@/lib/lucia";
+'use server';
 
-export const getAuth = cache(async () => {
-  const sessionId = 
-    (await cookies()).get(lucia.sessionCookieName)?.value ?? null;
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-  if (!sessionId) {
-    return {
-      user: null,
-      session: null,
-    };
-  }
+export const getAuth = async () => {
+  const session = await getServerSession(authOptions);
 
-  const result = await lucia.validateSession(sessionId);
-
-  try {
-    if (result.session && result.session.fresh) {
-      const sessionCookie = lucia.createSessionCookie(result.session.id);
-      (await cookies()).set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes
-      );
-    }
-    if (!result.session) {
-      const sessionCookie = lucia.createBlankSessionCookie();
-      (await cookies()).set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes
-      );
-    }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
-
-  }
-
-  return result;
-});
+  return {
+    user: session?.user ?? null,
+    session,
+  };
+};

@@ -1,26 +1,10 @@
-import { User as AuthUser } from "lucia";
-import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
-import { getAuth } from "../queries/get-auth"
+import { useSession } from "next-auth/react";
 
+export const useAuth = () => {
+  const { data: session, status } = useSession();
 
-const useAuth = () => {
-      const [isFetched, setFetched] = useState(false)
-      const [user, setUser] = useState<AuthUser | null>(null)
-    
-      const pathname = usePathname()
-    
-      useEffect(() => {
-        const fetchUser = async () => {
-          const { user } = await getAuth();
-          setUser(user)
-          setFetched(true)
-        }
-    
-        fetchUser()
-      }, [pathname])
-    
-      return {user, isFetched}
-}
-
-export {useAuth}
+  return {
+    user: session?.user ?? null,
+    isFetched: status !== "loading",
+  };
+};

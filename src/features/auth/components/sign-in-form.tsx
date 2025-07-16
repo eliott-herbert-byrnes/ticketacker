@@ -1,40 +1,59 @@
 "use client";
-import { useActionState } from "react";
-import { FieldError } from "@/components/form/field-error";
-import { Form } from "@/components/form/form";
+
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react"; // <- from next-auth
+import { useState } from "react";
+import { ticketsPath } from "@/app/paths";
 import { SubmitButton } from "@/components/form/sumit-button";
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signIn } from "../actions/sign-in";
 
-const SignInForm = () => {
-  const [actionState, action] = useActionState(signIn, EMPTY_ACTION_STATE);
+export const SignInForm = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false, // handle redirect manually
+    });
+
+    if (res?.ok) {
+      router.push(ticketsPath());
+    } else {
+      setError("Incorrect email or password");
+    }
+  };
 
   return (
-    <Form action={action} actionState={actionState}>
+    <form onSubmit={handleSubmit}>
       <Label htmlFor="email">Email</Label>
       <Input
         name="email"
-        placeholder="JohnDoe123@gmail.com"
-        defaultValue={actionState.payload?.get("email") as string}
+        placeholder="john@example.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
-      <FieldError actionState={actionState} name="email" />
 
       <Label htmlFor="password">Password</Label>
       <Input
         name="password"
-        placeholder="ug@5yh4vb1j!k"
         type="password"
-        defaultValue={actionState.payload?.get("password") as string}
+        placeholder="••••••••"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
-      <FieldError actionState={actionState} name="password" />
+
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
       <div className="mt-4">
         <SubmitButton label="Sign In" />
       </div>
-    </Form>
+    </form>
   );
 };
-
-export { SignInForm };
