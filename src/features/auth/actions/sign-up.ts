@@ -2,9 +2,9 @@
 
 import { hash } from "@node-rs/argon2";
 import { Prisma } from "@prisma/client";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 import { z } from "zod";
-// import { ticketsPath } from "@/app/paths";
+import { ActionState,fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 
 const signUpSchema = z.object({
@@ -18,11 +18,12 @@ const signUpSchema = z.object({
   }
 });
 
-export const signUp = async (_state: unknown, formData: FormData) => {
-  const { username, email, password } = signUpSchema.parse(Object.fromEntries(formData));
-  const passwordHash = await hash(password);
-
+export const signUp = async (_state: ActionState, formData: FormData): Promise<ActionState> => {
   try {
+    const data = signUpSchema.parse(Object.fromEntries(formData));
+    const { username, email, password } = data;
+    const passwordHash = await hash(password);
+
     await prisma.user.create({
       data: {
         username,
@@ -30,16 +31,15 @@ export const signUp = async (_state: unknown, formData: FormData) => {
         passwordHash,
       },
     });
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return {
-        status: "ERROR",
-        message: "Username or email already in use",
-        data: Object.fromEntries(formData),
-      };
-    }
-    throw error;
-  }
 
-  redirect("/api/auth/signin"); // let user log in with NextAuth now
+    return toActionState("SUCCESS", "Account created successfully");
+  } catch (error) {
+    // Handle Prisma duplicate error gracefully
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return toActionState("ERROR", "Username or email already in use", formData);
+    }
+
+    // Handle Zod or unknown errors
+    return fromErrorToActionState(error, formData);
+  }
 };

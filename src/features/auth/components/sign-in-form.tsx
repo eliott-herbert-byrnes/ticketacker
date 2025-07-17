@@ -31,7 +31,7 @@ export const SignInForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
       <Label htmlFor="email">Email</Label>
       <Input
         name="email"
@@ -51,7 +51,7 @@ export const SignInForm = () => {
 
       {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-      <div className="mt-4">
+      <div className="mt-2">
         <SubmitButton label="Sign In" />
       </div>
     </form>

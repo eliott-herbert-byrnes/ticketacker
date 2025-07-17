@@ -1,20 +1,18 @@
-'use client'
+"use client";
 
 import { LucideLogOut, LucideSquirrel } from "lucide-react";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { homePath, signInPath, signUpPath, ticketsPath } from "@/app/paths";
-import { signOut } from "@/features/auth/actions/sign-out";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { SubmitButton } from "./form/sumit-button";
 import { ThemeSwitcher } from "./theme/theme-switcher";
-import { buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 
 const Header = () => {
+  const { user, isFetched } = useAuth();
 
-  const {user, isFetched} = useAuth()
-
-  if(!isFetched){
-    return null
+  if (!isFetched) {
+    return null;
   }
 
   const navItems = user ? (
@@ -26,9 +24,14 @@ const Header = () => {
         Tickets
       </Link>
 
-      <form action={signOut}>
-        <SubmitButton label="Sign Out" icon={<LucideLogOut />} />
-      </form>
+      <Button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        variant="default"
+        className="cursor-pointer"
+      >
+        Sign Out
+        <LucideLogOut className="h-4 w-4" />
+      </Button>
     </>
   ) : (
     <>
