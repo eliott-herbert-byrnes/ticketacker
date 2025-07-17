@@ -3,10 +3,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { setCookieByKey } from "@/app/actions/cookies";
-import { ticketPath, ticketsPath } from "@/app/paths";
+import { signInPath, ticketPath, ticketsPath } from "@/app/paths";
 import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 import { toCent } from "@/utils/currency";
+import { getAuth } from "../auth/queries/get-auth";
 
 const UpsertTicketSchema = z.object({
   title: z.string().min(1).max(191),
@@ -20,6 +21,13 @@ const UpsertTicket = async (
   _actionState: ActionState,
   formData: FormData
 ) => {
+
+  const {user} = await getAuth()
+
+  if (!user) {
+    redirect(signInPath())
+  }
+
   try {
     const data = UpsertTicketSchema.parse({
       title: formData.get("title"),
@@ -30,6 +38,7 @@ const UpsertTicket = async (
 
     const dbData = {
       ...data,
+      userId: user.id,
       bounty: toCent(data.bounty)
     }
 
