@@ -16,7 +16,7 @@ const TicketPage = async ({ params }: TicketPageProps) => {
   const ticket = await getTicket(ticketId);
 
   const session = await getServerSession(authOptions)
-  const isAuthorised = isOwner(session, ticket)
+  const isAuthorised = isOwner(session?.user, ticket)
 
   if (!ticket || !isAuthorised) {
     notFound()

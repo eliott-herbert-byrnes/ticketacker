@@ -9,6 +9,8 @@ import Link from "next/link";
 import { editPath, ticketPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { getAuth } from "@/features/auth/queries/get-auth";
+import { isOwner } from "@/features/auth/utils/is-owner";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { TICKET_ICONS } from "./constants";
 import { TicketMoreMenu } from "./ticket-more-menu";
@@ -24,7 +26,11 @@ type TicketItemProps = {
   isDetail?: boolean;
 };
 
-const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
+const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
+
+  const { user } = await getAuth()
+  const isTicketOwner = isOwner(user, ticket)
+
   const buttonElement = (
     <Button variant="outline" asChild size="icon">
       <Link prefetch href={ticketPath(ticket.id)}>
@@ -33,15 +39,15 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
     </Button>
   );
 
-  const editButton = (
+  const editButton = isTicketOwner ? (
     <Button variant="outline" asChild size="icon">
       <Link prefetch href={editPath(ticket.id)}>
         <LucidePencil className="h-4 w-4" />
       </Link>
     </Button>
-  );
+  ) : null;
 
-  const moreMenu = (
+  const moreMenu = isTicketOwner ? (
     <TicketMoreMenu
       ticket={ticket}
       trigger={
@@ -50,7 +56,7 @@ const TicketItem = ({ ticket, isDetail }: TicketItemProps) => {
         </Button>
       }
     />
-  );
+  ) : null;
 
   return (
     <div

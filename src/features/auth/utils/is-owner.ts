@@ -1,16 +1,18 @@
-import { Session } from "next-auth";
+type User = {
+  id: string;
+};
 
 type Entity = {
   userId: string | null;
 };
 
 export const isOwner = (
-  session: Session | null | undefined,
+  user: User | null | undefined,
   entity: Entity | null | undefined
 ) => {
-  if (!session?.user?.id || !entity?.userId) {
+  if (!user?.id || !entity?.userId) {
     return false;
   }
 
-  return session.user.id === entity.userId;
+  return user.id === entity.userId;
 };

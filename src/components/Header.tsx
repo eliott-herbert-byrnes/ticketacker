@@ -3,7 +3,7 @@
 import { LucideLogOut, LucideSquirrel } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
-import { homePath, signInPath, signUpPath, ticketsPath } from "@/app/paths";
+import { homePath, signInPath, signUpPath } from "@/app/paths";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { ThemeSwitcher } from "./theme/theme-switcher";
 import { Button, buttonVariants } from "./ui/button";
@@ -17,13 +17,6 @@ const Header = () => {
 
   const navItems = user ? (
     <>
-      <Link
-        href={ticketsPath()}
-        className={buttonVariants({ variant: "default" })}
-      >
-        Tickets
-      </Link>
-
       <Button
         onClick={() => signOut({ callbackUrl: "/" })}
         variant="default"
@@ -54,7 +47,7 @@ const Header = () => {
   return (
     <nav
       className="
-        animate-header-from-top
+        animate-[fade-from-top_0.5s_ease-out_forwards]
         supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur w-full flex py-2.5 px-5 justify-between
         "
     >

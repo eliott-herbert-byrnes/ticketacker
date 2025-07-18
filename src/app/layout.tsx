@@ -2,9 +2,10 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Header } from "@/components/Header";
+import { Sidebar } from "@/components/sidebar/components/sidebar";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import Providers from "./providers"; // 👈 Add this
+import Providers from "./providers";
 
 const InterSans = Inter({
   variable: "--font-inter-sans",
@@ -27,11 +28,12 @@ export default function RootLayout({
         <Providers>
           <ThemeProvider>
             <Header />
-            <main
-              className="min-h-screen flex-1 overflow-y-auto overflow-x-hidden py-24 px-8 bg-secondary/20 flex flex-col"
-            >
-              {children}
-            </main>
+            <div className="flex h-screen overflow-x-hidden border-collapse">
+              <Sidebar />
+              <main className="min-h-screen flex-1 overflow-y-auto overflow-x-hidden py-24 px-8 bg-secondary/20 flex flex-col">
+                {children}
+              </main>
+            </div>
             <Toaster expand />
           </ThemeProvider>
         </Providers>
