@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Header } from "@/components/Header";
-import { Sidebar } from "@/components/sidebar/components/sidebar";
+import { Header } from "@/app/_navigation/Header";
+import { Sidebar } from "@/app/_navigation/sidebar/components/sidebar";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import Providers from "./providers";
@@ -30,7 +30,8 @@ export default function RootLayout({
             <Header />
             <div className="flex h-screen overflow-x-hidden border-collapse">
               <Sidebar />
-              <main className="min-h-screen flex-1 overflow-y-auto overflow-x-hidden py-24 px-8 bg-secondary/20 flex flex-col">
+              <main className="duration-200
+                pl-[78px] min-h-screen md:peer-hover:pl-[240px] flex-1 overflow-y-auto overflow-x-hidden py-24 px-8 bg-secondary/20 flex flex-col">
                 {children}
               </main>
             </div>

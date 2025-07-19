@@ -1,12 +1,12 @@
 "use client";
 
-import { LucideLogOut, LucideSquirrel } from "lucide-react";
+import { LucideSquirrel } from "lucide-react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { homePath, signInPath, signUpPath } from "@/app/paths";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { ThemeSwitcher } from "./theme/theme-switcher";
-import { Button, buttonVariants } from "./ui/button";
+import { ThemeSwitcher } from "../../components/theme/theme-switcher";
+import { buttonVariants } from "../../components/ui/button";
+import { AccountDropdown } from "./account-dropdown";
 
 const Header = () => {
   const { user, isFetched } = useAuth();
@@ -17,14 +17,9 @@ const Header = () => {
 
   const navItems = user ? (
     <>
-      <Button
-        onClick={() => signOut({ callbackUrl: "/" })}
-        variant="default"
-        className="cursor-pointer"
-      >
-        Sign Out
-        <LucideLogOut className="h-4 w-4" />
-      </Button>
+    <div className="flex items-center">
+        <AccountDropdown user={user} />
+    </div>
     </>
   ) : (
     <>
