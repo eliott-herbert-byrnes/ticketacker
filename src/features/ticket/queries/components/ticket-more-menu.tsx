@@ -64,7 +64,6 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
   return (
     <>
       {deleteDialog}
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
         <DropdownMenuContent side="right" className="w-42 ">

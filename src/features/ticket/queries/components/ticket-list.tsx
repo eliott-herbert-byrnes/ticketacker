@@ -15,7 +15,7 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
   const {list: tickets, metadata: ticketMetaData} = await getTickets(userId, searchParams);
 
   return (
-    <div className="flex-1 flex flex-col items-center gap-y-4 opacity-0 animate-[fade-from-top_1.0s_ease-out_forwards]">
+    <div className="flex-1 flex flex-col items-center gap-y-3 opacity-0 animate-[fade-from-top_1.0s_ease-out_forwards]">
       <div className="max-w-[420px] w-full mb-3 flex flex-row gap-x-2">
         <TicketSearchInput placeholder="Search tickets ..." />
         <TicketSortSelect

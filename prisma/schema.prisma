@@ -16,6 +16,8 @@ model User {
   sessions        Session[]
   accounts        Account[]
   tickets         Ticket[]
+
+  comments Comment[]
 }
 
 model Session {
@@ -65,7 +67,22 @@ model Ticket {
     user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@index([userId])
+    comments Comment[]
 }
+
+model Comment {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  content     String      @db.VarChar(1024)
+  ticketId    String
+  ticket      Ticket      @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([ticketId])
+}
+
 
 enum TicketStatus {
     OPEN
