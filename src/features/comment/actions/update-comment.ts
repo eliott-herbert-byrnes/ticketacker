@@ -1,4 +1,5 @@
 "use server";
+
 import { revalidatePath } from "next/cache";
 import { ticketPath } from "@/app/paths";
 import {
@@ -9,7 +10,7 @@ import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect"
 import { isOwner } from "@/features/auth/utils/is-owner";
 import { prisma } from "@/lib/prisma";
 
-const deleteComment = async (id: string) => {
+const updateComment = async (id: string, content: string) => {
   const { user } = await getAuthOrRedirect();
 
   const comment = await prisma.comment.findUnique({
@@ -21,8 +22,9 @@ const deleteComment = async (id: string) => {
   }
 
   try {
-    await prisma.comment.delete({
+    await prisma.comment.update({
       where: { id },
+      data: {content}
     });
   } catch (error) {
     fromErrorToActionState(error);
@@ -30,7 +32,7 @@ const deleteComment = async (id: string) => {
 
   revalidatePath(ticketPath(comment.ticketId));
 
-  return toActionState("SUCCESS", "Comment deleted");
+  return toActionState("SUCCESS", "Comment updated");
 };
 
-export { deleteComment };
+export { updateComment };
