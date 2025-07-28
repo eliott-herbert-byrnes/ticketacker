@@ -1,3 +1,5 @@
+'use client'
+
 import { Prisma } from "@prisma/client";
 import clsx from "clsx";
 import {
@@ -10,9 +12,6 @@ import { editPath, ticketPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { getAuth } from "@/features/auth/queries/get-auth";
-import { isOwner } from "@/features/auth/utils/is-owner";
-import { Comments } from "@/features/comment/components/comments";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { TICKET_ICONS } from "./constants";
 import { TicketMoreMenu } from "./ticket-more-menu";
@@ -26,13 +25,14 @@ type TicketItemProps = {
         };
       };
     };
-  }>;
+  }> & {isOwner: boolean};
   isDetail?: boolean;
+  comments?: React.ReactNode;
 };
 
-const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
-  const { user } = await getAuth();
-  const isTicketOwner = isOwner(user, ticket);
+const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
+  // const { user } = await getAuth();
+  // const isTicketOwner = isOwner(user, ticket);
 
   const buttonElement = (
     <Button variant="outline" asChild size="icon">
@@ -42,7 +42,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
     </Button>
   );
 
-  const editButton = isTicketOwner ? (
+  const editButton = ticket.isOwner ? (
     <Button variant="outline" asChild size="icon">
       <Link prefetch href={editPath(ticket.id)}>
         <LucidePencil className="h-4 w-4" />
@@ -50,7 +50,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
     </Button>
   ) : null;
 
-  const moreMenu = isTicketOwner ? (
+  const moreMenu = ticket.isOwner ? (
     <TicketMoreMenu
       ticket={ticket}
       trigger={
@@ -107,7 +107,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
 
       <Separator />
 
-      {isDetail ? <Comments ticketId={ticket.id} /> : null}
+      {comments}
     </div>
   );
 };

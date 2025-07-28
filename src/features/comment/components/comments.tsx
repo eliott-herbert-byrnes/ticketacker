@@ -1,18 +1,14 @@
 import { CardCompact } from "@/components/card-compact";
-import { getAuth } from "@/features/auth/queries/get-auth";
-import { isOwner } from "@/features/auth/utils/is-owner";
-import { getComments } from "../queries/get-comments";
+import { CommentWithMetadata } from "../types";
 import { CommentCreateForm } from "./comment-create-form";
 import { CommentItem } from "./comment-item";
 
 type CommentProps = {
   ticketId: string;
+  comments?: CommentWithMetadata[];
 };
 
-const Comments = async ({ ticketId }: CommentProps) => {
-  const { user } = await getAuth();
-  const comments = await getComments(ticketId);
-
+const Comments =  ({ ticketId, comments = [] }: CommentProps) => {
   return (
     <>
       <div className="flex flex-col gap-y-4 w-full">
@@ -20,7 +16,7 @@ const Comments = async ({ ticketId }: CommentProps) => {
         <CommentItem
           key={comment.id}
           comment={comment}
-          isOwner={isOwner(user, comment)}
+          isOwner={comment.isOwner}
         />
 
         ))}

@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation";
-// import { getServerSession } from "next-auth";
 import { homePath } from "@/app/paths";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Separator } from "@/components/ui/separator";
-// import { isOwner } from "@/features/auth/utils/is-owner";
+import { Comments } from "@/features/comment/components/comments";
+import { getComments } from "@/features/comment/queries/get-comments";
 import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
-// import { authOptions } from "@/lib/authOptions";
 
 
 type TicketPageProps = {
@@ -17,7 +16,10 @@ type TicketPageProps = {
 
 const TicketPage = async ({ params }: TicketPageProps) => {
   const { ticketId } = await params;
-  const ticket = await getTicket(ticketId);
+  const ticketPromise = getTicket(ticketId);
+  const commentsPromise = getComments(ticketId);
+
+  const [ticket, comments] = await Promise.all([ticketPromise, commentsPromise])
 
 
   // Temporarily removed isOwner auth check, as throws
@@ -47,7 +49,7 @@ const TicketPage = async ({ params }: TicketPageProps) => {
       <Separator />
 
       <div className="flex justify-center animate-fade-from-top">
-        <TicketItem ticket={ticket} isDetail={true} />
+        <TicketItem ticket={ticket} isDetail={true} comments={<Comments ticketId={ticket.id} comments={comments}/>}/>
       </div>
     </div>
   );

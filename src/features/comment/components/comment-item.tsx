@@ -1,4 +1,5 @@
 "use client";
+import {format} from "date-fns"
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,7 +25,7 @@ const CommentItem = ({ comment, isOwner }: CommentItemProps) => {
             {comment.user?.username ?? 'Deleted User'}
           </p>
           <p className="text-xs text-muted-foreground">
-            {comment.createdAt.toLocaleString().slice(0, 17)}
+            {format(comment.createdAt, "yyyy-MM-dd, HH:mm")}
           </p>
         </div>
 
@@ -55,6 +56,5 @@ const CommentItem = ({ comment, isOwner }: CommentItemProps) => {
     </div>
   );
 };
-
 
 export { CommentItem };
