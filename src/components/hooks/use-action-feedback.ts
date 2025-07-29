@@ -1,33 +1,36 @@
-import { useEffect, useRef } from "react"
-import { ActionState } from "../form/utils/to-action-state"
+import { useEffect, useRef } from "react";
+import { ActionState } from "../form/utils/to-action-state";
 
-type onArgs = {
-    actionState: ActionState
-}
+// Make the hook generic over T
+type OnArgs<T> = {
+  actionState: ActionState<T>;
+};
 
-type useActionFeedbackOptions = {
-    onSuccess?: (onArgs: onArgs) => void
-    onError?: (onArgs: onArgs) => void
-}
+type UseActionFeedbackOptions<T> = {
+  onSuccess?: (args: OnArgs<T>) => void;
+  onError?: (args: OnArgs<T>) => void;
+};
 
-const useActionFeedback = (actionState: ActionState, options: useActionFeedbackOptions) => {
+const useActionFeedback = <T,>(
+  actionState: ActionState<T>,
+  options: UseActionFeedbackOptions<T>
+) => {
+  const prevTimestamp = useRef(actionState.timestamp);
+  const isUpdate = prevTimestamp.current !== actionState.timestamp;
 
-    const prevTimestamp = useRef(actionState.timestamp)
-    const isUpdate = prevTimestamp.current !== actionState.timestamp
+  useEffect(() => {
+    if (!isUpdate) return;
 
-    useEffect(() => {
+    if (actionState.status === "SUCCESS") {
+      options.onSuccess?.({ actionState });
+    }
 
-        if (!isUpdate) return
+    if (actionState.status === "ERROR") {
+      options.onError?.({ actionState });
+    }
 
-        if (actionState.status === 'SUCCESS'){
-            options.onSuccess?.({actionState})
-        }
+    prevTimestamp.current = actionState.timestamp;
+  }, [isUpdate, actionState, options]);
+};
 
-        if (actionState.status === 'ERROR'){
-            options.onError?.({actionState})
-        }
-        prevTimestamp.current = actionState.timestamp
-    }, [isUpdate, actionState, options])
-}
-
-export {useActionFeedback}
+export { useActionFeedback };

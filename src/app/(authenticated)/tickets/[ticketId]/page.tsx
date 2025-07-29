@@ -19,7 +19,7 @@ const TicketPage = async ({ params }: TicketPageProps) => {
   const ticketPromise = getTicket(ticketId);
   const commentsPromise = getComments(ticketId);
 
-  const [ticket, comments] = await Promise.all([ticketPromise, commentsPromise])
+  const [ticket, paginatedComments] = await Promise.all([ticketPromise, commentsPromise])
 
 
   // Temporarily removed isOwner auth check, as throws
@@ -49,7 +49,7 @@ const TicketPage = async ({ params }: TicketPageProps) => {
       <Separator />
 
       <div className="flex justify-center animate-fade-from-top">
-        <TicketItem ticket={ticket} isDetail={true} comments={<Comments ticketId={ticket.id} comments={comments}/>}/>
+        <TicketItem ticket={ticket} isDetail={true} comments={<Comments ticketId={ticket.id} paginatedComments={paginatedComments}/>}/>
       </div>
     </div>
   );

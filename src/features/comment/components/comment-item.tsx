@@ -1,5 +1,5 @@
 "use client";
-import {format} from "date-fns"
+import { format } from "date-fns";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,9 +11,14 @@ type CommentItemProps = {
   comment: CommentWithMetadata;
   buttons?: React.ReactNode[];
   isOwner: boolean;
+  onDeleteComment?: (id: string) => void;
 };
 
-const CommentItem = ({ comment, isOwner }: CommentItemProps) => {
+const CommentItem = ({
+  comment,
+  isOwner,
+  onDeleteComment,
+}: CommentItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(comment.content);
 
@@ -22,7 +27,7 @@ const CommentItem = ({ comment, isOwner }: CommentItemProps) => {
       <Card className="p-4 flex-1 flex flex-col gap-y-3 overflow-hidden">
         <div className="flex justify-between">
           <p className="text-sm text-muted-foreground">
-            {comment.user?.username ?? 'Deleted User'}
+            {comment.user?.username ?? "Deleted User"}
           </p>
           <p className="text-xs text-muted-foreground">
             {format(comment.createdAt, "yyyy-MM-dd, HH:mm")}
@@ -43,7 +48,10 @@ const CommentItem = ({ comment, isOwner }: CommentItemProps) => {
 
       {isOwner && (
         <div className="flex flex-col gap-y-1">
-          <CommentDeleteButton id={comment.id} />
+          <CommentDeleteButton
+            id={comment.id}
+            onDeleteComment={onDeleteComment}
+          />
           <CommentUpdateButton
             id={comment.id}
             content={content}

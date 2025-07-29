@@ -10,6 +10,7 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { prisma } from "@/lib/prisma";
+import { CommentWithMetadata } from "../types";
 
 const createCommentSchema = z.object({
   content: z.string().min(1).max(1024),
@@ -17,19 +18,24 @@ const createCommentSchema = z.object({
 
 export const createComment = async (
   ticketId: string,
-  _actionState: ActionState,
+  _actionState: ActionState<CommentWithMetadata | undefined>,
   formData: FormData
-) => {
+): Promise<ActionState<CommentWithMetadata | undefined>> => {
   const { user } = await getAuthOrRedirect();
+
+  let comment;
 
   try {
     const data = createCommentSchema.parse(Object.fromEntries(formData));
 
-    await prisma.comment.create({
+    comment = await prisma.comment.create({
       data: {
         userId: user?.id,
         ticketId: ticketId,
         ...data,
+      },
+      include: {
+        user: true,
       },
     });
   } catch (error) {
@@ -38,5 +44,10 @@ export const createComment = async (
 
   revalidatePath(ticketPath(ticketId));
 
-  return toActionState("SUCCESS", "Comment created");
+  return toActionState<CommentWithMetadata | undefined>(
+    "SUCCESS",
+    "Comment created",
+    undefined,
+    comment ? { ...comment, isOwner: true } : undefined
+  );
 };
