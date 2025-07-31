@@ -20,15 +20,14 @@ const CommentCreateForm = ({
   ticketId,
   onCreateComment,
 }: CommentCreateFormProps) => {
-const [actionState, action] = useActionState<
-  ActionState<CommentWithMetadata | undefined>,
-  FormData
->(
-  createComment.bind(null, ticketId),
-  EMPTY_ACTION_STATE as ActionState<CommentWithMetadata | undefined>
-);
+  const [actionState, action] = useActionState(
+    createComment.bind(null, ticketId),
+    EMPTY_ACTION_STATE
+  );
 
-  const handleSuccess = (actionState: ActionState<CommentWithMetadata | undefined>) => {
+  const handleSuccess = (
+    actionState: ActionState<CommentWithMetadata | undefined>
+  ) => {
     onCreateComment?.(actionState.data);
   };
 

@@ -1,6 +1,5 @@
 'use client'
 
-import { Prisma } from "@prisma/client";
 import clsx from "clsx";
 import {
   LucideArrowUpRight,
@@ -13,27 +12,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toCurrencyFromCent } from "@/utils/currency";
+import { TicketWithMetadata } from "../../types";
 import { TICKET_ICONS } from "./constants";
 import { TicketMoreMenu } from "./ticket-more-menu";
 
 type TicketItemProps = {
-  ticket: Prisma.TicketGetPayload<{
-    include: {
-      user: {
-        select: {
-          username: true;
-        };
-      };
-    };
-  }> & {isOwner: boolean};
+  ticket: TicketWithMetadata;
   isDetail?: boolean;
   comments?: React.ReactNode;
 };
 
 const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
-  // const { user } = await getAuth();
-  // const isTicketOwner = isOwner(user, ticket);
-
+ 
   const buttonElement = (
     <Button variant="outline" asChild size="icon">
       <Link prefetch href={ticketPath(ticket.id)}>

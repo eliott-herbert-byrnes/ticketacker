@@ -1,19 +1,18 @@
 import { useEffect, useRef } from "react";
-import { ActionState } from "../form/utils/to-action-state";
+import { ActionState } from "@/components/form/utils/to-action-state";
 
-// Make the hook generic over T
-type OnArgs<T> = {
-  actionState: ActionState<T>;
+type OnArgs = {
+  actionState: ActionState;
 };
 
-type UseActionFeedbackOptions<T> = {
-  onSuccess?: (args: OnArgs<T>) => void;
-  onError?: (args: OnArgs<T>) => void;
+type UseActionFeedbackOptions = {
+  onSuccess?: (onArgs: OnArgs) => void;
+  onError?: (onArgs: OnArgs) => void;
 };
 
-const useActionFeedback = <T,>(
-  actionState: ActionState<T>,
-  options: UseActionFeedbackOptions<T>
+const useActionFeedback = (
+  actionState: ActionState,
+  options: UseActionFeedbackOptions
 ) => {
   const prevTimestamp = useRef(actionState.timestamp);
   const isUpdate = prevTimestamp.current !== actionState.timestamp;

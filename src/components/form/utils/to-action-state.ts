@@ -1,15 +1,16 @@
 import { ZodError } from "zod";
 
-export type ActionState<T = unknown> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ActionState<T = any> = {
   status?: "SUCCESS" | "ERROR";
   message: string;
-  fieldErrors: Record<string, string[] | undefined>;
   payload?: FormData;
+  fieldErrors: Record<string, string[] | undefined>;
   timestamp: number;
   data?: T;
 };
 
-export const EMPTY_ACTION_STATE: ActionState<never> = {
+export const EMPTY_ACTION_STATE: ActionState = {
   message: "",
   fieldErrors: {},
   timestamp: Date.now(),
@@ -38,7 +39,7 @@ export const fromErrorToActionState = (
   } else {
     return {
       status: "ERROR",
-      message: "An unknown error occured",
+      message: "An unknown error occurred",
       payload: formData,
       fieldErrors: {},
       timestamp: Date.now(),
@@ -46,12 +47,12 @@ export const fromErrorToActionState = (
   }
 };
 
-export const toActionState = <T>(
-  status: ActionState<T>["status"],
+export const toActionState = (
+  status: ActionState["status"],
   message: string,
   formData?: FormData,
-  data?: T
-): ActionState<T> => {
+  data?: unknown
+): ActionState => {
   return {
     status,
     message,

@@ -10,14 +10,14 @@ type FormProps<T = unknown> = {
   onError?: (actionState: ActionState<T>) => void;
 };
 
-const Form = <T,>({
+const Form = ({
   action,
   children,
   actionState,
   onSuccess,
   onError,
-}: FormProps<T>) => {
-  useActionFeedback<T>(actionState, {
+}: FormProps) => {
+  useActionFeedback(actionState, {
     onSuccess: ({ actionState }) => {
       if (actionState.message) toast.success(actionState.message);
       onSuccess?.(actionState);

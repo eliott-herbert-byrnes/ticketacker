@@ -1,4 +1,10 @@
-import { cloneElement, useActionState, useEffect, useRef, useState } from "react";
+import {
+  cloneElement,
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { ActionState, EMPTY_ACTION_STATE } from "./form/utils/to-action-state";
 import { useActionFeedback } from "./hooks/use-action-feedback";
@@ -18,7 +24,7 @@ type UseConfirmDialogArgs = {
   title?: string;
   description?: string;
   action: () => Promise<ActionState>;
-  trigger: React.ReactElement | ((isLoading: boolean) => React.ReactElement);
+  trigger: React.ReactElement | ((isPending: boolean) => React.ReactElement);
   onSuccess?: (actionState: ActionState) => void;
 };
 
@@ -36,13 +42,14 @@ const useConfirmDialog = ({
     EMPTY_ACTION_STATE
   );
 
-const baseTrigger = typeof trigger === "function" ? trigger(isPending) : trigger;
+  const baseTrigger =
+    typeof trigger === "function" ? trigger(isPending) : trigger;
 
-const dialogTrigger = (
-  <span onClick={() => setIsOpen((state) => !state)}>
-    {cloneElement(baseTrigger)}
-  </span>
-);
+  const dialogTrigger = (
+    <span onClick={() => setIsOpen((state) => !state)}>
+      {cloneElement(baseTrigger)}
+    </span>
+  );
 
   const toastRef = useRef<string | number | null>(null);
 
