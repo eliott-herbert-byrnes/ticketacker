@@ -39,6 +39,17 @@ const Comments = ({ ticketId, paginatedComments }: CommentProps) => {
 
   return (
     <>
+        <CardCompact
+          title="Create Comment"
+          description="A new comment will be created"
+          content={
+            <CommentCreateForm
+              ticketId={ticketId}
+              onCreateComment={handleCreateComment}
+            />
+          }
+        />
+        
       <div className="flex flex-col gap-y-4 w-full">
         {comments.map((comment) => (
           <CommentItem
@@ -49,7 +60,7 @@ const Comments = ({ ticketId, paginatedComments }: CommentProps) => {
           />
         ))}
       </div>
-
+      
       <div className="flex flex-col justify-center">
         {metadata.hasNextPage && (
           <Button
@@ -62,16 +73,7 @@ const Comments = ({ ticketId, paginatedComments }: CommentProps) => {
         )}
       </div>
 
-      <CardCompact
-        title="Create Comment"
-        description="A new comment will be created"
-        content={
-          <CommentCreateForm
-            ticketId={ticketId}
-            onCreateComment={handleCreateComment}
-          />
-        }
-      />
+
     </>
   );
 };

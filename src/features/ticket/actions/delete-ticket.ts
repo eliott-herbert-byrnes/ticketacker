@@ -4,10 +4,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { setCookieByKey } from "@/app/actions/cookies";
 import { ticketsPath } from "@/app/paths";
-import { fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
+import {
+  fromErrorToActionState,
+  toActionState,
+} from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
-import { getAuthOrRedirect } from "../auth/queries/get-auth-or-redirect";
-import { isOwner } from "../auth/utils/is-owner";
+import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
+import { isOwner } from "../../auth/utils/is-owner";
 
 export const deleteTicket = async (id: string) => {
   const { user } = await getAuthOrRedirect();
@@ -22,6 +25,7 @@ export const deleteTicket = async (id: string) => {
     if (!ticket || !isOwner(user, ticket)) {
       return toActionState("ERROR", "Not authorized");
     }
+
     await prisma.ticket.delete({
       where: {
         id,
@@ -32,6 +36,9 @@ export const deleteTicket = async (id: string) => {
   }
 
   revalidatePath(ticketsPath());
+
   await setCookieByKey("toast", "Ticket deleted");
   redirect(ticketsPath());
+
+  // return toActionState("SUCCESS", "Ticket deleted");
 };

@@ -54,13 +54,13 @@ const DatePicker = ({
           data-empty={!date}
           className="justify-start text-left font-normal cursor-pointer"
         >
-          <LucideCalendar />
+          <LucideCalendar className=""/>
           {date ? formattedStringDate : <span>Pick a date</span>}
-          <input type="hidden" name={name} value={formattedStringDate} />
+          <input type="hidden" className="" name={name} value={formattedStringDate} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={date} onSelect={handleSelect} />
+        <Calendar className="" mode="single" selected={date} onSelect={handleSelect} />
       </PopoverContent>
     </Popover>
   );

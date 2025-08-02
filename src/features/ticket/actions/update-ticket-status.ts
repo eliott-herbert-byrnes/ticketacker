@@ -8,8 +8,8 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
-import { getAuthOrRedirect } from "../auth/queries/get-auth-or-redirect";
-import { isOwner } from "../auth/utils/is-owner";
+import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
+import { isOwner } from "../../auth/utils/is-owner";
 
 export const updateTicketStatus = async (id: string, status: TicketStatus) => {
   const { user } = await getAuthOrRedirect();

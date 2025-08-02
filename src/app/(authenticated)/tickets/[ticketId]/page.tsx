@@ -7,7 +7,6 @@ import { getComments } from "@/features/comment/queries/get-comments";
 import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 
-
 type TicketPageProps = {
   params: Promise<{
     ticketId: string;
@@ -19,19 +18,10 @@ const TicketPage = async ({ params }: TicketPageProps) => {
   const ticketPromise = getTicket(ticketId);
   const commentsPromise = getComments(ticketId);
 
-  const [ticket, paginatedComments] = await Promise.all([ticketPromise, commentsPromise])
-
-
-  // Temporarily removed isOwner auth check, as throws
-  // 'Ticket Not Found' error for isDetail page, when
-  // logged in as non-admin user. 
-
-  // const session = await getServerSession(authOptions);
-  // const isAuthorised = isOwner(session?.user, ticket);
-  
-  // if (!ticket || !isAuthorised) {
-  //   notFound();
-  // }
+  const [ticket, paginatedComments] = await Promise.all([
+    ticketPromise,
+    commentsPromise,
+  ]);
 
   if (!ticket) {
     notFound();
@@ -49,7 +39,16 @@ const TicketPage = async ({ params }: TicketPageProps) => {
       <Separator />
 
       <div className="flex justify-center animate-fade-from-top">
-        <TicketItem ticket={ticket} isDetail={true} comments={<Comments ticketId={ticket.id} paginatedComments={paginatedComments}/>}/>
+        <TicketItem
+          ticket={ticket}
+          isDetail={true}
+          comments={
+            <Comments
+              ticketId={ticket.id}
+              paginatedComments={paginatedComments}
+            />
+          }
+        />
       </div>
     </div>
   );

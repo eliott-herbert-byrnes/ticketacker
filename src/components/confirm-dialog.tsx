@@ -24,7 +24,7 @@ type UseConfirmDialogArgs = {
   title?: string;
   description?: string;
   action: () => Promise<ActionState>;
-  trigger: React.ReactElement | ((isPending: boolean) => React.ReactElement);
+  trigger: React.ReactElement | ((isLoading: boolean) => React.ReactElement);
   onSuccess?: (actionState: ActionState) => void;
 };
 
@@ -42,13 +42,14 @@ const useConfirmDialog = ({
     EMPTY_ACTION_STATE
   );
 
-  const baseTrigger =
+  const resolvedTrigger =
     typeof trigger === "function" ? trigger(isPending) : trigger;
 
-  const dialogTrigger = (
-    <span onClick={() => setIsOpen((state) => !state)}>
-      {cloneElement(baseTrigger)}
-    </span>
+  const dialogTrigger = cloneElement(
+    resolvedTrigger as React.ReactElement<{ onClick?: () => void }>,
+    {
+      onClick: () => setIsOpen((state) => !state),
+    }
   );
 
   const toastRef = useRef<string | number | null>(null);
@@ -58,7 +59,7 @@ const useConfirmDialog = ({
       toastRef.current = toast.loading("Deleting ...");
     } else if (toastRef.current) {
       toast.dismiss(toastRef.current);
-    }
+    } 
 
     return () => {
       if (toastRef.current) {

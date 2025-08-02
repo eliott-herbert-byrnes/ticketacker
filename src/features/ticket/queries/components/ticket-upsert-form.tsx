@@ -10,7 +10,7 @@ import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { UpsertTicket } from "@/features/actions/upsert-ticket";
+import { UpsertTicket } from "@/features/ticket/actions/upsert-ticket";
 import { fromCent } from "@/utils/currency";
 
 type TicketUpsertFormProps = {

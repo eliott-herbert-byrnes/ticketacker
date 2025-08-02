@@ -32,7 +32,7 @@ const CommentCreateForm = ({
   };
 
   return (
-    <Form action={action} actionState={actionState} onSuccess={handleSuccess}>
+    <Form action={action} actionState={actionState} onSuccess={handleSuccess as (actionState: ActionState<unknown>) => void}>
       <Textarea
         className="text-sm mb-2"
         name="content"

@@ -1,7 +1,9 @@
 "use client";
 import { Ticket, TicketStatus } from "@prisma/client";
 import { LucideTrash } from "lucide-react";
+// import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+// import { ticketsPath } from "@/app/paths";
 import { useConfirmDialog } from "@/components/confirm-dialog";
 import {
   DropdownMenu,
@@ -12,8 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteTicket } from "@/features/actions/delete-ticket";
-import { updateTicketStatus } from "@/features/actions/update-ticket-status";
+import { deleteTicket } from "@/features/ticket/actions/delete-ticket";
+import { updateTicketStatus } from "@/features/ticket/actions/update-ticket-status";
 import { TICKET_ICONS_LABELS } from "./constants";
 
 type TicketMoreMenuProps = {
@@ -22,6 +24,9 @@ type TicketMoreMenuProps = {
 };
 
 const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
+
+  // const router = useRouter();
+
   const [deleteButton, deleteDialog] = useConfirmDialog({
     action: deleteTicket.bind(null, ticket.id),
     trigger: (
@@ -30,6 +35,10 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
         <span>Delete</span>
       </DropdownMenuItem>
     ),
+    // onSuccess: () => {
+    //   toast.success("Ticket deleted");
+    //   setTimeout(() => router.push(ticketsPath()), 300);
+    // }
   });
 
   const handleUpdateTicketStatus = async (value: string) => {
@@ -43,7 +52,7 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
 
     if ((result.status = "ERROR")) {
       toast.error(result.message);
-    } else {
+    } else if (result.status === "SUCCESS") {
       toast.success(result.message);
     }
   };

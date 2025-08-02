@@ -6,6 +6,7 @@ import { Header } from "@/app/_navigation/Header";
 import { Sidebar } from "@/app/_navigation/sidebar/components/sidebar";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { ReactQueryProvider } from "./_providers/react-query/react-query-provider";
 import Providers from "./providers";
 
 const InterSans = Inter({
@@ -29,6 +30,7 @@ export default function RootLayout({
         <Providers>
           <NuqsAdapter>
             <ThemeProvider>
+              <ReactQueryProvider>
               <Header />
               <div className="flex h-screen overflow-x-hidden border-collapse">
                 <Sidebar />
@@ -40,6 +42,7 @@ export default function RootLayout({
                 </main>
               </div>
               <Toaster expand />
+              </ReactQueryProvider>
             </ThemeProvider>
           </NuqsAdapter>
         </Providers>

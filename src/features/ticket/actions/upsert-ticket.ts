@@ -7,8 +7,8 @@ import { ticketPath, ticketsPath } from "@/app/paths";
 import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 import { toCent } from "@/utils/currency";
-import { getAuthOrRedirect } from "../auth/queries/get-auth-or-redirect";
-import { isOwner } from "../auth/utils/is-owner";
+import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
+import { isOwner } from "../../auth/utils/is-owner";
 
 const UpsertTicketSchema = z.object({
   title: z.string().min(1).max(191),
@@ -63,7 +63,6 @@ const UpsertTicket = async (
       });
     }
   } catch (error) {
-    console.error("UpsertTicket error:", error); 
     return fromErrorToActionState(error, formData)
   }
 
