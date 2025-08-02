@@ -35,6 +35,11 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
               sortValue: "desc",
               label: "Bounty",
             },
+            {
+              sortKey: "status",
+              sortValue: "asc",
+              label: "Status",
+            },
           ]}
         />
       </div>
@@ -44,7 +49,7 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
         <Placeholder label="No tickets found" />
       )}
 
-      <div className="w-5/6 max-w-[420px] mt-2">
+      <div className="w-full md:w-5/6 md:max-w-[420px] mt-2">
         <TicketPagination paginatedTicketMetadata={ticketMetaData}/>
       </div>
     </div>

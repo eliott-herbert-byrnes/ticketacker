@@ -39,12 +39,12 @@ const SortSelect = ({ value, onChange, options }: SortSelectProps) => {
 
   return (
     <Select defaultValue={value.sortKey + "_" + value.sortValue} onValueChange={handleSort}>
-      <SelectTrigger>
+      <SelectTrigger className="cursor-pointer">
         <SelectValue placeholder="Sort" />
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem key={option.sortKey + option.sortValue} value={option.sortKey + "_" + option.sortValue}>
+          <SelectItem className="cursor-pointer" key={option.sortKey + option.sortValue} value={option.sortKey + "_" + option.sortValue}>
             {option.label}
           </SelectItem>
         ))}

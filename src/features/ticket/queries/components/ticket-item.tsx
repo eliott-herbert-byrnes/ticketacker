@@ -75,7 +75,7 @@ const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
               {ticket.deadline} by {ticket.user.username}
             </p>
             <p className="text-sm text-muted-foreground">
-              {toCurrencyFromCent(ticket.bounty / 100)}
+              {toCurrencyFromCent(ticket.bounty)}
             </p>
           </CardFooter>
         </Card>

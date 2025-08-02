@@ -18,12 +18,12 @@ const SidebarItem = ({ isOpen, navItem }: SidebarItemProps) => {
 
   return (
     <>
-      {navItem.seperator && <Separator />}
+      {navItem.seperator && <Separator className="hidden md:block"/>}
       <Link
         href={navItem.href}
         className={cn(
           buttonVariants({ variant: "ghost" }),
-          "group relative flex h-12 justify-start",
+          "group relative flex h-12 md:justify-start",
           isActive && "bg-muted font-bold hover:bg-muted"
         )}
       >

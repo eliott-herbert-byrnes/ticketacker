@@ -6,8 +6,11 @@ import { Header } from "@/app/_navigation/Header";
 import { Sidebar } from "@/app/_navigation/sidebar/components/sidebar";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 import { ReactQueryProvider } from "./_providers/react-query/react-query-provider";
 import Providers from "./providers";
+
+
 
 const InterSans = Inter({
   variable: "--font-inter-sans",
@@ -32,11 +35,15 @@ export default function RootLayout({
             <ThemeProvider>
               <ReactQueryProvider>
               <Header />
-              <div className="flex h-screen overflow-x-hidden border-collapse">
+              <div className="flex flex-col-reverse md:flex-row h-screen overflow-x-hidden border-collapse">
                 <Sidebar />
                 <main
-                  className="duration-200
-                pl-[78px] min-h-screen md:peer-hover:pl-[240px] flex-1 overflow-y-auto overflow-x-hidden py-24 px-8 bg-secondary/20 flex flex-col"
+                  className={cn(
+                    "flex-1 overflow-y-auto overflow-x-hidden bg-secondary/20 flex flex-col",
+                    "duration-200",
+                    "px-8 pt-20 pb-8",
+                    "md:px-0 md:pt-24",
+                  )}
                 >
                   {children}
                 </main>

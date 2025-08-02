@@ -76,7 +76,7 @@ const TicketUpsertForm = ({ ticket }: TicketUpsertFormProps) => {
             id="bounty"
             name="bounty"
             type='number'
-            step='0.1'
+            step='0.01'
             defaultValue={
               (actionState.payload?.get("bounty") as string) ?? 
               (ticket?.bounty ? fromCent(ticket?.bounty) : "")

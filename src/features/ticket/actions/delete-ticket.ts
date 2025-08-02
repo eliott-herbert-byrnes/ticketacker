@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { setCookieByKey } from "@/app/actions/cookies";
-import { ticketsPath } from "@/app/paths";
+import { homePath, ticketsPath } from "@/app/paths";
 import {
   fromErrorToActionState,
   toActionState,
@@ -38,7 +38,6 @@ export const deleteTicket = async (id: string) => {
   revalidatePath(ticketsPath());
 
   await setCookieByKey("toast", "Ticket deleted");
-  redirect(ticketsPath());
+  redirect(homePath());
 
-  // return toActionState("SUCCESS", "Ticket deleted");
 };

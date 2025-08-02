@@ -43,7 +43,7 @@ const Header = () => {
     <nav
       className="
         animate-[fade-from-top_0.5s_ease-out_forwards]
-        supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-20 border-b bg-background/95 backdrop-blur w-full flex py-2.5 px-5 justify-between
+        supports-backdrop-blur:bg-background/60 fixed left-0 right-0 top-0 z-100 border-b bg-background/95 backdrop-blur w-full flex py-2.5 px-5 justify-between
         "
     >
       <div className="flex align-items gap-x-2">

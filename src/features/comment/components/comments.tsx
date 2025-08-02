@@ -14,6 +14,7 @@ type CommentProps = {
 };
 
 const Comments = ({ ticketId, paginatedComments }: CommentProps) => {
+
   const [comments, setComments] = useState(paginatedComments.list);
   const [metadata, setMetadata] = useState(paginatedComments.metadata);
 

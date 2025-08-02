@@ -24,23 +24,38 @@ const Sidebar = () => {
   return (
     <nav
       className={cn(
-        "animate-[fade-from-side_1.0s_ease-out_forwards] absolute peer h-screen border-r pt-24",
+        "z-50 border-t md:border-t-0 md:border-r bg-secondary/20 flex md:flex-col w-full md:w-[78px] md:pt-24",
         isTransition && "duration-200",
-        isOpen ? "md:w-60 w-[78px]" : "w-[78px]"
+        isOpen && "md:w-60"
       )}
       onMouseEnter={() => handleToggle(true)}
       onMouseLeave={() => handleToggle(false)}
     >
-      <div className="px-3 py-2">
-        <nav className="space-y-2">
-          {navItems.map((navItem) => (
-            <SidebarItem
-              key={navItem.title}
-              isOpen={isOpen}
-              navItem={navItem}
-            />
-          ))}
-        </nav>
+      <div className="flex md:flex-col md:justify-between w-full md:h-full py-2 px-4 md:px-3 md:py-2">
+        
+        <div className="flex md:flex-col gap-2 w-full md:space-y-2">
+          {navItems
+            .filter((item) => item.title !== "Account")
+            .map((navItem) => (
+              <SidebarItem
+                key={navItem.title}
+                isOpen={isOpen}
+                navItem={navItem}
+              />
+            ))}
+        </div>
+
+        <div className="flex md:flex-col gap-2 md:space-y-2">
+          {navItems
+            .filter((item) => item.title === "Account")
+            .map((navItem) => (
+              <SidebarItem
+                key={navItem.title}
+                isOpen={isOpen}
+                navItem={navItem}
+              />
+            ))}
+        </div>
       </div>
     </nav>
   );
