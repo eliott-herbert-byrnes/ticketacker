@@ -20,7 +20,7 @@ export const SignInForm = () => {
     const res = await signIn("credentials", {
       email,
       password,
-      redirect: false, // handle redirect manually
+      redirect: false,
     });
 
     if (res?.ok) {
