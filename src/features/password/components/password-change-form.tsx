@@ -1,76 +1,58 @@
 "use client";
 
 import clsx from "clsx";
-import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
-import { passwordForgotPath, signInPath, ticketsPath } from "@/app/paths";
+import { useActionState, useEffect, useState } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/sumit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
-import { useActionState } from "@/components/hooks/use-action-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { passwordReset } from "../actions/password-reset";
+import { passwordChange } from "../actions/password-change";
 import { checkPasswordStrength } from "../utils/password-strength";
 
-type PasswordResetFormProps = {
-  tokenId: string;
-};
-
-export const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
+export const PasswordChangeForm = () => {
   const [actionState, action] = useActionState(
-    passwordReset.bind(null, tokenId),
+    passwordChange,
     EMPTY_ACTION_STATE
   );
 
-  const router = useRouter();
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  // const [password, setPassword] = useState("");
-
-  const passwordRef = useRef("");
+  const [password, setPassword] = useState("");
   const [strength, setStrength] = useState<number | null>(null);
 
   useEffect(() => {
-    const autoSignIn = async () => {
-      if (actionState.status === "SUCCESS") {
-        const email = actionState.data?.email;
-        const password = passwordRef.current; 
-
-        const res = await signIn("credentials", {
-          email,
-          password,
-          redirect: false,
-        });
-
-        if (res?.ok) {
-          router.push(ticketsPath());
-        } else {
-          router.push(signInPath());
-        }
-      } else if (
-        actionState.status === "ERROR" &&
-        Object.keys(actionState.fieldErrors ?? {}).length === 0
-      ) {
-        router.push(passwordForgotPath());
-      }
-    };
-
-    autoSignIn();
-  }, [actionState, router]);
+    if (actionState.status === "SUCCESS") {
+      // redirect(signInPath());
+      console.log("Success");
+    } else if (
+      actionState.status === "ERROR" &&
+      Object.keys(actionState.fieldErrors ?? {}).length === 0
+    ) {
+      // redirect(passwordForgotPath());
+      console.log("Error");
+    }
+  }, [actionState.fieldErrors, actionState.status]);
 
   return (
     <Form action={action} actionState={actionState}>
       <Input
         type="password"
+        name="currentPassword"
+        placeholder="Current Password"
+        defaultValue={actionState.payload?.get("currentPassword") as string}
+      />
+      <FieldError actionState={actionState} name="currentPassword" />
+
+      <Input
+        type="password"
         name="password"
-        placeholder="password"
+        placeholder="New Password"
         defaultValue={actionState.payload?.get("password") as string}
         onChange={(e) => {
-          passwordRef.current = e.target.value;
-          const result = checkPasswordStrength(e.target.value);
+          const val = e.target.value;
+          setPassword(val);
+          const result = checkPasswordStrength(val);
           setStrength(result.score);
         }}
       />
@@ -79,7 +61,7 @@ export const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
       <Input
         type="password"
         name="confirmPassword"
-        placeholder="confirm Password"
+        placeholder="Confirm Password"
         defaultValue={actionState.payload?.get("confirmPassword") as string}
       />
       <FieldError actionState={actionState} name="confirmPassword" />
@@ -96,12 +78,11 @@ export const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
           {["Very Weak", "Weak", "Fair", "Good", "Strong"][strength]}
         </div>
       )}
-
       {strength !== null && strength > 2 ? (
-        <SubmitButton variant="default" label="Reset Password" />
+        <SubmitButton variant="default" label="Change Password" />
       ) : (
         <Button disabled={true} variant="outline">
-          Reset Password
+          Change Password
         </Button>
       )}
     </Form>

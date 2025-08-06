@@ -5,6 +5,7 @@ import { setCookieByKey } from "@/app/actions/cookies";
 import {
   ActionState,
   fromErrorToActionState,
+  toActionState,
 } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/utils/crypto";
@@ -42,12 +43,6 @@ export const passwordReset = async (
       where: { tokenHash },
     });
 
-    if (passwordResetToken) {
-      await prisma.passwordResetToken.delete({
-        where: { tokenHash },
-      });
-    }
-
     if (
       !passwordResetToken ||
       Date.now() > passwordResetToken.expiresAt.getTime()
@@ -60,26 +55,37 @@ export const passwordReset = async (
       } as ActionState;
     }
 
-    await prisma.session.deleteMany({
-      where: {
-        userId: passwordResetToken.userId,
-      },
+    const user = await prisma.user.findUnique({
+      where: { id: passwordResetToken.userId },
     });
+
+    if (!user) {
+      return toActionState("ERROR", "User not found");
+    }
+
+    await prisma.passwordResetToken.delete({ where: { tokenHash } });
+
+    await prisma.session.deleteMany({ where: { userId: user.id } });
 
     const passwordHash = await hashPassword(password);
 
     await prisma.user.update({
-      where: { id: passwordResetToken.userId },
+      where: { id: user.id },
       data: { passwordHash },
     });
+
+    await setCookieByKey("toast", "Successfully reset password");
+
+    return {
+      status: "SUCCESS",
+      fieldErrors: {},
+      timestamp: Date.now(),
+      data: {
+        email: user.email,
+        password, // needed for client to sign in
+      },
+    } as ActionState;
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
-
-  await setCookieByKey("toast", "Successfully reset password");
-  return {
-    status: "SUCCESS",
-    fieldErrors: {},
-    timestamp: Date.now(),
-  } as ActionState;
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react"; // <- from next-auth
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { ticketsPath } from "@/app/paths";
 import { SubmitButton } from "@/components/form/sumit-button";
