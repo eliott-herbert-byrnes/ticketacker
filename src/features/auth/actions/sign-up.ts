@@ -9,6 +9,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { inngest } from "@/lib/inngest";
 import { prisma } from "@/lib/prisma";
 
 const signUpSchema = z
@@ -37,15 +38,26 @@ export const signUp = async (
   formData: FormData
 ): Promise<ActionState> => {
   try {
-    const data = signUpSchema.parse(Object.fromEntries(formData));
-    const { username, email, password } = data;
+    const { username, email, password } = signUpSchema.parse(
+      Object.fromEntries(formData)
+    );
     const passwordHash = await hash(password);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username,
         email,
         passwordHash,
+      },
+    });
+
+    const welcomeUrl = "https://www.ticketacker.com/tickets";
+
+    await inngest.send({
+      name: "app/welcome.welcome-email",
+      data: {
+        userId: user.id,
+        welcomeUrl,
       },
     });
 

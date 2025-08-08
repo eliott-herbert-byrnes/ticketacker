@@ -1,5 +1,5 @@
 import { hash } from "@node-rs/argon2";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -7,10 +7,14 @@ const users = [
   {
     username: "admin",
     email: "admin@admin.com",
+    role: Role.ADMIN,
+    emailVerified: true,
   },
   {
     username: "user",
-    email: "hello@road-to-next.com",
+    email: "eliott.c.h.byrnes@googlemail.com",
+    role: Role.USER,
+    emailVerified: false,
   },
 ];
 
@@ -72,13 +76,12 @@ const seed = async () => {
     const createdTicket = await prisma.ticket.create({
       data: {
         ...ticket,
-        userId: dbUsers[0].id, // admin
+        userId: dbUsers[0].id,
       },
     });
     dbTickets.push(createdTicket);
   }
 
-  // Create comments for user on the first ticket
   for (const comment of comments) {
     await prisma.comment.create({
       data: {

@@ -4,45 +4,45 @@ import {
   Container,
   Head,
   Html,
-  // Img,
   Section,
   Tailwind,
   Text,
 } from "@react-email/components";
 
-type EmailPasswordResetProps = {
+type EmailWelcomeProps = {
   toName: string;
   url: string;
 };
 
-const EmailPasswordReset = ({ toName, url }: EmailPasswordResetProps) => {
+const EmailWelcome = ({ toName, url }: EmailWelcomeProps) => {
   return (
     <Html>
       <Head />
       <Tailwind>
         <Body className="bg-gray-50 font-sans text-gray-800">
           <Container className="bg-white shadow-md rounded-md my-10 mx-auto p-8 max-w-md">
-            {/* Header / Logo */}
+
+            {/* Header */}
             <Section className="text-center mb-6">
-              {/* <Img
-                src="https://ticketacker.com/logo.svg"
-                alt="TickeTacker logo"
-                width="40"
-                height="40"
-                className="mx-auto mb-4"
-              /> */}
-              <Text className="text-xl font-semibold text-gray-900">
-                Password Reset Request
+              <Text className="text-2xl font-bold text-gray-900">
+                Welcome to TickeTacker 🎟️
               </Text>
             </Section>
 
             {/* Body */}
             <Section>
-              <Text className="text-left mb-4">Hello {toName},</Text>
+              <Text className="text-left mb-4">Hi {toName},</Text>
+
+              <Text className="text-left mb-4">
+                Thanks for joining TickeTacker — we&apos;re thrilled to have you onboard!
+              </Text>
+
               <Text className="text-left mb-6">
-                We received a request to reset your password. Click the button
-                below to choose a new one. This link will expire in 2 hours for
-                your security.
+                Whether you&apos;re tracking tickets for personal tasks, collaborative projects, or anything in between, TickeTacker is here to help you stay organized and on top of your goals.
+              </Text>
+
+              <Text className="text-left mb-6">
+                Click the button below to log in and start managing your tickets:
               </Text>
             </Section>
 
@@ -52,7 +52,7 @@ const EmailPasswordReset = ({ toName, url }: EmailPasswordResetProps) => {
                 href={url}
                 className="bg-black text-white font-medium py-3 px-6 rounded-md"
               >
-                Reset Password
+                Get Started
               </Button>
             </Section>
 
@@ -70,7 +70,7 @@ const EmailPasswordReset = ({ toName, url }: EmailPasswordResetProps) => {
             {/* Footer */}
             <Section className="mt-8 border-t border-gray-200 pt-4 text-xs text-gray-500 text-center">
               <Text>
-                If you didn’t request this, you can safely ignore this email.
+                If you didn’t create an account with TickeTacker, feel free to ignore this email.
               </Text>
               <Text className="mt-2">
                 © {new Date().getFullYear()} TickeTacker. All rights reserved.
@@ -83,4 +83,4 @@ const EmailPasswordReset = ({ toName, url }: EmailPasswordResetProps) => {
   );
 };
 
-export default EmailPasswordReset;
+export default EmailWelcome;

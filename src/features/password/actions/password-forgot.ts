@@ -6,9 +6,9 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { inngest } from "@/lib/inngest";
 import { prisma } from "@/lib/prisma";
-import { sendEmailPasswordReset } from "../emails/send-email-password-reset";
-import { generatePasswordResetLink } from "../utils/generate-password-reset-link";
+
 
 const passwordForgotSchema = z.object({
   email: z.string().min(1, { message: "Is Required" }).max(191).email(),
@@ -27,11 +27,10 @@ export const passwordForgot = async (
       return toActionState("ERROR", "Password reset link sent", formData);
     }
 
-    const passwordResetLink = await generatePasswordResetLink(user.id)
-
-    await sendEmailPasswordReset(user.username, user.email, passwordResetLink)
-
-
+    await inngest.send({
+      name: "app/password.password-reset",
+      data: {userId: user.id},
+    })
 
   } catch (error) {
     return fromErrorToActionState(error, formData);

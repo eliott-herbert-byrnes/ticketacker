@@ -5,7 +5,6 @@ import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/sumit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { signUp } from "../actions/sign-up";
 
 const SignUpForm = () => {
@@ -13,42 +12,38 @@ const SignUpForm = () => {
 
   return (
     <Form action={action} actionState={actionState}>
-      <Label htmlFor="username">Username</Label>
       <Input
         name="username"
-        placeholder="JohnDoe123"
+        placeholder="Username"
         defaultValue={actionState.payload?.get("username") as string}
       />
       <FieldError actionState={actionState} name="username" />
 
-      <Label htmlFor="email">Email</Label>
       <Input
         name="email"
-        placeholder="JohnDoe123@gmail.com"
+        placeholder="Email"
         defaultValue={actionState.payload?.get("email") as string}
       />
       <FieldError actionState={actionState} name="email" />
 
-      <Label htmlFor="password">Password</Label>
       <Input
         name="password"
-        placeholder="ug@5yh4vb1j!k"
+        placeholder="Password"
         type="password"
         defaultValue={actionState.payload?.get("password") as string}
       />
       <FieldError actionState={actionState} name="password" />
 
-      <Label htmlFor="confirmPassword">Confirm Password</Label>
       <Input
         name="confirmPassword"
-        placeholder="ug@5yh4vb1j!k"
+        placeholder=" Confirm Password"
         type="password"
         defaultValue={actionState.payload?.get("confirmPassword") as string}
 
       />
       <FieldError actionState={actionState} name="confirmPassword" />
 
-      <div className="mt-4">
+      <div className="mt-2">
         <SubmitButton label="Sign Up" />
       </div>
     </Form>
