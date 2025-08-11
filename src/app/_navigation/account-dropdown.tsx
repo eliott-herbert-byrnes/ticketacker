@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut } from "@/features/auth/actions/sign-out";
+import { signOutAction } from "@/features/auth/actions/sign-out";
 
 type AuthUser = {
   name?: string | null;
@@ -51,7 +51,7 @@ const AccountDropdown = ({ user }: AccountDropdownProps) => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <form action={signOut}>
+        <form action={signOutAction}>
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full flex items-center">
               <LucideLogOut className="mr-2 h-4 w-4" />

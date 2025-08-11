@@ -1,14 +1,16 @@
+// src/features/auth/actions/sign-up.ts
 "use server";
 
 import { hash } from "@node-rs/argon2";
 import { Prisma } from "@prisma/client";
-// import { redirect } from "next/navigation";
 import { z } from "zod";
+import { ticketsPath } from "@/app/paths";
 import {
   ActionState,
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { signIn } from "@/lib/auth";
 import { inngest } from "@/lib/inngest";
 import { prisma } from "@/lib/prisma";
 
@@ -33,35 +35,60 @@ const signUpSchema = z
     }
   });
 
-export const signUp = async (
+export async function signUpAction(
   _state: ActionState,
   formData: FormData
-): Promise<ActionState> => {
+): Promise<ActionState> {
   try {
-    const { username, email, password } = signUpSchema.parse(
-      Object.fromEntries(formData)
-    );
+    const parsed = signUpSchema.parse(Object.fromEntries(formData));
+    const username = parsed.username.trim();
+    const email = parsed.email.toLowerCase().trim();
+    const password = parsed.password;
+
     const passwordHash = await hash(password);
 
     const user = await prisma.user.create({
-      data: {
-        username,
-        email,
-        passwordHash,
-      },
+      data: { username, email, passwordHash },
     });
 
-    const welcomeUrl = "https://www.ticketacker.com/tickets";
+    await inngest.send({
+      name: "app/auth.sign-up",
+      data: {
+        userId: user.id,
+      },
+    });
 
     await inngest.send({
       name: "app/welcome.welcome-email",
       data: {
         userId: user.id,
-        welcomeUrl,
+        welcomeUrl: "https://www.ticketacker.com/tickets",
       },
     });
 
-    return toActionState("SUCCESS", "Account created successfully");
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (
+      result &&
+      typeof result === "object" &&
+      "error" in result &&
+      result.error
+    ) {
+      return toActionState(
+        "ERROR",
+        "Sign in failed after registration",
+        formData
+      );
+    }
+
+    return {
+      ...toActionState("SUCCESS", "Account created — signed in"),
+      data: { redirectTo: ticketsPath() },
+    };
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -73,7 +100,6 @@ export const signUp = async (
         formData
       );
     }
-
     return fromErrorToActionState(error, formData);
   }
-};
+}

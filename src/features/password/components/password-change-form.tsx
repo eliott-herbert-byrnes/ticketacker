@@ -1,11 +1,12 @@
 "use client";
 
 import clsx from "clsx";
-import { useActionState, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/sumit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
+import { useActionState } from "@/components/hooks/use-action-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { passwordChange } from "../actions/password-change";

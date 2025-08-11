@@ -8,13 +8,13 @@ const users = [
     username: "admin",
     email: "admin@admin.com",
     role: Role.ADMIN,
-    emailVerified: true,
+    emailVerified: new Date(),
   },
   {
     username: "user",
     email: "eliott.c.h.byrnes@googlemail.com",
     role: Role.USER,
-    emailVerified: false,
+    emailVerified: null,
   },
 ];
 

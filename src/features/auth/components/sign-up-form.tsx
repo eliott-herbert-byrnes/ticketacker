@@ -1,15 +1,36 @@
+// src/features/auth/components/sign-up-form.tsx
 "use client";
-import { useActionState } from "react";
+
+import { useRouter } from "next/navigation";
+import {  useEffect } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/sumit-button";
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
+import {
+  ActionState,
+  EMPTY_ACTION_STATE,
+} from "@/components/form/utils/to-action-state";
+import { useActionState } from "@/components/hooks/use-action-state";
 import { Input } from "@/components/ui/input";
-import { signUp } from "../actions/sign-up";
+import { signUpAction } from "../actions/sign-up";
 
-const SignUpForm = () => {
-  const [actionState, action] = useActionState(signUp, EMPTY_ACTION_STATE);
+export function SignUpForm() {
+  const router = useRouter();
 
+  const [actionState, action] = useActionState<ActionState>(
+    signUpAction,
+    EMPTY_ACTION_STATE
+  );
+
+    useEffect(() => {
+    if (actionState.status === "SUCCESS") {
+      router.refresh();
+      const to = (actionState.data)?.redirectTo as string | undefined;
+      if (to) router.push(to);
+    }
+  }, [actionState, router]);
+
+  
   return (
     <Form action={action} actionState={actionState}>
       <Input
@@ -28,26 +49,27 @@ const SignUpForm = () => {
 
       <Input
         name="password"
-        placeholder="Password"
         type="password"
+        placeholder="Password"
         defaultValue={actionState.payload?.get("password") as string}
       />
       <FieldError actionState={actionState} name="password" />
 
       <Input
         name="confirmPassword"
-        placeholder=" Confirm Password"
         type="password"
+        placeholder="Confirm Password"
         defaultValue={actionState.payload?.get("confirmPassword") as string}
-
       />
       <FieldError actionState={actionState} name="confirmPassword" />
+
+      {actionState.status === "ERROR" && (
+        <p className="text-red-500 text-sm mt-2">{actionState.message}</p>
+      )}
 
       <div className="mt-2">
         <SubmitButton label="Sign Up" />
       </div>
     </Form>
   );
-};
-
-export { SignUpForm };
+}

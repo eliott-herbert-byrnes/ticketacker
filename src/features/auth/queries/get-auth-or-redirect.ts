@@ -2,14 +2,21 @@ import { redirect } from "next/navigation";
 import { emailVerificationPath, signInPath } from "@/app/paths";
 import { getAuth } from "./get-auth";
 
-export const getAuthOrRedirect = async () => {
+type GetAuthOrRedirectOptions = {
+  checkEmailVerified?: boolean;
+}
+
+export const getAuthOrRedirect = async (options?: GetAuthOrRedirectOptions) => {
+
+  const {checkEmailVerified = true} = options ?? {}
+
   const auth = await getAuth();
 
   if (!auth.user) {
     redirect(signInPath());
   }
 
-  if (!auth.user.emailVerified){
+  if (checkEmailVerified && !auth.user.emailVerified){
     redirect(emailVerificationPath())
   }
 

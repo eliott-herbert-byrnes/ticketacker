@@ -1,8 +1,8 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { signInPath } from "@/app/paths";
+import { signOut } from "@/lib/auth";
 
-export const signOut = async () => {
-  redirect("/api/auth/signout?callbackUrl=" + encodeURIComponent(signInPath()));
-};
+export async function signOutAction(): Promise<void> {
+  await signOut({ redirectTo: signInPath() }); 
+}

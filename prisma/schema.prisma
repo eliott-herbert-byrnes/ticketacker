@@ -17,7 +17,7 @@ model User {
   id                 String               @id @default(cuid())
   username           String               @unique
   email              String               @unique
-  emailVerified      Boolean              @default(false)
+  emailVerified      DateTime?            
   passwordHash       String
   sessions           Session[]
   PasswordResetToken PasswordResetToken[]
@@ -27,6 +27,7 @@ model User {
 
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt    @default(now())
+  lastSignedIn       DateTime?
 
   role               Role                 @default(USER)
 
