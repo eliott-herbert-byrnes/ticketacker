@@ -21,7 +21,11 @@ export const emailVerification = async (
   _actionState: ActionState,
   formData: FormData
 ) => {
-  const { user } = await getAuthOrRedirect({ checkEmailVerified: false });
+  const { user } = await getAuthOrRedirect({
+    checkEmailVerified: false,
+    checkOrganization: false,
+    checkActiveOrganization: false,
+  });
 
   if (!user) {
     return toActionState("ERROR", "Invalid or expired");
@@ -87,7 +91,6 @@ export const emailVerification = async (
     });
     // Optional cleanup:
     // await prisma.emailVerificationToken.deleteMany({ where: { userId: dbUser.id } });
-
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }

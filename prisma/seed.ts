@@ -14,7 +14,7 @@ const users = [
     username: "user",
     email: "eliott.c.h.byrnes@googlemail.com",
     role: Role.USER,
-    emailVerified: null,
+    emailVerified: new Date(),
   },
 ];
 
@@ -55,8 +55,16 @@ const seed = async () => {
   await prisma.comment.deleteMany();
   await prisma.ticket.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.organization.deleteMany();
+  await prisma.membership.deleteMany();
 
   const passwordHash = await hash("geheimnis");
+
+  const dbOrganization = await prisma.organization.create({
+    data: {
+      name: "Organization 1"
+    }
+  })
 
   // Create users and capture their IDs
   const dbUsers = [];
@@ -69,6 +77,14 @@ const seed = async () => {
     });
     dbUsers.push(createdUser);
   }
+
+  await prisma.membership.create({
+    data: {
+      userId: dbUsers[0].id,
+      organizationId: dbOrganization.id,
+      isActive: true,
+    }
+  })
 
   // Create tickets for admin user
   const dbTickets = [];

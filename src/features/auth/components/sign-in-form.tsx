@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
-import { SubmitButton } from "@/components/form/sumit-button";
+import { SubmitButton } from "@/components/form/submit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { useActionState } from "@/components/hooks/use-action-state";
 import { Input } from "@/components/ui/input";

@@ -3,7 +3,7 @@
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
 import { useActionState } from "react";
 import { Form } from "@/components/form/form";
-import { SubmitButton } from "@/components/form/sumit-button";
+import { SubmitButton } from "@/components/form/submit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 // import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";

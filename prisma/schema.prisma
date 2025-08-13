@@ -24,9 +24,10 @@ model User {
   EmailVerificationToken  EmailVerificationToken[]
   accounts           Account[]
   tickets            Ticket[]
+  memberships        Membership[]
 
   createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt    @default(now())
+  updatedAt          DateTime             @updatedAt 
   lastSignedIn       DateTime?
 
   role               Role                 @default(USER)
@@ -34,6 +35,28 @@ model User {
   comments           Comment[]
 
   @@index([createdAt])
+}
+
+model Organization {
+    id                String      @id @default(cuid())
+    createdAt         DateTime    @default(now())
+    updatedAt         DateTime    @updatedAt
+    name              String      
+    memberships       Membership[]    
+}
+
+model Membership {
+    organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    organizationId  String
+    user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId          String
+    isActive        Boolean
+
+    joinedAt DateTime @default(now())
+
+    @@id(name: "membershipId", [organizationId, userId])
+    @@index([organizationId])
+    @@index([userId])
 }
 
 model EmailVerificationToken {
