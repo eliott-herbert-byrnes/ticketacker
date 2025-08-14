@@ -78,12 +78,16 @@ const seed = async () => {
     dbUsers.push(createdUser);
   }
 
-  await prisma.membership.create({
-    data: {
+  await prisma.membership.createMany({
+    data: [{
       userId: dbUsers[0].id,
       organizationId: dbOrganization.id,
       isActive: true,
-    }
+    }, {
+      userId: dbUsers[1].id,
+      organizationId: dbOrganization.id,
+      isActive: true,
+    }]
   })
 
   // Create tickets for admin user

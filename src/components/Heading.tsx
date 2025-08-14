@@ -21,7 +21,9 @@ const Heading = ({ tabs, title, description, actions }: headingTypes) => {
         <div className="flex gap-x-2">{actions}</div>
       </div>
 
+      <div className="px-14">
       <Separator />
+      </div>
     </>
   );
 };

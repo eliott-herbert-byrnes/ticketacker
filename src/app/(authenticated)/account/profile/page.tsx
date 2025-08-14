@@ -7,7 +7,7 @@ import { AccountTabs } from "../_navigation/tabs";
 const Profile = () => {
   return (
     <>
-      <div className="flex-1 flex flex-col gap-y-8">
+      <div className="flex-1 flex flex-col gap-y-6">
         <Heading
           title="Profile"
           description="All your profile information"
@@ -19,8 +19,7 @@ const Profile = () => {
             title="Organizations"
             description="Your organizations"
             className="w-full max-w-[420px] animate-fade-from-top"
-            content={<OrganizationStatus />
-}
+            content={<OrganizationStatus />}
           />
           <CardCompact
             title="Change Your Email"
