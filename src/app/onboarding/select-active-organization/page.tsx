@@ -37,7 +37,7 @@ const SelectActiveOrganizationPage = async () => {
       ></Heading>
 
       <Suspense fallback={<Spinner />}>
-        <OrganizationList />
+        <OrganizationList limitedAccess/>
       </Suspense>
     </div>
   );

@@ -10,6 +10,7 @@ import { AccountDropdown } from "./account-dropdown";
 
 const Header = () => {
   const { user, isFetched } = useAuth();
+  
 
   if (!isFetched) {
     return null;
@@ -17,9 +18,9 @@ const Header = () => {
 
   const navItems = user ? (
     <>
-    <div className="flex items-center">
+      <div className="flex items-center">
         <AccountDropdown user={user} />
-    </div>
+      </div>
     </>
   ) : (
     <>
@@ -56,7 +57,7 @@ const Header = () => {
         </Link>
       </div>
 
-      <div className="flex align-items gap-x-2">
+      <div className="flex align-items gap-x-2 items-center">
         <ThemeSwitcher />
         {navItems}
       </div>

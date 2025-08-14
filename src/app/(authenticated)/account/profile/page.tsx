@@ -1,5 +1,6 @@
 import { CardCompact } from "@/components/card-compact";
 import { Heading } from "@/components/Heading";
+import { OrganizationStatus } from "@/features/organization/components/organization-status";
 import { EmailChangeForm } from "@/features/password/components/email-change-form";
 import { AccountTabs } from "../_navigation/tabs";
 
@@ -13,7 +14,14 @@ const Profile = () => {
           tabs={<AccountTabs />}
         />
 
-        <div className="flex-1 flex flex-col items-center">
+        <div className="flex-1 flex flex-col items-center gap-y-4">
+          <CardCompact
+            title="Organizations"
+            description="Your organizations"
+            className="w-full max-w-[420px] animate-fade-from-top"
+            content={<OrganizationStatus />
+}
+          />
           <CardCompact
             title="Change Your Email"
             description="Enter your new email address"
