@@ -28,7 +28,7 @@ const OrganizationPage = async () => {
       ></Heading>
 
       <Suspense fallback={<Spinner />}>
-        <OrganizationList />
+        <OrganizationList  />
       </Suspense>
     </div>
   );

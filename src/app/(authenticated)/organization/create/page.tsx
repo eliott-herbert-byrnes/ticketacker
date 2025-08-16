@@ -1,7 +1,12 @@
 import { CardCompact } from "@/components/card-compact"
+import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect"
 import { OrganizationCreateForm } from "@/features/organization/components/organization-create-form"
 
-const OrganizationCreate = () => {
+const OrganizationCreate = async () => {
+    await getAuthOrRedirect({
+        checkOrganization: false,
+        checkActiveOrganization: false,
+    })
     return (
         <div className="flex-1 flex flex-col items-center">
             <CardCompact 

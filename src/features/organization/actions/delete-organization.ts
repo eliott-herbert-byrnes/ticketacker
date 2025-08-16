@@ -1,34 +1,56 @@
 "use server";
 
+import { organizationCreatePath } from "@/app/paths";
 import { fromErrorToActionState } from "@/components/form/utils/to-action-state";
 import { toActionState } from "@/components/form/utils/to-action-state";
-import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
+import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
 import { prisma } from "@/lib/prisma";
-import { getOrganizationsByUser } from "../queries/get-organization-by-user";
+// import { getOrganizationsByUser } from "../queries/get-organization-by-user";
 
 export const deleteOrganization = async (organizationId: string) => {
-  await getAuthOrRedirect({
-    checkActiveOrganization: false,
-  });
+  const {user} = await getAdminOrRedirect(organizationId);
 
   try {
-    const organizations = await getOrganizationsByUser();
 
-    const canDelete = organizations.some(
-      (organization) => organization.id === organizationId
-    );
+    // delete org, find remaining, if remaining pick one and mark as active
 
-    if (!canDelete) {
-      return toActionState("ERROR", "Organization not found");
+    await prisma.$transaction(async (tx) => {
+
+      await tx.organization.delete({where: {id: organizationId}});
+
+      const remainingMemberships = await tx.membership.findMany({
+        where: {userId: user!.id},
+        select: {organizationId: true},
+        orderBy: {joinedAt: "asc"}
+      })
+
+      if(remainingMemberships.length > 0){
+        const nextOrgId = remainingMemberships[0].organizationId
+        await tx.membership.updateMany({
+          where: {userId: user!.id},
+          data: {isActive: false}
+        })
+        await tx.membership.update({
+          where: {
+            membershipId: {organizationId: nextOrgId, userId: user!.id}
+          },
+          data: {isActive: true}
+        })
+      }
+    })
+
+    // check for remaining orgs, if none redirect to create
+    const remaining = await prisma.membership.count({where: {userId: user!.id}})
+    
+    if(remaining === 0){
+      return {
+        ...toActionState("SUCCESS", "Organization deleted"),
+        data: {redirectTo: organizationCreatePath()}
+      }
     }
-
-    await prisma.organization.delete({
-      where: {
-        id: organizationId,
-      },
-    });
+    
+    return toActionState("SUCCESS", "Active organization has been switched");
   } catch (error) {
     return fromErrorToActionState(error);
   }
-  return toActionState("SUCCESS", "Active organization has been switched");
 };

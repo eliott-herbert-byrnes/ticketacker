@@ -12,16 +12,58 @@ export const deleteMembership = async ({
     userId: string;
     organizationId: string
 }) => {
-    const auth = await getAuthOrRedirect()
+    const {user} = await getAuthOrRedirect()
 
     const memberships = await getMemberships(organizationId)
 
     const isLastMembership = (memberships ?? []).length === 1;
 
+    // membership auth checks
+
     if (isLastMembership){
         return toActionState(
             "ERROR",
             "The last membership cannot be deleted"
+        )
+    }
+
+    const targetMembership = (memberships ?? []).find(
+        (membership) => membership.userId === userId
+    )
+
+    if(!targetMembership){
+        return toActionState("ERROR", "Membership not found")
+    }
+
+    // admin auth checks
+
+    const adminMemberships = (memberships ?? []).filter(
+        (membership) => membership.membershipRole === "ADMIN"
+    )
+
+    const removesAdmin = targetMembership.membershipRole === "ADMIN"
+    const isLastAdmin = adminMemberships.length <= 1
+
+    if(removesAdmin && isLastAdmin){
+        return toActionState(
+            "ERROR",
+            "You cannot delete the last admin of an organization"
+        )
+    }
+
+    // final checks
+
+    const myMembership = (memberships ?? []).find(
+        (membership) => membership.userId === user?.id
+    )
+
+    const isMyself = user!.id === userId;
+    const isAdmin = myMembership?.membershipRole === "ADMIN"
+
+    if(!isAdmin && !isMyself){
+        return toActionState(
+            "ERROR",
+            "You can only delete memberships as an admin"
         )
     }
 
@@ -34,10 +76,17 @@ export const deleteMembership = async ({
         }
     })
 
-    if (userId === auth.user?.id){
-        return toActionState("SUCCESS", "Deleting member")
-    } else {
-        return toActionState("SUCCESS", "Leaving organization")
-    }
+    // if (userId === user?.id){
+    //     return toActionState("SUCCESS", "Deleting member")
+    // } else {
+    //     return toActionState("SUCCESS", "Leaving organization")
+    // }
+
+    return toActionState(
+        "SUCCESS",
+        isMyself
+        ? "Leaving organization"
+        : "The membership has been deleted"
+    )
 
 }

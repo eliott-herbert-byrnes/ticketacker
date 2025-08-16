@@ -51,12 +51,18 @@ model Membership {
     user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId          String
     isActive        Boolean
+    membershipRole  MembershipRole  @default(MEMBER)
 
     joinedAt DateTime @default(now())
 
     @@id(name: "membershipId", [organizationId, userId])
     @@index([organizationId])
     @@index([userId])
+}
+
+enum MembershipRole {
+  MEMBER
+  ADMIN
 }
 
 model EmailVerificationToken {

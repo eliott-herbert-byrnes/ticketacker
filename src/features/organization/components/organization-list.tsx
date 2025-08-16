@@ -16,13 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { MembershipDeleteButton } from "@/features/membership/components/membership-delete-button";
 import { getOrganizationsByUser } from "../queries/get-organization-by-user";
 import { OrganizationDeleteButton } from "./organization-delete-button";
+import { OrganizationRenameButtton } from "./organization-rename-button";
 import { OrganizationSwitchButton } from "./organization-switch-button";
-import { MembershipDeleteButton } from "@/features/membership/components/membership-delete-button";
 
 type OrganizationListProps = {
-  limitedAccess: boolean;
+  limitedAccess?: boolean;
 };
 
 export const OrganizationList = async ({
@@ -35,7 +36,7 @@ export const OrganizationList = async ({
 
   return (
     <div className="overflow-hidden px-14">
-      <Table className="table-fixed w-full [&_th]:px-14 [&_td]:px-14 [&_th]:py-4 [&_td]:py-4">
+      <Table className="table-fixed">
         <TableHeader>
           <TableRow>
             {/* <TableHead className="px-8 w-[300px]">ID</TableHead> */}
@@ -50,6 +51,7 @@ export const OrganizationList = async ({
           {/* <TableBody className="[&_tr:nth-child(even)]:bg-muted/40"> */}
           {organizations.map((organization) => {
             const isActive = organization.membershipByUser.isActive;
+            const isAdmin = organization.membershipByUser.membershipRole === "ADMIN"
 
             const switchButton = (
               <OrganizationSwitchButton
@@ -94,18 +96,32 @@ export const OrganizationList = async ({
             );
 
             const deleteButton = (
-              <>
                 <OrganizationDeleteButton organizationId={organization.id} />
-              </>
             );
+
+            const renameButton = (
+              <OrganizationRenameButtton
+                organizationName={organization.name} 
+                organizationId={organization.id}
+              />
+            );
+
+            const placeholder = (
+              <Button 
+                size="icon"
+                disabled
+                className="disabled:opacity-0"
+              />
+            )
 
             const buttons = (
               <div className="flex gap-2">
                 {switchButton}
-                {limitedAccess ? null : detailButton}
-                {limitedAccess ? null : editButton}
+                {limitedAccess ? null : isAdmin ? detailButton : placeholder}
+                {limitedAccess ? null : isAdmin ? editButton : placeholder}
+                {limitedAccess ? null : isAdmin ? renameButton : placeholder}
                 {limitedAccess ? null : leaveButton}
-                {limitedAccess ? null : deleteButton}
+                {limitedAccess ? null : isAdmin ? deleteButton : placeholder}
               </div>
             );
 
@@ -120,6 +136,7 @@ export const OrganizationList = async ({
                   )}
                 </TableCell>
                 <TableCell>{organization._count.memberships}</TableCell>
+                <TableCell>{organization.membershipByUser.membershipRole}</TableCell>
                 <TableCell>{buttons}</TableCell>
               </TableRow>
             );

@@ -10,6 +10,7 @@ import {
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { getMemberships } from "../queries/get-memberships";
 import { MembershipDeleteButton } from "./membership-delete-button";
+import { MembershipMoreMenu } from "./membership-more-menu";
 
 type MembershipListProps = {
   organizationId: string;
@@ -29,11 +30,21 @@ const MembershipList = async ({ organizationId }: MembershipListProps) => {
             <TableHead>Username</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Verified Email</TableHead>
+            <TableHead>Role</TableHead>
             <TableHead />
           </TableRow>
         </TableHeader>
         <TableBody>
           {memberships.map((membership) => {
+
+            const membershipMoreMenu = (
+              <MembershipMoreMenu
+                userId={membership.userId}
+                organizationId={membership.organizationId}
+                membershipRole={membership.membershipRole}
+                />
+            )
+            
             const deleteButton = (
               <MembershipDeleteButton
                 organizationId={membership.organizationId}
@@ -41,7 +52,11 @@ const MembershipList = async ({ organizationId }: MembershipListProps) => {
               />
             );
 
-            const buttons = <>{deleteButton}</>;
+            const buttons = 
+            <>
+            {deleteButton}
+            {membershipMoreMenu}
+            </>;
 
             const username =
               membership.userId === currentUserId ? (
@@ -63,6 +78,9 @@ const MembershipList = async ({ organizationId }: MembershipListProps) => {
                   ) : (
                     <LucideBan />
                   )}
+                </TableCell>
+                <TableCell >
+                  {membership.membershipRole}
                 </TableCell>
                 <TableCell className="flex justify-end gap-x-2">
                   {buttons}
