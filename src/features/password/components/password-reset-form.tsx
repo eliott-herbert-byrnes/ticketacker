@@ -27,7 +27,7 @@ export const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
 
   const router = useRouter();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   // const [password, setPassword] = useState("");
 
   const passwordRef = useRef("");

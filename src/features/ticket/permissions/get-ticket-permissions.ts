@@ -28,7 +28,7 @@ export const getTicketPermissions = async ({
 
     if (!membership) {
         return {
-            canDeleteticket: false,
+            canDeleteTicket: false,
             canUpdateTicket: false,
         }
     }

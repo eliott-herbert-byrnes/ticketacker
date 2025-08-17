@@ -9,7 +9,7 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
-import { isOwner } from "../../auth/utils/is-owner";
+// import { isOwner } from "../../auth/utils/is-owner";
 import { getTicketPermissions } from "../permissions/get-ticket-permissions";
 
 export const updateTicketStatus = async (id: string, status: TicketStatus) => {
@@ -26,9 +26,9 @@ export const updateTicketStatus = async (id: string, status: TicketStatus) => {
       return toActionState("ERROR", "Unable to locate ticket")
     }
 
-    const owner = isOwner(user, ticket);
+    // const owner = isOwner(user, ticket);
     const perms = await getTicketPermissions({ organizationId: ticket.organizationId, userId: user!.id });
-    const canUpdate = owner || !!perms.canUpdateTicket;
+    const canUpdate = !!perms.canUpdateTicket;
     if (!canUpdate) return toActionState("ERROR", "Not authorized");
 
     await prisma.ticket.update({

@@ -1,9 +1,8 @@
 import { Suspense } from "react";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/spinner";
-import { MembershipList } from "@/features/membership/components/membership-list";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { MembershipList } from "@/features/membership/components/membership-list";
 
 type MembershipsPageProps = {
   params: Promise<{
