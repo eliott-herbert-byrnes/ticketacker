@@ -23,21 +23,8 @@ const UpsertTicket = async (
   formData: FormData
 ) => {
 
-  const {user} = await getAuthOrRedirect()
-
-  try {
-    if(id){
-      const ticket = await prisma.ticket.findUnique({
-        where: {
-          id,
-        }
-      })
-
-      if(!ticket || !isOwner(user, ticket)){
-        return toActionState("ERROR", "Not authorized")
-      }
-    }
-
+  const {user, activeOrganization} = await getAuthOrRedirect()
+try {
     const data = UpsertTicketSchema.parse({
       title: formData.get("title"),
       content: formData.get("content"),
@@ -48,32 +35,49 @@ const UpsertTicket = async (
     const dbData = {
       ...data,
       userId: user!.id,
-      bounty: toCent(data.bounty)
-    }
+      bounty: toCent(data.bounty),
+    };
 
     if (id) {
-      await prisma.ticket.upsert({
+      const existing = await prisma.ticket.findUnique({
         where: { id },
-        update: dbData,
-        create: dbData, 
+        select: { userId: true },
       });
-    } else {
-      await prisma.ticket.create({
+
+      if (!existing || !isOwner(user, existing)) {
+        return toActionState("ERROR", "Not authorized");
+      }
+
+      await prisma.ticket.update({
+        where: { id },
         data: dbData,
       });
+
+      revalidatePath(ticketsPath());
+      await setCookieByKey("toast", "Ticket updated");
+      redirect(homePath()); 
+    } else {
+      if (!activeOrganization) {
+        return toActionState(
+          "ERROR",
+          "You need an active organization to create a ticket."
+        );
+      }
+
+      await prisma.ticket.create({
+        data: {
+          ...dbData,
+          organizationId: activeOrganization.id,
+        },
+      });
+
+      revalidatePath(ticketsPath());
+      // await setCookieByKey("toast", "Ticket created");
+      return toActionState("SUCCESS", "Ticket Created");
     }
   } catch (error) {
-    return fromErrorToActionState(error, formData)
+    return fromErrorToActionState(error, formData);
   }
-
-  revalidatePath(ticketsPath());
-
-  if (id) {
-    await setCookieByKey('toast', 'Ticket updated')
-    redirect(homePath());
-  }
-
-  return toActionState('SUCCESS', 'Ticket Created');
 };
 
 export { UpsertTicket };

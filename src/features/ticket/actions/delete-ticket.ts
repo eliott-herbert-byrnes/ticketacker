@@ -11,33 +11,35 @@ import {
 import { prisma } from "@/lib/prisma";
 import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
 import { isOwner } from "../../auth/utils/is-owner";
+import { getTicketPermissions } from "../permissions/get-ticket-permissions";
 
 export const deleteTicket = async (id: string) => {
   const { user } = await getAuthOrRedirect();
 
   try {
-    const ticket = await prisma.ticket.findUnique({
-      where: {
-        id,
-      },
+    const ticket = await prisma.ticket.findUnique({ where: { id } });
+    if (!ticket) {
+      return toActionState("ERROR", "Ticket not found");
+    }
+
+    const perms = await getTicketPermissions({
+      organizationId: ticket.organizationId,
+      userId: user!.id,
     });
 
-    if (!ticket || !isOwner(user, ticket)) {
+    const owner = isOwner(user, ticket);
+    const adminCan = !!perms.canDeleteTicket;
+
+    if (!owner && !adminCan) {
       return toActionState("ERROR", "Not authorized");
     }
 
-    await prisma.ticket.delete({
-      where: {
-        id,
-      },
-    });
+    await prisma.ticket.delete({ where: { id } });
   } catch (error) {
     return fromErrorToActionState(error);
   }
 
   revalidatePath(ticketsPath());
-
   await setCookieByKey("toast", "Ticket deleted");
   redirect(homePath());
-
 };

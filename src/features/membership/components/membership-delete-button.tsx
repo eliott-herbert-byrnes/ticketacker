@@ -23,13 +23,15 @@ const MembershipDeleteButton = ({
             organizationId,
         }),
         trigger: (isPending) => (
-            <Button variant="destructive" size="icon">
-            {isPending ? (
-                <LucideLoaderCircle className="h-4 w-4 animate-spin" />
-            ): (
-                <LucideLogOut className="w-4 h-4" />
-            )}
-            </Button>
+
+                <Button variant="destructive" size="icon">
+                {isPending ? (
+                    <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+                ): (
+                    <LucideLogOut className="w-4 h-4" />
+                )}
+                </Button>
+
         ),
         onSuccess: () => {
             router.refresh()

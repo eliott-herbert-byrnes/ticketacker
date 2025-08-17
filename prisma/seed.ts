@@ -99,6 +99,7 @@ const seed = async () => {
       data: {
         ...ticket,
         userId: dbUsers[0].id,
+        organizationId: dbOrganization.id,
       },
     });
     dbTickets.push(createdTicket);

@@ -1,4 +1,5 @@
 import { Placeholder } from "@/components/Placeholder";
+import { TicketOrgFilterButton } from "@/components/ticket-org-filter-button";
 import { getTickets } from "../get-tickets";
 import { ParsedSearchParams } from "../search-params";
 import { TicketItem } from "./ticket-item";
@@ -9,10 +10,19 @@ import { TicketSortSelect } from "./ticket-sort-select";
 type TicketListProps = {
   userId?: string;
   searchParams: ParsedSearchParams;
+  byOrganization?: boolean;
 };
 
-const TicketList = async ({ userId, searchParams }: TicketListProps) => {
-  const {list: tickets, metadata: ticketMetaData} = await getTickets(userId, searchParams);
+const TicketList = async ({
+  userId,
+  searchParams,
+  byOrganization = false,
+}: TicketListProps) => {
+  const { list: tickets, metadata: ticketMetaData } = await getTickets(
+    userId,
+    byOrganization,
+    searchParams
+  );
 
   return (
     <div className="flex-1 flex flex-col items-center gap-y-3 opacity-0 animate-[fade-from-top_1.0s_ease-out_forwards]">
@@ -42,6 +52,9 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
             },
           ]}
         />
+        {userId ? (
+          <TicketOrgFilterButton />
+        ) : null}
       </div>
       {tickets.length ? (
         tickets.map((ticket) => <TicketItem key={ticket.id} ticket={ticket} />)
@@ -50,7 +63,7 @@ const TicketList = async ({ userId, searchParams }: TicketListProps) => {
       )}
 
       <div className="w-full md:w-5/6 md:max-w-[420px] mt-2">
-        <TicketPagination paginatedTicketMetadata={ticketMetaData}/>
+        <TicketPagination paginatedTicketMetadata={ticketMetaData} />
       </div>
     </div>
   );

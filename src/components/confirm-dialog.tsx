@@ -24,7 +24,7 @@ type UseConfirmDialogArgs = {
   title?: string;
   description?: string;
   action: () => Promise<ActionState>;
-  trigger: React.ReactElement | ((isLoading: boolean) => React.ReactElement);
+  trigger?: React.ReactElement | ((isLoading: boolean) => React.ReactElement);
   onSuccess?: (actionState: ActionState) => void;
 };
 

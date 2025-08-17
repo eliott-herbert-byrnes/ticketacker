@@ -44,14 +44,15 @@ export const OrganizationList = async ({
             <TableHead>Name</TableHead>
             <TableHead>Joined At</TableHead>
             <TableHead>Members</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>Admin</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {/* <TableBody className="[&_tr:nth-child(even)]:bg-muted/40"> */}
           {organizations.map((organization) => {
             const isActive = organization.membershipByUser.isActive;
-            const isAdmin = organization.membershipByUser.membershipRole === "ADMIN"
+            const isAdmin =
+              organization.membershipByUser.membershipRole === "ADMIN";
 
             const switchButton = (
               <OrganizationSwitchButton
@@ -88,7 +89,7 @@ export const OrganizationList = async ({
               </Button>
             );
 
-             const leaveButton = (
+            const leaveButton = (
               <MembershipDeleteButton
                 organizationId={organization.id}
                 userId={organization.membershipByUser.userId}
@@ -96,23 +97,19 @@ export const OrganizationList = async ({
             );
 
             const deleteButton = (
-                <OrganizationDeleteButton organizationId={organization.id} />
+              <OrganizationDeleteButton organizationId={organization.id} />
             );
 
             const renameButton = (
               <OrganizationRenameButtton
-                organizationName={organization.name} 
+                organizationName={organization.name}
                 organizationId={organization.id}
               />
             );
 
             const placeholder = (
-              <Button 
-                size="icon"
-                disabled
-                className="disabled:opacity-0"
-              />
-            )
+              <Button size="icon" disabled className="disabled:opacity-0" />
+            );
 
             const buttons = (
               <div className="flex gap-2">
@@ -136,8 +133,14 @@ export const OrganizationList = async ({
                   )}
                 </TableCell>
                 <TableCell>{organization._count.memberships}</TableCell>
-                <TableCell>{organization.membershipByUser.membershipRole}</TableCell>
-                <TableCell>{buttons}</TableCell>
+                <TableCell>
+                  {organization.membershipByUser.membershipRole}
+                </TableCell>
+                <TableCell>
+                </TableCell>
+                <TableCell>
+                  {buttons}
+                  </TableCell>
               </TableRow>
             );
           })}

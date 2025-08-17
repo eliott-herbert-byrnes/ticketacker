@@ -17,19 +17,17 @@ export type SortSelectOption = {
 type SortObject = {
   sortKey: string;
   sortValue: string;
-}
+};
 
 type SortSelectProps = {
-  value: SortObject
-  onChange: (sort: SortObject) => void
+  value: SortObject;
+  onChange: (sort: SortObject) => void;
   options: SortSelectOption[];
 };
 
 const SortSelect = ({ value, onChange, options }: SortSelectProps) => {
-
   const handleSort = (compositeKey: string) => {
-
-    const [sortKey, sortValue] = compositeKey.split("_")
+    const [sortKey, sortValue] = compositeKey.split("_");
 
     onChange({
       sortKey,
@@ -38,13 +36,20 @@ const SortSelect = ({ value, onChange, options }: SortSelectProps) => {
   };
 
   return (
-    <Select defaultValue={value.sortKey + "_" + value.sortValue} onValueChange={handleSort}>
+    <Select
+      defaultValue={value.sortKey + "_" + value.sortValue}
+      onValueChange={handleSort}
+    >
       <SelectTrigger className="cursor-pointer">
         <SelectValue placeholder="Sort" />
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem className="cursor-pointer" key={option.sortKey + option.sortValue} value={option.sortKey + "_" + option.sortValue}>
+          <SelectItem
+            className="cursor-pointer"
+            key={option.sortKey + option.sortValue}
+            value={option.sortKey + "_" + option.sortValue}
+          >
             {option.label}
           </SelectItem>
         ))}
