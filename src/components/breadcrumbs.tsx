@@ -1,4 +1,4 @@
-import { LucideSlash } from "lucide-react";
+import { LucideChevronDown, LucideSlash } from "lucide-react";
 import Link from "next/link";
 import { Fragment } from "react";
 import {
@@ -9,12 +9,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 type BreadcrumbsProps = {
   breadcrumbs: {
     title: string;
     href?: string;
-  }[];
+    dropdown?: {
+      title: string;
+      href: string;
+    }[]
+  }[]
 };
 
 const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
@@ -37,6 +42,24 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
                 </Link>
               </BreadcrumbLink>
             );
+          }
+
+          if(breadcrumb.dropdown){
+            breadcrumbItem = (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-1">
+                  {breadcrumb.title}
+                  <LucideChevronDown className="h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  {breadcrumb.dropdown.map((item) => (
+                    <DropdownMenuItem asChild key={item.href}>
+                      <Link href={item.href}>{item.title}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )
           }
 
           return (

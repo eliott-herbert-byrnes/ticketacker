@@ -25,6 +25,7 @@ model User {
   accounts           Account[]
   tickets            Ticket[]
   memberships        Membership[]
+  invitesByUser      Invitation[]
 
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt 
@@ -44,6 +45,20 @@ model Organization {
     name              String      
     memberships       Membership[]    
     tickets           Ticket[]
+    invitations       Invitation[]
+}
+
+model Invitation {
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt   
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId    String
+  email             String
+  tokenHash         String        @unique
+  invitedByUser     User?         @relation(fields: [invitedByUserId], references: [id], onDelete: SetNull)
+  invitedByUserId   String?
+
+  @@index([organizationId]) 
 }
 
 model Membership {
