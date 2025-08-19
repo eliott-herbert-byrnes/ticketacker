@@ -4,16 +4,17 @@ import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect"
 import { getMembership } from "./get-membership";
 
 export const getAdminOrRedirect = async (organizationId: string) => {
-    // standard auth check
     const auth = await getAuthOrRedirect();
 
-    // membership of auth user
+    if(!auth.user){
+        redirect(signInPath())
+    }
+
     const membership = await getMembership({
         organizationId,
-        userId: auth.user!.id,
+        userId: auth.user.id,
     })
 
-    // authorisation checks
     if(!membership){
         redirect(signInPath())
     }

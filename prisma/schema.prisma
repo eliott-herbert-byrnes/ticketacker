@@ -57,8 +57,15 @@ model Invitation {
   tokenHash         String        @unique
   invitedByUser     User?         @relation(fields: [invitedByUserId], references: [id], onDelete: SetNull)
   invitedByUserId   String?
+  status            InvitationStatus  @default(PENDING)
 
   @@index([organizationId]) 
+  @@id(name: "invitationId", [organizationId, email])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED_WITHOUT_ACCOUNT
 }
 
 model Membership {

@@ -19,6 +19,7 @@ export const selectActiveOrganizationPath = () => "/onboarding/select-active-org
 // Memberships
 export const membershipsPath = (organizationId: string) => `/organization/${organizationId}/memberships`
 export const invitationsPath = (organizationId: string) => `/organization/${organizationId}/invitations`
+export const emailInvitiationPath = () => "/email-invitation"
 
 // Password
 export const passwordForgotPath = () => "/password-forgot"

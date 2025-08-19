@@ -3,6 +3,7 @@ import { LucidePlus } from "lucide-react";
 import { useState } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
+import { SubmitButton } from "@/components/form/submit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { useActionState } from "@/components/hooks/use-action-state";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,7 @@ const InvitationCreateButton = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="h-8 w-8">
           <LucidePlus className="w-4 h-4" />
         </Button>
       </DialogTrigger>
@@ -77,6 +78,7 @@ const InvitationCreateButton = ({
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancel
             </Button>
+            <SubmitButton label="Invite" />
           </DialogFooter>
         </Form>
       </DialogContent>

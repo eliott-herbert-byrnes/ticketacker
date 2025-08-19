@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { sendEmailPasswordReset } from "../emails/send-email-password-reset";
 import { generatePasswordResetLink } from "../utils/generate-password-reset-link";
 
-
 export type PasswordResetEventArgs = {
     data: {
         userId: string;

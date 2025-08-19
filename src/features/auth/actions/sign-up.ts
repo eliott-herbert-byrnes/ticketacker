@@ -51,6 +51,28 @@ export async function signUpAction(
       data: { username, email, passwordHash },
     });
 
+    const invitiations = await prisma.invitation.findMany({
+      where: {
+        email,
+      }
+    })
+
+    await prisma.$transaction([
+      prisma.invitation.deleteMany({
+        where: {
+          email,
+        }
+      }),
+      prisma.membership.createMany({
+        data: invitiations.map((invitation) => ({
+          organizationId: invitation.organizationId,
+          userId: user.id,
+          membershipRole: "MEMBER",
+          isActive: false,
+        }))
+      })
+    ])
+
     await inngest.send({
       name: "app/auth.sign-up",
       data: {

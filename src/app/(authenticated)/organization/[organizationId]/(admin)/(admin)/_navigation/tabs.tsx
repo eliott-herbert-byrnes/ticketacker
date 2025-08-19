@@ -12,11 +12,9 @@ type OrganizationBreadcrumbsProps = {
 }
 
 const OrganizationBreadcrumbs = ({organizationName}: OrganizationBreadcrumbsProps) => {
-  // get url param + pathname
   const params = useParams<{ organizationId: string }>();
   const pathName = usePathname();
 
-  // determine Breadcrumbs title based on last path segment
   const title = {
     memberships: "Memberships" as const,
     invitations: "Invitations" as const,
@@ -27,7 +25,6 @@ const OrganizationBreadcrumbs = ({organizationName}: OrganizationBreadcrumbsProp
   }
 
   return (
-    // Render Breadcrumbs component with links for Organizations
     <Breadcrumbs
       breadcrumbs={[
         { title: "Organizations", href: organizationPath() },

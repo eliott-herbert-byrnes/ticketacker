@@ -4,7 +4,9 @@ import {z} from "zod"
 import { invitationsPath } from "@/app/paths"
 import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state"
 import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect"
+import { inngest } from "@/lib/inngest"
 import { prisma } from "@/lib/prisma"
+import { generateInvitationLink } from "../utils/generate-invitiation-link"
 
 const createInvitiationSchema = z.object({
     email: z.string().min(1, {message: "Is required"}).max(191).email(),
@@ -15,14 +17,33 @@ export const createInvitiation = async (
     _actionState: ActionState,
     formData: FormData
 ) => {
-    await getAdminOrRedirect(organizationId)
+    const {user} = await getAdminOrRedirect(organizationId)
+
+    if(!user){
+        return toActionState("ERROR", "User not verified")
+    }
 
     try {
         const {email} = createInvitiationSchema.parse({
             email: formData.get("email")
         })
 
-        //TODO invite by email link to join organization
+        const emailInvitationLink = await generateInvitationLink(
+            user.id,
+            organizationId,
+            email
+        )
+
+        await inngest.send({
+            name: "app/invitation.created",
+            data: {
+                userId: user.id,
+                organizationId,
+                email,
+                emailInvitationLink
+            }
+        })
+        
 
         const targetMembership = await prisma.membership.findFirst({
             where: {
