@@ -3,17 +3,16 @@ import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/spinner";
 import { Badge } from "@/components/ui/badge";
 import { InvitationCreateButton } from "@/features/invitation/components/invitation-create-button";
-import { MembershipList } from "@/features/membership/components/membership-list";
+import { InvitationList } from "@/features/invitation/components/invitation-list";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
 import { OrganizationBreadcrumbs } from "../_navigation/tabs";
 
-type MembershipsPageProps = {
+type InvitationPageProps = {
   params: Promise<{
     organizationId: string;
   }>;
 };
-
-const MembershipsPage = async ({ params }: MembershipsPageProps) => {
+const InvitationsPage = async ({ params }: InvitationPageProps) => {
   const { organizationId } = await params;
 
   const organization = await getOrganizationsByUser();
@@ -24,15 +23,8 @@ const MembershipsPage = async ({ params }: MembershipsPageProps) => {
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
-        // badge={
-        //   <div className="pr-6">
-        //     <Badge variant="default" className="h-6 ">
-        //       <p className="text-xs">Admin area</p>
-        //     </Badge>
-        //   </div>
-        // }
-        title="Memberships"
-        description="Manage members in your organization"
+        title="Invitations"
+        description="Manage your organizations invitations"
         actions={
           <div>
             <div className="flex flex-row items-center gap-x-2 pr-6">
@@ -44,17 +36,17 @@ const MembershipsPage = async ({ params }: MembershipsPageProps) => {
           </div>
         }
         tabs={
-          <div className="pl-16">
+          <div className="pl-14">
             <OrganizationBreadcrumbs organizationName={organizationName} />
           </div>
         }
       />
 
       <Suspense fallback={<Spinner />}>
-        <MembershipList organizationId={organizationId} />
+        <InvitationList organizationId={organizationId} />
       </Suspense>
     </div>
   );
 };
 
-export default MembershipsPage;
+export default InvitationsPage;

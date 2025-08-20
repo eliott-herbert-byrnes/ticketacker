@@ -1,3 +1,4 @@
+'use client'
 import { LucideLoaderCircle, LucideTrash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useConfirmDialog } from "@/components/confirm-dialog";

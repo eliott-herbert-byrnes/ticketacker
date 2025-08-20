@@ -28,3 +28,6 @@ export const passwordResetPath = () => "/password-reset"
 // Account
 export const accountProfilePath = () => "/account/profile"
 export const accountPasswordPath = () => "/account/password"
+
+// Attachments
+export const attachmentDownloadPath = (attachmentId: string) => `/api/aws/s3/attachments/${attachmentId}`

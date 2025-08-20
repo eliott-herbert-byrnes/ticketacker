@@ -9,7 +9,7 @@ export const ticketData = [
         id: '2',
         title: `Ticket 2`,
         content: 'This is the mock information for a ticket 2',
-        status: 'DONE' as const,
+        status: 'COMPLETE' as const,
     },
     {
         id: '3',

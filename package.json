@@ -15,6 +15,8 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
+    "@aws-sdk/client-s3": "^3.872.0",
+    "@aws-sdk/s3-request-presigner": "^3.872.0",
     "@noble/hashes": "^1.8.0",
     "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^6.11.1",

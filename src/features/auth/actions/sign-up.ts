@@ -1,4 +1,3 @@
-// src/features/auth/actions/sign-up.ts
 "use server";
 
 import { hash } from "@node-rs/argon2";
@@ -16,10 +15,7 @@ import { prisma } from "@/lib/prisma";
 
 const signUpSchema = z
   .object({
-    username: z
-      .string()
-      .min(1)
-      .max(191)
+    username: z.string().min(1).max(191)
       .refine((v) => !v.includes(" "), "Username cannot contain spaces"),
     email: z.string().min(1, "Is required").max(191).email(),
     password: z.string().min(6).max(191),
@@ -51,42 +47,23 @@ export async function signUpAction(
       data: { username, email, passwordHash },
     });
 
-    const invitiations = await prisma.invitation.findMany({
-      where: {
-        email,
-      }
-    })
-
-    await prisma.$transaction([
-      prisma.invitation.deleteMany({
-        where: {
-          email,
-        }
-      }),
-      prisma.membership.createMany({
-        data: invitiations.map((invitation) => ({
-          organizationId: invitation.organizationId,
+    await inngest.send([
+      {
+        name: "app/auth.sign-up",
+        data: { userId: user.id },
+      },
+      {
+        name: "app/membership.process-invitations",
+        data: { userId: user.id, email }, 
+      },
+      {
+        name: "app/welcome.welcome-email",
+        data: {
           userId: user.id,
-          membershipRole: "MEMBER",
-          isActive: false,
-        }))
-      })
-    ])
-
-    await inngest.send({
-      name: "app/auth.sign-up",
-      data: {
-        userId: user.id,
+          welcomeUrl: "https://www.ticketacker.com/tickets",
+        },
       },
-    });
-
-    await inngest.send({
-      name: "app/welcome.welcome-email",
-      data: {
-        userId: user.id,
-        welcomeUrl: "https://www.ticketacker.com/tickets",
-      },
-    });
+    ]);
 
     const result = await signIn("credentials", {
       email,
@@ -94,17 +71,8 @@ export async function signUpAction(
       redirect: false,
     });
 
-    if (
-      result &&
-      typeof result === "object" &&
-      "error" in result &&
-      result.error
-    ) {
-      return toActionState(
-        "ERROR",
-        "Sign in failed after registration",
-        formData
-      );
+    if (result && typeof result === "object" && "error" in result && result.error) {
+      return toActionState("ERROR", "Sign in failed after registration", formData);
     }
 
     return {
@@ -112,15 +80,8 @@ export async function signUpAction(
       data: { redirectTo: ticketsPath() },
     };
   } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2002"
-    ) {
-      return toActionState(
-        "ERROR",
-        "Username or email already in use",
-        formData
-      );
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return toActionState("ERROR", "Username or email already in use", formData);
     }
     return fromErrorToActionState(error, formData);
   }

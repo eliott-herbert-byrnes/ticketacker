@@ -142,6 +142,15 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Attachment {
+  id        String    @id     @default(cuid())
+  name      String
+  ticket    Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId  String
+
+  @@index([ticketId])
+}
+
 model Ticket {
     id          String          @id @default(cuid())
     createdAt   DateTime        @default(now())
@@ -155,6 +164,7 @@ model Ticket {
     user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
     organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     organizationId  String
+    attachments Attachment[]
 
     @@index([userId])
     @@index([organizationId])
@@ -178,5 +188,5 @@ model Comment {
 enum TicketStatus {
     OPEN
     IN_PROGRESS
-    DONE
+    COMPLETE
 }

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import clsx from "clsx";
 import {
@@ -15,15 +15,21 @@ import { toCurrencyFromCent } from "@/utils/currency";
 import { TicketWithMetadata } from "../../types";
 import { TICKET_ICONS } from "./constants";
 import { TicketMoreMenu } from "./ticket-more-menu";
+import React from "react";
 
 type TicketItemProps = {
   ticket: TicketWithMetadata;
   isDetail?: boolean;
   comments?: React.ReactNode;
+  attachments?: React.ReactNode;
 };
 
-const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
- 
+const TicketItem = ({
+  ticket,
+  isDetail,
+  comments,
+  attachments,
+}: TicketItemProps) => {
   const buttonElement = (
     <Button variant="outline" asChild size="icon">
       <Link prefetch href={ticketPath(ticket.id)}>
@@ -52,17 +58,22 @@ const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
   ) : null;
 
   return (
-    <div className={clsx("w-full flex-col flex gap-y-4", {
-          "max-w-[580px]": isDetail,
-          "max-w-[420px]": !isDetail,
-        })}>
-      <div
-        className="w-full flex gap-x-2"
-      >
+    <div
+      className={clsx("w-full flex-col flex gap-y-4", {
+        "max-w-[580px]": isDetail,
+        "max-w-[420px]": !isDetail,
+      })}
+    >
+      <div className="w-full flex gap-x-2">
         <Card className="w-full">
-          <CardTitle className="flex gap-x-2 px-4 items-center">
-            <span>{TICKET_ICONS[ticket.status]}</span>
-            <span className="truncate">{ticket.title}</span>
+          <CardTitle className="flex flex-row gap-x-2 px-4 items-center justify-between">
+            <div className="flex flex-row gap-x-2 items-center">
+              <span>{TICKET_ICONS[ticket.status]}</span>
+              <span className="truncate">{ticket.title}</span>
+            </div>
+            <span className="truncate text-xs text-muted-foreground">
+              {ticket.status.replace("_", " ")}
+            </span>
           </CardTitle>
 
           <CardContent className="">
@@ -97,6 +108,7 @@ const TicketItem = ({ ticket, isDetail, comments }: TicketItemProps) => {
 
       <Separator />
 
+      {attachments}
       {comments}
     </div>
   );

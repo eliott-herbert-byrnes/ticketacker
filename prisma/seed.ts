@@ -22,7 +22,7 @@ const tickets = [
   {
     title: "Ticket 1",
     content: "First ticket from DB.",
-    status: "DONE" as const,
+    status: "COMPLETE" as const,
     deadline: new Date().toISOString().split("T")[0],
     bounty: 499,
   },
@@ -66,7 +66,6 @@ const seed = async () => {
     }
   })
 
-  // Create users and capture their IDs
   const dbUsers = [];
   for (const user of users) {
     const createdUser = await prisma.user.create({
@@ -92,7 +91,6 @@ const seed = async () => {
     }]
   })
 
-  // Create tickets for admin user
   const dbTickets = [];
   for (const ticket of tickets) {
     const createdTicket = await prisma.ticket.create({
@@ -110,7 +108,7 @@ const seed = async () => {
       data: {
         ...comment,
         ticketId: dbTickets[0].id,
-        userId: dbUsers[1].id, // user
+        userId: dbUsers[1].id, 
       },
     });
   }

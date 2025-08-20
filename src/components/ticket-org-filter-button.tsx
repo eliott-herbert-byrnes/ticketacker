@@ -4,21 +4,24 @@ import { useQueryStates } from "nuqs";
 import { Button } from "@/components/ui/button";
 import { orgOptions,orgParser } from "@/features/ticket/queries/search-params";
 
-const label: Record<"all" | "active" | "none", string> = {
+const label: Record<"all" | "active" , string> = {
   all: "Organizations",
-  active: "Active",
-  none: "All",
+  active: "Organizations",
 };
 
 export function TicketOrgFilterButton() {
   const [state, setState] = useQueryStates(orgParser, orgOptions);
-  const current = (state.org ?? "all") as "all" | "active" | "none";
-  const next = current === "all" ? "active" : current === "active" ? "none" : "all";
+
+  const current = (state.org ?? "all") as "all" | "active";
+  const next = current === "all" ? "active" : current === "active" ? "all" : 'active';
 
   return (
     <Button
       type="button"
-      variant="secondary"
+      variant={
+        current === 'active' ? 'default' :
+        'secondary'
+      }
       className="whitespace-nowrap"
       onClick={() => setState({ org: next })}
       title={`Click to switch: ${label[next]}`}

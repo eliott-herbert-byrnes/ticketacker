@@ -36,7 +36,7 @@ export const OrganizationList = async ({
 
   return (
     <div className="overflow-hidden px-14">
-      <Table className="table-fixed">
+      <Table className="">
         <TableHeader>
           <TableRow>
             {/* <TableHead className="px-8 w-[300px]">ID</TableHead> */}
@@ -136,8 +136,8 @@ export const OrganizationList = async ({
                 <TableCell>
                   {organization.membershipByUser.membershipRole}
                 </TableCell>
-                <TableCell>
-                </TableCell>
+                {/* <TableCell>
+                </TableCell> */}
                 <TableCell>
                   {buttons}
                   </TableCell>

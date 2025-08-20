@@ -6,6 +6,7 @@ import { Comments } from "@/features/comment/components/comments";
 import { getComments } from "@/features/comment/queries/get-comments";
 import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
+import { Attachments } from "@/features/attachments/components/attachments";
 
 type TicketPageProps = {
   params: Promise<{
@@ -47,6 +48,9 @@ const TicketPage = async ({ params }: TicketPageProps) => {
               ticketId={ticket.id}
               paginatedComments={paginatedComments}
             />
+          }
+          attachments={
+            <Attachments ticketId={ticket.id} isOwner={ticket.isOwner} />
           }
         />
       </div>

@@ -1,13 +1,13 @@
 import { LucideFile,LucideFileCheck, LucideFileText } from "lucide-react";
 
 export const TICKET_ICONS = {
-  DONE: <LucideFileCheck />,
+  COMPLETE: <LucideFileCheck />,
   IN_PROGRESS: <LucideFileText />,
   OPEN: <LucideFile />,
 };
 
 export const TICKET_ICONS_LABELS = {
-  DONE: "Done",
+  COMPLETE: "Complete",
   IN_PROGRESS: "In Progress",
   OPEN: "Open",
 };

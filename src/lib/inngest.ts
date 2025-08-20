@@ -2,9 +2,12 @@ import {EventSchemas, Inngest} from 'inngest'
 import { EmailVerificationForEmailChangeArgs } from '@/features/auth/events/event-email-change';
 import { EmailVerificationEventArgs } from '@/features/auth/events/event-email-verification';
 import { WeeklyUserRoundupEventArgs } from '@/features/background-jobs/events/weekly-user-roundup';
+import { CreateMembershipEvent } from '@/features/invitation/events/event-create-membersip';
 import { InvitationCreateEventArgs } from '@/features/invitation/events/event-invitation-created';
+import { ProcessInvitationsEvent } from '@/features/membership/events/event-process-invitations';
 import { PasswordResetEventArgs } from '@/features/password/events/event-password-event'
 import { WelcomeEmailEventArgs } from '@/features/password/events/event-welcome-events';
+import { AttachmentDeleteEventArgs } from '@/features/attachments/events/event-attachment-deleted';
 
 type Events = {
     "app/password.password-reset": PasswordResetEventArgs;
@@ -13,6 +16,9 @@ type Events = {
     "app/auth.sign-up": EmailVerificationEventArgs;
     "app/auth.email-change-request": EmailVerificationForEmailChangeArgs;
     "app/invitation.created": InvitationCreateEventArgs;
+    "app/membership.process-invitations": ProcessInvitationsEvent;
+    "app/membership.create": CreateMembershipEvent;
+    "app/attachment.deleted": AttachmentDeleteEventArgs;
 }
 
 export const inngest = new Inngest({
