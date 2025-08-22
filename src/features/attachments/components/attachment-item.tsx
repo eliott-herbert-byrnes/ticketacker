@@ -16,6 +16,7 @@ const AttachmentItem = ({ attachment, buttons }: AttachmentItemProps) => {
         href={attachmentDownloadPath(attachment.id)}
       >
         <LucideArrowUpRightFromSquare className="w-4 h-4" />
+        {attachment.name}
       </Link>
       {buttons}
     </div>
