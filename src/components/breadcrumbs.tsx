@@ -9,7 +9,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "./ui/breadcrumb";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 type BreadcrumbsProps = {
   breadcrumbs: {
@@ -18,8 +23,8 @@ type BreadcrumbsProps = {
     dropdown?: {
       title: string;
       href: string;
-    }[]
-  }[]
+    }[];
+  }[];
 };
 
 const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
@@ -44,7 +49,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
             );
           }
 
-          if(breadcrumb.dropdown){
+          if (breadcrumb.dropdown) {
             breadcrumbItem = (
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1">
@@ -59,7 +64,7 @@ const Breadcrumbs = ({ breadcrumbs }: BreadcrumbsProps) => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-            )
+            );
           }
 
           return (

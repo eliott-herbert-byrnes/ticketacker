@@ -9,9 +9,11 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { ACCEPTED } from "../constants";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { AttachmentEntity } from "@prisma/client";
 
 type AttachmentCreateFormProps = {
-  ticketId: string;
+  entityId: string;
+  entity: AttachmentEntity;
 };
 
 type PreviewFile = {
@@ -20,9 +22,9 @@ type PreviewFile = {
   url: string;
 };
 
-const AttachmentCreateForm = ({ ticketId }: AttachmentCreateFormProps) => {
+const AttachmentCreateForm = ({ entityId, entity }: AttachmentCreateFormProps) => {
   const [actionState, action] = useActionState(
-    createAttachments.bind(null, ticketId),
+    createAttachments.bind(null, {entity, entityId}),
     EMPTY_ACTION_STATE
   );
 
@@ -32,7 +34,13 @@ const AttachmentCreateForm = ({ ticketId }: AttachmentCreateFormProps) => {
   const isImage = (type: string) => type.startsWith("image/");
 
   const fileStatus =
-    files.length === 0 ? "No file chosen" : files.map((f) => {f.name}).join(", ");
+    files.length === 0
+      ? "No file chosen"
+      : files
+          .map((f) => {
+            f.name;
+          })
+          .join(", ");
 
   const buildPreviews = (fs: File[]) =>
     fs.map((f) => ({
@@ -90,9 +98,13 @@ const AttachmentCreateForm = ({ ticketId }: AttachmentCreateFormProps) => {
         />
 
         <span className=" text-sm">
-            <span className={files.length === 0 ? "text-xs text-muted-foreground" : "text-xs"}>
-                {fileStatus}
-            </span>
+          <span
+            className={
+              files.length === 0 ? "text-xs text-muted-foreground" : "text-xs"
+            }
+          >
+            {fileStatus}
+          </span>
         </span>
 
         <FieldError actionState={actionState} name="files" />

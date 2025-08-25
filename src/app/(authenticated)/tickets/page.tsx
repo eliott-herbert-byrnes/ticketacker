@@ -9,29 +9,34 @@ import { TicketUpsertForm } from "@/features/ticket/queries/components/ticket-up
 import { searchParamsCache } from "@/features/ticket/queries/search-params";
 
 type TicketsPageProps = {
-  searchParams: SearchParams
-}
+  searchParams: SearchParams;
+};
 
-const TicketsPage = async ({searchParams}: TicketsPageProps) => {
+const TicketsPage = async ({ searchParams }: TicketsPageProps) => {
   const { user } = await getAuth();
 
   return (
     <>
-    <div className="flex-1 flex flex-col gap-y-8">
-      <Heading title="My Tickets" description="All of your tickets in one place" />
+      <div className="flex-1 flex flex-col gap-y-8">
+        <Heading
+          title="My Tickets"
+          description="All of your tickets in one place"
+        />
 
-      <CardCompact 
-        title='Create Ticket'
-        description='A new ticket will be created' 
-        content={<TicketUpsertForm />} 
-        className={"self-center w-full max-w-[420px]"}
-      />
+        <CardCompact
+          title="Create Ticket"
+          description="A new ticket will be created"
+          content={<TicketUpsertForm />}
+          className={"self-center w-full max-w-[420px]"}
+        />
 
-      <Suspense fallback={<Spinner />}>
-        <TicketList userId={user?.id} searchParams={await searchParamsCache.parse(searchParams)}/>
-      </Suspense>
-    </div>
-    
+        <Suspense fallback={<Spinner />}>
+          <TicketList
+            userId={user?.id}
+            searchParams={await searchParamsCache.parse(searchParams)}
+          />
+        </Suspense>
+      </div>
     </>
   );
 };

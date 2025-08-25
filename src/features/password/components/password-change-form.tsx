@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import {useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/submit-button";
@@ -24,13 +24,11 @@ export const PasswordChangeForm = () => {
 
   useEffect(() => {
     if (actionState.status === "SUCCESS") {
-      // redirect(signInPath());
       console.log("Success");
     } else if (
       actionState.status === "ERROR" &&
       Object.keys(actionState.fieldErrors ?? {}).length === 0
     ) {
-      // redirect(passwordForgotPath());
       console.log("Error");
     }
   }, [actionState.fieldErrors, actionState.status]);

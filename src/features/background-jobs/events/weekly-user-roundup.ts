@@ -50,8 +50,10 @@ export const weeklyUserRoundupFn = inngest.createFunction(
         rangeEnd,
       });
 
-      if(result.error){
-        throw new Error(`${result.error.name ?? "EmailError"}: ${result.error.message ?? "Failed to send weekly roundup"}`)
+      if (result.error) {
+        throw new Error(
+          `${result.error.name ?? "EmailError"}: ${result.error.message ?? "Failed to send weekly roundup"}`
+        );
       }
     });
 

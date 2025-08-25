@@ -9,12 +9,18 @@ type headingTypes = {
   badge?: React.ReactNode;
 };
 
-const Heading = ({ tabs, title, description, actions, badge }: headingTypes) => {
+const Heading = ({
+  tabs,
+  title,
+  description,
+  actions,
+  badge,
+}: headingTypes) => {
   return (
     <>
-      {tabs}
       <div className="flex items-center justify-between px-8">
         <div className="md:ml-6 flex flex-col gap-y-1">
+          {tabs}
           {badge}
           <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
           <p className="text-sm text-muted-foreground">{description}</p>
@@ -24,7 +30,7 @@ const Heading = ({ tabs, title, description, actions, badge }: headingTypes) => 
       </div>
 
       <div className="px-14">
-      <Separator />
+        <Separator />
       </div>
     </>
   );

@@ -2,7 +2,6 @@ import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-r
 import { prisma } from "@/lib/prisma"
 
 export const getInvitation = async (organizationId: string) => {
-    // ADMIN auth check or redirect
     await getAdminOrRedirect(organizationId)
 
     // Query all invitations for the organizationId

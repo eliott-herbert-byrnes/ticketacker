@@ -60,7 +60,6 @@ export async function emailChange(
 
     const code = await generateEmailVerificationCode(user.id, newEmail);
 
-    // Send Email verification
     await inngest.send({
       name: "app/auth.email-change-request",
       data: {
@@ -73,7 +72,7 @@ export async function emailChange(
 
     return {
       ...toActionState("SUCCESS", "Verification email sent"),
-      data: { redirectTo: `${emailVerificationPath()}?mode=change`},
+      data: { redirectTo: `${emailVerificationPath()}?mode=change` },
     };
   } catch (err) {
     if (err instanceof AuthError) {

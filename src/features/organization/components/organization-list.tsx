@@ -39,7 +39,6 @@ export const OrganizationList = async ({
       <Table className="">
         <TableHeader>
           <TableRow>
-            {/* <TableHead className="px-8 w-[300px]">ID</TableHead> */}
             <TableHead>ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Joined At</TableHead>
@@ -48,7 +47,6 @@ export const OrganizationList = async ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* <TableBody className="[&_tr:nth-child(even)]:bg-muted/40"> */}
           {organizations.map((organization) => {
             const isActive = organization.membershipByUser.isActive;
             const isAdmin =
@@ -136,11 +134,7 @@ export const OrganizationList = async ({
                 <TableCell>
                   {organization.membershipByUser.membershipRole}
                 </TableCell>
-                {/* <TableCell>
-                </TableCell> */}
-                <TableCell>
-                  {buttons}
-                  </TableCell>
+                <TableCell>{buttons}</TableCell>
               </TableRow>
             );
           })}

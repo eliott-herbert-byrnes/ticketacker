@@ -2,7 +2,7 @@ import { LucidePlus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { onboardingPath, organizationPath,  } from "@/app/paths";
+import { onboardingPath, organizationPath } from "@/app/paths";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/spinner";
 import { Button } from "@/components/ui/button";
@@ -10,34 +10,35 @@ import { OrganizationList } from "@/features/organization/components/organizatio
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
 
 const SelectActiveOrganizationPage = async () => {
+  const organizations = await getOrganizationsByUser();
 
- const organizations = await getOrganizationsByUser()
-
- const hasActive = organizations.some((organization) => {
+  const hasActive = organizations.some((organization) => {
     return organization.membershipByUser.isActive;
- })
+  });
 
- if(hasActive){
-    redirect(organizationPath())
- }
+  if (hasActive) {
+    redirect(organizationPath());
+  }
+
+  const createOrganization = (
+    <Button variant="outline" asChild>
+      <Link href={onboardingPath()}>
+        <LucidePlus className="h-4 w-4" />
+        Create organization
+      </Link>
+    </Button>
+  );
 
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
         title="Select Organization"
         description="Pick one organization to work with"
-        actions={
-          <Button variant="outline" asChild>
-            <Link href={onboardingPath()}>
-              <LucidePlus className="h-4 w-4" />
-              Create organization
-            </Link>
-          </Button>
-        }
+        actions={createOrganization}
       ></Heading>
 
       <Suspense fallback={<Spinner />}>
-        <OrganizationList limitedAccess/>
+        <OrganizationList limitedAccess />
       </Suspense>
     </div>
   );

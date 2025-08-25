@@ -6,6 +6,7 @@ import { InvitationCreateButton } from "@/features/invitation/components/invitat
 import { InvitationList } from "@/features/invitation/components/invitation-list";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
 import { OrganizationBreadcrumbs } from "../_navigation/tabs";
+import { AdminButton } from "@/components/admin-button";
 
 type InvitationPageProps = {
   params: Promise<{
@@ -20,26 +21,19 @@ const InvitationsPage = async ({ params }: InvitationPageProps) => {
   const organizationName =
     organization.find((o) => o.id === organizationId)?.name ?? "Organization";
 
+  const breadcrumbs = (
+    <div className="mb-2">
+      <OrganizationBreadcrumbs organizationName={organizationName} />
+    </div>
+  );
+
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
         title="Invitations"
         description="Manage your organizations invitations"
-        actions={
-          <div>
-            <div className="flex flex-row items-center gap-x-2 pr-6">
-              <Badge variant="default" className="h-8">
-                <p className="text-xs">Admin area</p>
-              </Badge>
-              <InvitationCreateButton organizationId={organizationId} />
-            </div>
-          </div>
-        }
-        tabs={
-          <div className="pl-14">
-            <OrganizationBreadcrumbs organizationName={organizationName} />
-          </div>
-        }
+        actions={<AdminButton organizationId={organizationId} />}
+        tabs={breadcrumbs}
       />
 
       <Suspense fallback={<Spinner />}>

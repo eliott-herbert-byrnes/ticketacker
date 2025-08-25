@@ -1,5 +1,5 @@
 // src/features/membership/components/membership-more-menu.tsx
-'use client';
+"use client";
 
 import { MembershipRole } from "@prisma/client";
 import { LucideUserCog } from "lucide-react";
@@ -13,7 +13,7 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { updateMembershipRole } from "../actions/update-membership-role";
 

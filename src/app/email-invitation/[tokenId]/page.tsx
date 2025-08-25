@@ -17,58 +17,58 @@ const EmailInvitiationPage = async ({ params }: EmailInvitiationPageProps) => {
   const { tokenId } = await params;
 
   const auth = await getAuth();
-  const tokenHash = hashToken(tokenId)
+  const tokenHash = hashToken(tokenId);
 
   const invitation = await prisma.invitation.findUnique({
-    where: {tokenHash},
-    select: {email: true, organizationId: true}
-  })
+    where: { tokenHash },
+    select: { email: true, organizationId: true },
+  });
 
-  if(!invitation){
+  if (!invitation) {
     return (
-        <div className="flex-1 flex flex-col justify-center items-center">
-            <CardCompact 
-                title="Invalid invitation"
-                description="This invitation is invalid or has been revoked"
-                className="w-full max-w-[420px] animate-fade-from-top"
-                content={null}
-            />
-        </div>
-    )
+      <div className="flex-1 flex flex-col justify-center items-center">
+        <CardCompact
+          title="Invalid invitation"
+          description="This invitation is invalid or has been revoked"
+          className="w-full max-w-[420px] animate-fade-from-top"
+          content={null}
+        />
+      </div>
+    );
   }
 
   const signedInEmail = auth.user?.email?.toLowerCase();
-  if(signedInEmail && signedInEmail === invitation.email.toLowerCase()){
+  if (signedInEmail && signedInEmail === invitation.email.toLowerCase()) {
     const user = await prisma.user.findUnique({
-        where: {email: invitation.email},
-        select: {id: true},
-    })
-    if(user){
+      where: { email: invitation.email },
+      select: { id: true },
+    });
+    if (user) {
       await prisma.$transaction([
-          prisma.invitation.delete({where: {tokenHash}}),
-          prisma.membership.upsert({
-            where: {
-                membershipId: {
-                    organizationId: invitation.organizationId,
-                    userId: user.id
-                },
+        prisma.invitation.delete({ where: { tokenHash } }),
+        prisma.membership.upsert({
+          where: {
+            membershipId: {
+              organizationId: invitation.organizationId,
+              userId: user.id,
             },
-            create: {
-                organizationId: invitation.organizationId,
-                userId: user.id,
-                membershipRole: "MEMBER",
-                isActive: false,
-            },
-            update: {},
-          })
-      ])
-      redirect(organizationPath())
+          },
+          create: {
+            organizationId: invitation.organizationId,
+            userId: user.id,
+            membershipRole: "MEMBER",
+            isActive: false,
+          },
+          update: {},
+        }),
+      ]);
+      redirect(organizationPath());
     } else {
-        await prisma.invitation.update({
-            where: {tokenHash},
-            data: {status: "ACCEPTED_WITHOUT_ACCOUNT"},
-        })
-        redirect(organizationPath())
+      await prisma.invitation.update({
+        where: { tokenHash },
+        data: { status: "ACCEPTED_WITHOUT_ACCOUNT" },
+      });
+      redirect(organizationPath());
     }
   }
 

@@ -2,7 +2,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {  useEffect } from "react";
+import { useEffect } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/submit-button";
@@ -22,15 +22,14 @@ export function SignUpForm() {
     EMPTY_ACTION_STATE
   );
 
-    useEffect(() => {
+  useEffect(() => {
     if (actionState.status === "SUCCESS") {
       router.refresh();
-      const to = (actionState.data)?.redirectTo as string | undefined;
+      const to = actionState.data?.redirectTo as string | undefined;
       if (to) router.push(to);
     }
   }, [actionState, router]);
 
-  
   return (
     <Form action={action} actionState={actionState}>
       <Input

@@ -37,12 +37,14 @@ export const createComment = async (
         user: true,
       },
     });
+
+    revalidatePath(ticketPath(ticketId));
+    
   } catch (error) {
     return fromErrorToActionState(error);
   }
-
-  revalidatePath(ticketPath(ticketId));
-
+  
+  
   return toActionState("SUCCESS", "Comment created", undefined, {
     ...comment,
     isOwner: true,

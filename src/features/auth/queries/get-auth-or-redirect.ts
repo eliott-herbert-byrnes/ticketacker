@@ -1,5 +1,10 @@
 import { redirect } from "next/navigation";
-import { emailVerificationPath, onboardingPath, selectActiveOrganizationPath, signInPath } from "@/app/paths";
+import {
+  emailVerificationPath,
+  onboardingPath,
+  selectActiveOrganizationPath,
+  signInPath,
+} from "@/app/paths";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
 import { getAuth } from "./get-auth";
 
@@ -26,25 +31,25 @@ export const getAuthOrRedirect = async (options?: GetAuthOrRedirectOptions) => {
     redirect(emailVerificationPath());
   }
 
-  let activeOrganization
+  let activeOrganization;
 
-if (checkOrganization || checkActiveOrganization){
-    const organization = await getOrganizationsByUser()
+  if (checkOrganization || checkActiveOrganization) {
+    const organization = await getOrganizationsByUser();
 
-    if(checkOrganization && !organization.length) {
-        redirect(onboardingPath())
+    if (checkOrganization && !organization.length) {
+      redirect(onboardingPath());
     }
 
     activeOrganization = organization.find((organization) => {
-      return organization.membershipByUser.isActive
-    })
+      return organization.membershipByUser.isActive;
+    });
 
-        const hasActive = !!activeOrganization
+    const hasActive = !!activeOrganization;
 
     if (checkActiveOrganization && !hasActive) {
-        redirect(selectActiveOrganizationPath())
+      redirect(selectActiveOrganizationPath());
     }
-}
+  }
 
-  return {...auth, activeOrganization};
+  return { ...auth, activeOrganization };
 };

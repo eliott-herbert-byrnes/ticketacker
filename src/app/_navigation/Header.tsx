@@ -10,7 +10,6 @@ import { AccountDropdown } from "./account-dropdown";
 
 const Header = () => {
   const { user, isFetched } = useAuth();
-  
 
   if (!isFetched) {
     return null;

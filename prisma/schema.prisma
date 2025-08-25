@@ -145,10 +145,20 @@ model VerificationToken {
 model Attachment {
   id        String    @id     @default(cuid())
   name      String
-  ticket    Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  ticketId  String
+  ticket    Ticket?    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId  String?
+  entity    AttachmentEntity
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String?
+
 
   @@index([ticketId])
+  @@index([commentId])
+}
+
+enum AttachmentEntity {
+  TICKET
+  COMMENT
 }
 
 model Ticket {
@@ -172,13 +182,14 @@ model Ticket {
 }
 
 model Comment {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  content     String      @db.VarChar(1024)
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  content     String       @db.VarChar(1024)
+  ticket      Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   ticketId    String
-  ticket      Ticket      @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  userId      String?
   user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId      String?
+  attachments Attachment[]
 
   @@index([userId])
   @@index([ticketId])

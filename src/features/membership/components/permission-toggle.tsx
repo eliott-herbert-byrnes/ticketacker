@@ -5,9 +5,7 @@ import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/submit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { useActionState } from "@/components/hooks/use-action-state";
-import {
-  PermissionKey,
-} from "@/features/ticket/permissions/keys/permission-keys";
+import { PermissionKey } from "@/features/ticket/permissions/keys/permission-keys";
 import { togglePermission } from "../actions/toggle-permission";
 
 type PermissionToggleProps = {
@@ -32,7 +30,6 @@ const PermissionToggle = ({
     EMPTY_ACTION_STATE
   );
 
-  // tracks state of permission
   const isOn = !!permissionValue;
 
   return (

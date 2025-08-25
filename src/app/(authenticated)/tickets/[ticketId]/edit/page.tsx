@@ -5,6 +5,7 @@ import { CardCompact } from "@/components/card-compact";
 import { Separator } from "@/components/ui/separator";
 import { TicketUpsertForm } from "@/features/ticket/queries/components/ticket-upsert-form";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
+import { Heading } from "@/components/Heading";
 
 type TicketEditPageProps = {
   params: Promise<{
@@ -20,8 +21,8 @@ const TicketEditPage = async ({ params }: TicketEditPageProps) => {
     notFound();
   }
 
-  return (
-    <div className="flex-1 flex flex-col gap-y-8 ml-6">
+  const breadcrumbs = (
+    <div className="mb-2">
       <Breadcrumbs
         breadcrumbs={[
           { title: "Tickets", href: homePath() },
@@ -29,10 +30,18 @@ const TicketEditPage = async ({ params }: TicketEditPageProps) => {
           { title: "Edit" },
         ]}
       />
+    </div>
+  );
 
-      <Separator />
+  return (
+    <div className="flex-1 flex flex-col gap-y-8 ml-6">
+      <Heading
+        title={ticket.title}
+        description="Change status, upload attachments, or create comments"
+        tabs={breadcrumbs}
+      />
 
-      <div className="flex-1 flex flex-col justify-center items-center">
+      <div className="flex-1 flex flex-col items-center">
         <CardCompact
           title="Edit Ticket"
           description="Edit an existing ticket"

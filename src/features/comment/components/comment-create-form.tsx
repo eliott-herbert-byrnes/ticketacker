@@ -13,7 +13,7 @@ import { CommentWithMetadata } from "../types";
 
 type CommentCreateFormProps = {
   ticketId: string;
-  onCreateComment?: (comment: CommentWithMetadata | undefined) => void;
+  onCreateComment?: (comment: CommentWithMetadata) => void;
 };
 
 const CommentCreateForm = ({
@@ -28,11 +28,17 @@ const CommentCreateForm = ({
   const handleSuccess = (
     actionState: ActionState<CommentWithMetadata | undefined>
   ) => {
-    onCreateComment?.(actionState.data);
+    if (actionState.data) {
+      onCreateComment?.(actionState.data);
+    }
   };
 
   return (
-    <Form action={action} actionState={actionState} onSuccess={handleSuccess as (actionState: ActionState<unknown>) => void}>
+    <Form
+      action={action}
+      actionState={actionState}
+      onSuccess={handleSuccess as (actionState: ActionState<unknown>) => void}
+    >
       <Textarea
         className="text-sm mb-2"
         name="content"

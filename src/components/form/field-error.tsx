@@ -1,18 +1,16 @@
-import { ActionState } from "./utils/to-action-state"
+import { ActionState } from "./utils/to-action-state";
 
 type fieldErrorProps = {
-    actionState: ActionState,
-    name: string
-}
+  actionState: ActionState;
+  name: string;
+};
 
-const FieldError = ({actionState, name}: fieldErrorProps) => {
-    const message = actionState.fieldErrors[name]?.[0]
+const FieldError = ({ actionState, name }: fieldErrorProps) => {
+  const message = actionState.fieldErrors[name]?.[0];
 
-    if (!message) return null
+  if (!message) return null;
 
-    return (
-        <span className="text-xs text-red-500">{message}</span>
-    )
-}
+  return <span className="text-xs text-red-500">{message}</span>;
+};
 
-export {FieldError}
+export { FieldError };

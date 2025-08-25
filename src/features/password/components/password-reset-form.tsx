@@ -27,9 +27,6 @@ export const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
 
   const router = useRouter();
 
-   
-  // const [password, setPassword] = useState("");
-
   const passwordRef = useRef("");
   const [strength, setStrength] = useState<number | null>(null);
 
@@ -37,7 +34,7 @@ export const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
     const autoSignIn = async () => {
       if (actionState.status === "SUCCESS") {
         const email = actionState.data?.email;
-        const password = passwordRef.current; 
+        const password = passwordRef.current;
 
         const res = await signIn("credentials", {
           email,

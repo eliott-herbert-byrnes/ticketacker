@@ -9,26 +9,27 @@ import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect"
 import { OrganizationList } from "@/features/organization/components/organization-list";
 
 const OrganizationPage = async () => {
+  await getAuthOrRedirect({ checkOrganization: true });
 
-  await getAuthOrRedirect({checkOrganization: true})
+  const createOrganization = (
+    <Button variant="outline" asChild>
+      <Link href={organizationCreatePath()}>
+        <LucidePlus className="h-4 w-4" />
+        Create organization
+      </Link>
+    </Button>
+  );
 
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
         title="Organizations"
         description="All your organizations"
-        actions={
-          <Button variant="outline" asChild>
-            <Link href={organizationCreatePath()}>
-              <LucidePlus className="h-4 w-4" />
-              Create organization
-            </Link>
-          </Button>
-        }
+        actions={createOrganization}
       ></Heading>
 
       <Suspense fallback={<Spinner />}>
-        <OrganizationList  />
+        <OrganizationList />
       </Suspense>
     </div>
   );

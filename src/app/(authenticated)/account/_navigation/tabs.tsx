@@ -9,8 +9,8 @@ const AccountTabs = () => {
   const pathname = usePathname();
 
   return (
-    <div className="px-7">
-      <Tabs value={pathname.split("/").at(-1)} className="ml-4">
+    <div className="mb-2">
+      <Tabs value={pathname.split("/").at(-1)} className="">
         <TabsList>
           <TabsTrigger value="profile" asChild>
             <Link href={accountProfilePath()}>Profile</Link>

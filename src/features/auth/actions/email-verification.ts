@@ -36,7 +36,6 @@ export const emailVerification = async (
       Object.fromEntries(formData)
     );
 
-    // Look up the token by userId + code, verify not expired
     const token = await prisma.emailVerificationToken.findFirst({
       where: {
         userId: user.id as string,
@@ -49,7 +48,6 @@ export const emailVerification = async (
       return toActionState("ERROR", "Invalid or expired");
     }
 
-    // Fetch a fresh user copy (email may have changed in other flows)
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id as string },
       select: { id: true, email: true },
@@ -59,15 +57,12 @@ export const emailVerification = async (
       return toActionState("ERROR", "User not found");
     }
 
-    // Branch by whether this is verifying existing email vs changing to a new one
     if (dbUser.email === token.email) {
-      // Normal "verify my current email" flow (e.g. post sign-up)
       await prisma.user.update({
         where: { id: dbUser.id },
         data: { emailVerified: new Date() },
       });
     } else {
-      // Email change flow: move to the token's email
       const emailTaken = await prisma.user.findUnique({
         where: { email: token.email },
         select: { id: true },
@@ -80,17 +75,14 @@ export const emailVerification = async (
         where: { id: dbUser.id },
         data: {
           email: token.email,
-          emailVerified: new Date(), // you've just verified the new email
+          emailVerified: new Date(),
         },
       });
     }
 
-    // Burn this token (and optionally any other outstanding tokens for the user)
     await prisma.emailVerificationToken.delete({
       where: { id: token.id },
     });
-    // Optional cleanup:
-    // await prisma.emailVerificationToken.deleteMany({ where: { userId: dbUser.id } });
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }

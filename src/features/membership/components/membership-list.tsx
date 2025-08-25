@@ -39,15 +39,14 @@ const MembershipList = async ({ organizationId }: MembershipListProps) => {
         </TableHeader>
         <TableBody>
           {memberships.map((membership) => {
-
             const membershipMoreMenu = (
               <MembershipMoreMenu
                 userId={membership.userId}
                 organizationId={membership.organizationId}
                 membershipRole={membership.membershipRole}
-                />
-            )
-            
+              />
+            );
+
             const deleteButton = (
               <MembershipDeleteButton
                 organizationId={membership.organizationId}
@@ -55,11 +54,12 @@ const MembershipList = async ({ organizationId }: MembershipListProps) => {
               />
             );
 
-            const buttons = 
-            <>
-            {deleteButton}
-            {membershipMoreMenu}
-            </>;
+            const buttons = (
+              <>
+                {deleteButton}
+                {membershipMoreMenu}
+              </>
+            );
 
             const username =
               membership.userId === currentUserId ? (
@@ -82,24 +82,22 @@ const MembershipList = async ({ organizationId }: MembershipListProps) => {
                     <LucideBan />
                   )}
                 </TableCell>
-                <TableCell >
-                  {membership.membershipRole}
-                </TableCell>
-                <TableCell >
+                <TableCell>{membership.membershipRole}</TableCell>
+                <TableCell>
                   <PermissionToggle
                     userId={membership.userId}
                     organizationId={membership.organizationId}
                     permissionKey="canDeleteTicket"
                     permissionValue={membership.canDeleteTicket}
-                    />
+                  />
                 </TableCell>
-                <TableCell >
+                <TableCell>
                   <PermissionToggle
                     userId={membership.userId}
                     organizationId={membership.organizationId}
                     permissionKey="canUpdateTicket"
                     permissionValue={membership.canUpdateTicket}
-                    />
+                  />
                 </TableCell>
                 <TableCell className="flex justify-end gap-x-2">
                   {buttons}

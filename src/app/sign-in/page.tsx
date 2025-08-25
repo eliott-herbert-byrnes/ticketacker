@@ -4,6 +4,21 @@ import { SignInForm } from "@/features/auth/components/sign-in-form";
 import { passwordForgotPath, signUpPath } from "../paths";
 
 const SignInPage = () => {
+  const footer = (
+    <>
+      <Link className="text-sm text-muted-foreground" href={signUpPath()}>
+        No account yet?
+      </Link>
+
+      <Link
+        className="text-sm text-muted-foreground"
+        href={passwordForgotPath()}
+      >
+        Forgot Password?
+      </Link>
+    </>
+  );
+
   return (
     <div className="flex-1 flex flex-col justify-center items-center">
       <CardCompact
@@ -11,17 +26,7 @@ const SignInPage = () => {
         description="Sign In To Your Account"
         className="w-full max-w-[420px] animate-fade-from-top"
         content={<SignInForm />}
-        footer={
-          <>
-            <Link className="text-sm text-muted-foreground" href={signUpPath()}>
-              No account yet?
-            </Link>
-            
-            <Link className="text-sm text-muted-foreground" href={passwordForgotPath()}>
-              Forgot Password?
-            </Link>
-          </>
-        }
+        footer={footer}
       />
     </div>
   );
