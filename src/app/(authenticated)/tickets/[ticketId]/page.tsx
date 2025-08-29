@@ -1,13 +1,12 @@
 import { notFound } from "next/navigation";
 import { homePath } from "@/app/paths";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { Separator } from "@/components/ui/separator";
+import { Heading } from "@/components/Heading";
+import { Attachments } from "@/features/attachments/components/attachments";
 import { Comments } from "@/features/comment/components/comments/comments";
 import { getComments } from "@/features/comment/queries/get-comments";
 import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
-import { Attachments } from "@/features/attachments/components/attachments";
-import { Heading } from "@/components/Heading";
 
 type TicketPageProps = {
   params: Promise<{

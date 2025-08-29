@@ -1,15 +1,16 @@
 'use client'
-import { useConfirmDialog } from "@/components/confirm-dialog";
-import { Button } from "@/components/ui/button";
 import { LucideLoaderCircle, LucideTrash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useConfirmDialog } from "@/components/confirm-dialog";
+import { Button } from "@/components/ui/button";
 import { deleteAttachment } from "../actions/delete-attachment";
 
 type AttachmentDeleteButtonProps = {
   id: string;
+  onDeleted?: () => void;
 };
 
-const AttachmentDeleteButton = ({ id }: AttachmentDeleteButtonProps) => {
+const AttachmentDeleteButton = ({ id, onDeleted }: AttachmentDeleteButtonProps) => {
   const router = useRouter();
 
   const [deleteButton, deleteDialog] = useConfirmDialog({
@@ -24,7 +25,8 @@ const AttachmentDeleteButton = ({ id }: AttachmentDeleteButtonProps) => {
       </Button>
     ),
     onSuccess: () => {
-      router.refresh();
+      if (onDeleted) onDeleted();
+      else router.refresh();
     },
   });
 

@@ -1,82 +1,44 @@
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { PaginatedData } from "@/types/pagination";
-import { CommentWithMetadata } from "../../types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getComments } from "../../queries/get-comments";
+import { CommentWithMetadata } from "../../types";
 
-const usePaginatedComments = (
+export const usePaginatedComments = (
   ticketId: string,
   paginatedComments: PaginatedData<CommentWithMetadata>
 ) => {
+  const queryKey = ["comments", ticketId];
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey,
+      queryFn: ({ pageParam }) => getComments(ticketId, pageParam),
+      initialPageParam: undefined as string | undefined,
+      getNextPageParam: (lastPage) =>
+        lastPage.metadata.hasNextPage ? lastPage.metadata.cursor : undefined,
+      initialData: {
+        pages: [
+          {
+            list: paginatedComments.list,
+            metadata: paginatedComments.metadata,
+          },
+        ],
+        pageParams: [undefined],
+      },
+    });
+
+  const comments = data.pages.flatMap((page) => page.list);
+
   const queryClient = useQueryClient();
 
-  const { data = paginatedComments, isFetching } = useQuery<
-    PaginatedData<CommentWithMetadata>
-  >({
-    queryKey: ["comments", ticketId],
-    queryFn: () => getComments(ticketId),
-    initialData: paginatedComments,
-  });
-
-  const createMutation = useMutation({
-    mutationFn: async (comment: CommentWithMetadata) => comment,
-    onSuccess: (comment) => {
-      queryClient.setQueryData<PaginatedData<CommentWithMetadata>>(
-        ["comments", ticketId],
-        (old) =>
-          old
-            ? {
-                ...old,
-                list: [comment, ...old.list],
-              }
-            : {
-                list: [comment],
-                metadata: { count: 1, hasNextPage: false, cursor: undefined },
-              }
-      );
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => id,
-    onSuccess: (id) => {
-      queryClient.setQueryData<PaginatedData<CommentWithMetadata>>(
-        ["comments", ticketId],
-        (old) =>
-          old
-            ? {
-                ...old,
-                list: old.list.filter((comment) => comment.id !== id),
-              }
-            : old
-      );
-    },
-  });
-
-  const handleMore = async () => {
-    if (data.metadata.hasNextPage) {
-      const morePaginatedComments = await getComments(
-        ticketId,
-        data.metadata.cursor
-      );
-      queryClient.setQueryData<PaginatedData<CommentWithMetadata>>(
-        ["comments", ticketId],
-        (old) =>
-          old
-            ? {
-                list: [...old.list, ...morePaginatedComments.list],
-                metadata: morePaginatedComments.metadata,
-              }
-            : morePaginatedComments
-      );
-    }
-  };
   return {
-    data,
-    onCreateComment: createMutation.mutate,
-    onDeleteComment: (id: string) => deleteMutation.mutate(id),
-    handleMore,
-    isFetching,
+    comments,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    onCreateComment: () => queryClient.invalidateQueries({ queryKey }),
+    onDeleteComment: () => queryClient.invalidateQueries({ queryKey }),
+    onCreateAttachment: () => queryClient.invalidateQueries({ queryKey }),
+    onDeleteAttachment: () => queryClient.invalidateQueries({ queryKey }),
   };
 };
-
-export { usePaginatedComments };

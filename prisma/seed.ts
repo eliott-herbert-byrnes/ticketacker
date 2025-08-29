@@ -1,5 +1,5 @@
 import { hash } from "@node-rs/argon2";
-import { PrismaClient, Role } from "@prisma/client";
+import { MembershipRole, PrismaClient, Role, TicketStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -22,21 +22,21 @@ const tickets = [
   {
     title: "Ticket 1",
     content: "First ticket from DB.",
-    status: "COMPLETE" as const,
+    status: TicketStatus.COMPLETE,
     deadline: new Date().toISOString().split("T")[0],
     bounty: 499,
   },
   {
     title: "Ticket 2",
     content: "Second ticket from DB.",
-    status: "OPEN" as const,
+    status: TicketStatus.OPEN,
     deadline: new Date().toISOString().split("T")[0],
     bounty: 399,
   },
   {
     title: "Ticket 3",
     content: "Third ticket from DB.",
-    status: "IN_PROGRESS" as const,
+    status: TicketStatus.IN_PROGRESS,
     deadline: new Date().toISOString().split("T")[0],
     bounty: 599,
   },
@@ -54,9 +54,9 @@ const seed = async () => {
 
   await prisma.comment.deleteMany();
   await prisma.ticket.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.organization.deleteMany();
   await prisma.membership.deleteMany();
+  await prisma.organization.deleteMany();
+  await prisma.user.deleteMany();
 
   const passwordHash = await hash("geheimnis");
 
@@ -82,12 +82,12 @@ const seed = async () => {
       userId: dbUsers[0].id,
       organizationId: dbOrganization.id,
       isActive: true,
-      membershipRole: "ADMIN",
+      membershipRole: MembershipRole.ADMIN,
     }, {
       userId: dbUsers[1].id,
       organizationId: dbOrganization.id,
       isActive: true,
-      membershipRole: "MEMBER",
+      membershipRole: MembershipRole.MEMBER,
     }]
   })
 

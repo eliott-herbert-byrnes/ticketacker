@@ -1,19 +1,21 @@
 "use client";
+import { AttachmentEntity } from "@prisma/client";
+import { X } from "lucide-react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/submit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createAttachments } from "../actions/create-attachments";
-import { useActionState, useEffect, useRef, useState } from "react";
 import { ACCEPTED } from "../constants";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import { AttachmentEntity } from "@prisma/client";
 
 type AttachmentCreateFormProps = {
   entityId: string;
   entity: AttachmentEntity;
+  buttons?: React.ReactNode;
+  onSuccess?: () => void;
 };
 
 type PreviewFile = {
@@ -22,9 +24,14 @@ type PreviewFile = {
   url: string;
 };
 
-const AttachmentCreateForm = ({ entityId, entity }: AttachmentCreateFormProps) => {
+const AttachmentCreateForm = ({
+  entityId,
+  entity,
+  buttons,
+  onSuccess,
+}: AttachmentCreateFormProps) => {
   const [actionState, action] = useActionState(
-    createAttachments.bind(null, {entity, entityId}),
+    createAttachments.bind(null, { entity, entityId }),
     EMPTY_ACTION_STATE
   );
 
@@ -36,11 +43,7 @@ const AttachmentCreateForm = ({ entityId, entity }: AttachmentCreateFormProps) =
   const fileStatus =
     files.length === 0
       ? "No file chosen"
-      : files
-          .map((f) => {
-            f.name;
-          })
-          .join(", ");
+      : files.map(f => f.name).join(", ");
 
   const buildPreviews = (fs: File[]) =>
     fs.map((f) => ({
@@ -78,13 +81,16 @@ const AttachmentCreateForm = ({ entityId, entity }: AttachmentCreateFormProps) =
   };
 
   useEffect(() => {
-    return () => {
-      previews.forEach((p) => URL.revokeObjectURL(p.url));
-    };
-  }, []);
+    if(actionState.status === "SUCCESS"){
+      previews.forEach((p) => URL.revokeObjectURL(p.url))
+      setPreviews([])
+      setFiles([])
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }, [actionState.status])
 
   return (
-    <Form action={action} actionState={actionState}>
+    <Form action={action} actionState={actionState} onSuccess={onSuccess}>
       <div className="flex flex-col items-center gap-2">
         <Input
           ref={inputRef}
@@ -141,7 +147,7 @@ const AttachmentCreateForm = ({ entityId, entity }: AttachmentCreateFormProps) =
         </div>
       )}
 
-      <SubmitButton label="Upload" />
+      { buttons || <SubmitButton label="Upload" />}
     </Form>
   );
 };

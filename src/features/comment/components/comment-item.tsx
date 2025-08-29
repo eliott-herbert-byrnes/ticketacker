@@ -1,66 +1,45 @@
-"use client";
 import { format } from "date-fns";
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { CommentWithMetadata } from "../types";
-import { CommentDeleteButton } from "./comment-delete-button";
-import { CommentUpdateButton } from "./comment-update-button";
+import React from "react";
+import { Separator } from "@/components/ui/separator";
 
 type CommentItemProps = {
   comment: CommentWithMetadata;
-  buttons?: React.ReactNode[];
-  isOwner: boolean;
-  onDeleteComment?: (id: string) => void;
+  buttons: React.ReactNode[];
+  sections: {
+    label: string;
+    content: React.ReactNode;
+  }[];
 };
 
-const CommentItem = ({
-  comment,
-  isOwner,
-  onDeleteComment,
-}: CommentItemProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState(comment.content);
-
+const CommentItem = ({ comment, buttons, sections }: CommentItemProps) => {
   return (
-    <div className="flex gap-x-2 overflow-hidden">
-      <Card className="p-4 flex-1 flex flex-col gap-y-3 overflow-hidden">
+    <div className="flex gap-x-2">
+      <Card className="p-4 flex-1 flex flex-col gap-y-1">
         <div className="flex justify-between">
           <p className="text-sm text-muted-foreground">
-            {comment.user?.username ?? "Deleted User"}
+            {comment.isOwner
+              ? "You"
+              : (comment.user?.username ?? "Deleted User")}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {format(comment.createdAt, "yyyy-MM-dd, HH:mm")}
           </p>
         </div>
+        <p className="whitespace-pre-line">{comment.content}</p>
 
-        {isEditing ? (
-          <Textarea
-            className="text-sm resize-none overflow-hidden"
-            value={content}
-            rows={3}
-            onChange={(e) => setContent(e.target.value)}
-          />
-        ) : (
-          <p className="whitespace-pre-line text-sm">{content}</p>
-        )}
+        {sections.map((section) => (
+          <div className="space-y-2 mt-2" key={section.label}>
+            <Separator />
+
+            <h4 className="text-sm text-muted-foreground">{section.label}</h4>
+            <div className="">{section.content}</div>
+          </div>
+        ))}
       </Card>
 
-      {isOwner && (
-        <div className="flex flex-col gap-y-1">
-          <CommentDeleteButton
-            id={comment.id}
-            onDeleteComment={onDeleteComment}
-          />
-          <CommentUpdateButton
-            id={comment.id}
-            content={content}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing}
-            onSave={setContent}
-          />
-        </div>
-      )}
+      <div className="flex flex-col gap-y-1">{buttons}</div>
     </div>
   );
 };

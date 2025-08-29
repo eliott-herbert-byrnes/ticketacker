@@ -52,6 +52,7 @@
     "react": "19.1.1",
     "react-day-picker": "^9.8.0",
     "react-dom": "19.1.1",
+    "react-intersection-observer": "^9.16.0",
     "resend": "^5.0.0",
     "rfc4648": "^1.5.4",
     "sonner": "^2.0.6",

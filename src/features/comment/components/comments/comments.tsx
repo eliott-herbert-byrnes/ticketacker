@@ -1,22 +1,41 @@
 "use client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 import { CardCompact } from "@/components/card-compact";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PaginatedData } from "@/types/pagination";
-import { getComments } from "../../queries/get-comments";
 import { CommentWithMetadata } from "../../types";
 import { CommentCreateForm } from "../comment-create-form";
-import { CommentItem } from "../comment-item";
+import { CommentList } from "../comment-list";
 import { usePaginatedComments } from "./use-paginated-comments";
 
-type CommentProps = {
+type CommentsProps = {
   ticketId: string;
-  paginatedComments: PaginatedData<CommentWithMetadata>;
+  paginatedComments: PaginatedData<CommentWithMetadata, string>;
 };
 
-export function Comments({ ticketId, paginatedComments }: CommentProps) {
-  const { data, onCreateComment, onDeleteComment, isFetching, handleMore } =
-    usePaginatedComments(ticketId, paginatedComments);
+const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
+const {
+  comments,
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
+  onCreateComment,
+  onDeleteComment,
+ } = usePaginatedComments(ticketId, paginatedComments)
+
+ const queryClient = useQueryClient();
+ const invalidateComments = () =>
+  queryClient.invalidateQueries({queryKey: ["comments", ticketId]})
+
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, inView, isFetchingNextPage]);
 
   return (
     <>
@@ -30,30 +49,34 @@ export function Comments({ ticketId, paginatedComments }: CommentProps) {
           />
         }
       />
+      <div className="flex flex-col gap-y-2 ">
+        <CommentList
+          comments={comments}
+          onDeleteComment={onDeleteComment}
+          onAttachmentsChanged={invalidateComments}
+        />
 
-      <div className="flex flex-col gap-y-4 w-full">
-        {data.list.map((comment) => (
-          <CommentItem
-            key={comment.id}
-            comment={comment}
-            isOwner={comment.isOwner}
-            onDeleteComment={onDeleteComment}
-          />
-        ))}
+        {isFetchingNextPage && (
+          <>
+            <div className="flex gap-x-2">
+              <Skeleton className="h-[82px] w-full" />
+              <Skeleton className="h-[40px] w-[40px]" />
+            </div>
+            <div className="flex gap-x-2">
+              <Skeleton className="h-[82px] w-full" />
+              <Skeleton className="h-[40px] w-[40px]" />
+            </div>
+          </>
+        )}
       </div>
 
-      <div className="flex flex-col justify-center">
-        {data.metadata.hasNextPage && (
-          <Button
-            className="cursor-pointer"
-            variant="ghost"
-            onClick={handleMore}
-            disabled={isFetching}
-          >
-            {isFetching ? "Loading..." : "More"}
-          </Button>
+      <div ref={ref}>
+        {!hasNextPage && (
+          <p className="text-right text-xs italic">No more comments.</p>
         )}
       </div>
     </>
   );
-}
+};
+
+export { Comments };

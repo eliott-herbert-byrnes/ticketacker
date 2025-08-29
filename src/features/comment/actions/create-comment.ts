@@ -29,7 +29,7 @@ export const createComment = async (
 
     comment = await prisma.comment.create({
       data: {
-        userId: user?.id,
+        userId: user!.id,
         ticketId: ticketId,
         ...data,
       },
@@ -43,7 +43,6 @@ export const createComment = async (
   } catch (error) {
     return fromErrorToActionState(error);
   }
-  
   
   return toActionState("SUCCESS", "Comment created", undefined, {
     ...comment,
