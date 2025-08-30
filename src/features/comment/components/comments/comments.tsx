@@ -16,18 +16,18 @@ type CommentsProps = {
 };
 
 const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
-const {
-  comments,
-  fetchNextPage,
-  hasNextPage,
-  isFetchingNextPage,
-  onCreateComment,
-  onDeleteComment,
- } = usePaginatedComments(ticketId, paginatedComments)
+  const {
+    comments,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    onCreateComment,
+    onDeleteComment,
+  } = usePaginatedComments(ticketId, paginatedComments);
 
- const queryClient = useQueryClient();
- const invalidateComments = () =>
-  queryClient.invalidateQueries({queryKey: ["comments", ticketId]})
+  const queryClient = useQueryClient();
+  const invalidateComments = () =>
+    queryClient.invalidateQueries({ queryKey: ["comments", ticketId] });
 
   const { ref, inView } = useInView();
 

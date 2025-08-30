@@ -1,76 +1,37 @@
 "use server";
 
-import { organizationCreatePath } from "@/app/paths";
+import { revalidatePath } from "next/cache";
+import {  organizationPath } from "@/app/paths";
 import { fromErrorToActionState } from "@/components/form/utils/to-action-state";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
 import { prisma } from "@/lib/prisma";
-// import { getOrganizationsByUser } from "../queries/get-organization-by-user";
-// import { generateS3Key } from "@/features/attachments/utils/generate-s3-key";
-import { inngest } from "@/lib/inngest";
+import { getOrganizationsByUser } from "../queries/get-organization-by-user";
 
 export const deleteOrganization = async (organizationId: string) => {
-  const { user } = await getAdminOrRedirect(organizationId);
+  await getAdminOrRedirect(organizationId);
 
   try {
-    const attachments = await prisma.attachment.findMany({
-      where: { ticket: { organizationId } },
-      select: { id: true, name: true, ticketId: true },
-    });
+    const organizations = await getOrganizationsByUser();
 
-    const remainingMemberships = await prisma.membership.findMany({
-      where: { userId: user!.id, organizationId: { not: organizationId } },
-      select: { organizationId: true, joinedAt: true },
-      orderBy: { joinedAt: "asc" },
-    });
-
-    await prisma.$transaction(async (tx) => {
-      await tx.organization.delete({ where: { id: organizationId } });
-
-      if (remainingMemberships.length > 0) {
-        const nextOrgId = remainingMemberships[0].organizationId;
-
-        await tx.membership.updateMany({
-          where: { userId: user!.id },
-          data: { isActive: false },
-        });
-
-        await tx.membership.update({
-          where: {
-            membershipId: { organizationId: nextOrgId, userId: user!.id },
-          },
-          data: { isActive: true },
-        });
-      }
-    });
-
-    await Promise.all(
-      attachments.map((a) =>
-        inngest.send({
-          name: "app/attachment.deleted",
-          data: {
-            organizationId,
-            ticketId: a.ticketId,
-            fileName: a.name,
-            attachmentId: a.id,
-          },
-        })
-      )
+    const canDelete = organizations.some(
+      (organization) => organization.id === organizationId
     );
 
-    const remaining = await prisma.membership.count({
-      where: { userId: user!.id },
-    });
-
-    if (remaining === 0) {
-      return {
-        ...toActionState("SUCCESS", "Organization deleted"),
-        data: { redirectTo: organizationCreatePath() },
-      };
+    if (!canDelete) {
+      return toActionState("ERROR", "Not a member of this organization");
     }
 
-    return toActionState("SUCCESS", "Active organization has been switched");
+    await prisma.organization.delete({
+      where: {
+        id: organizationId,
+      },
+    });
   } catch (error) {
     return fromErrorToActionState(error);
   }
+
+  revalidatePath(organizationPath());
+
+  return toActionState("SUCCESS", "Organization deleted");
 };

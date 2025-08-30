@@ -1,6 +1,6 @@
 
 "use client"
-import { AttachmentCreateButton } from "@/features/attachments/components/attachment-create-button";
+// import { AttachmentCreateButton } from "@/features/attachments/components/attachment-create-button";
 import { AttachmentList } from "@/features/attachments/components/attachment-list";
 import { CommentWithMetadata } from "../types";
 import { CommentDeleteButton } from "./comment-delete-button";
@@ -16,7 +16,7 @@ const CommentList = ({ comments, onDeleteComment, onAttachmentsChanged }: Commen
   <>
     {comments.map((comment) => {
       const buttons = comment.isOwner ? [
-        <AttachmentCreateButton key="0" entityId={comment.id} entity="COMMENT" onChanged={onAttachmentsChanged} />,
+        // <AttachmentCreateButton key="0" entityId={comment.id} entity="COMMENT" onChanged={onAttachmentsChanged} />,
         <CommentDeleteButton key="1" id={comment.id} onDeleteComment={onDeleteComment} />,
       ] : [];
 

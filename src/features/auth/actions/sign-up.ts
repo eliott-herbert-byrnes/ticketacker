@@ -1,38 +1,15 @@
 "use server";
-
-import { hash } from "@node-rs/argon2";
 import { Prisma } from "@prisma/client";
-import { z } from "zod";
 import { ticketsPath } from "@/app/paths";
 import {
   ActionState,
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { signIn } from "@/lib/auth";
-import { inngest } from "@/lib/inngest";
-import { prisma } from "@/lib/prisma";
+import { SignUpfilesSchema } from "../schema/files";
+import * as InvitationService from "../service/index"
 
-const signUpSchema = z
-  .object({
-    username: z
-      .string()
-      .min(1)
-      .max(191)
-      .refine((v) => !v.includes(" "), "Username cannot contain spaces"),
-    email: z.string().min(1, "Is required").max(191).email(),
-    password: z.string().min(6).max(191),
-    confirmPassword: z.string().min(6).max(191),
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (password !== confirmPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      });
-    }
-  });
+const signUpSchema = SignUpfilesSchema
 
 export async function signUpAction(
   _state: ActionState,
@@ -44,35 +21,10 @@ export async function signUpAction(
     const email = parsed.email.toLowerCase().trim();
     const password = parsed.password;
 
-    const passwordHash = await hash(password);
 
-    const user = await prisma.user.create({
-      data: { username, email, passwordHash },
-    });
-
-    await inngest.send([
-      {
-        name: "app/auth.sign-up",
-        data: { userId: user.id },
-      },
-      {
-        name: "app/membership.process-invitations",
-        data: { userId: user.id, email },
-      },
-      {
-        name: "app/welcome.welcome-email",
-        data: {
-          userId: user.id,
-          welcomeUrl: "https://www.ticketacker.com/tickets",
-        },
-      },
-    ]);
-
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    const result = await InvitationService.signUp({
+      username, email, password,
+    })
 
     if (
       result &&
@@ -86,7 +38,7 @@ export async function signUpAction(
         formData
       );
     }
-
+    
     return {
       ...toActionState("SUCCESS", "Account created — signed in"),
       data: { redirectTo: ticketsPath() },
@@ -104,4 +56,5 @@ export async function signUpAction(
     }
     return fromErrorToActionState(error, formData);
   }
+
 }

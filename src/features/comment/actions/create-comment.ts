@@ -8,11 +8,14 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import { fileSchema } from "@/features/attachments/schema/files";
+import * as attachmentService from "@/features/attachments/service";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import { prisma } from "@/lib/prisma";
+import * as commentData from "../data"
 
 const createCommentSchema = z.object({
   content: z.string().min(1).max(1024),
+  files: fileSchema,
 });
 
 export const createComment = async (
@@ -22,21 +25,38 @@ export const createComment = async (
 ) => {
   const { user } = await getAuthOrRedirect();
 
+  if (!user){
+    return toActionState("ERROR", "You are not authorized to make this request")
+  }
+
   let comment;
 
   try {
-    const data = createCommentSchema.parse(Object.fromEntries(formData));
-
-    comment = await prisma.comment.create({
-      data: {
-        userId: user!.id,
-        ticketId: ticketId,
-        ...data,
-      },
-      include: {
-        user: true,
-      },
+    const {content, files} = createCommentSchema.parse({
+      content: formData.get("content"),
+      files: formData.getAll("files")
     });
+
+    comment = await commentData.createComment({
+      userId: user.id,
+      ticketId,
+      content,
+      include: {
+        user: {
+          select: {
+            username: true,
+          },
+        },
+        ticket: true,
+      }
+    })
+
+    await attachmentService.createAttachments({
+      subject: comment,
+      entity: "COMMENT",
+      entityId: comment.id,
+      files,
+    })
 
     revalidatePath(ticketPath(ticketId));
     

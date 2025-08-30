@@ -1,4 +1,3 @@
-// src/features/auth/actions/email-verification.ts
 "use server";
 
 import { redirect } from "next/navigation";
@@ -10,7 +9,7 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { prisma } from "@/lib/prisma";
+import * as userData from "../data";
 import { getAuthOrRedirect } from "../queries/get-auth-or-redirect";
 
 const emailVerificationSchema = z.object({
@@ -36,53 +35,24 @@ export const emailVerification = async (
       Object.fromEntries(formData)
     );
 
-    const token = await prisma.emailVerificationToken.findFirst({
-      where: {
-        userId: user.id as string,
-        code,
-        expiresAt: { gt: new Date() },
-      },
-    });
+    const token = await userData.findVerificationToken(user.id, code);
+    if (!token) return toActionState("ERROR", "Invalid or expired");
+    
 
-    if (!token) {
-      return toActionState("ERROR", "Invalid or expired");
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { id: user.id as string },
-      select: { id: true, email: true },
-    });
-
-    if (!dbUser) {
-      return toActionState("ERROR", "User not found");
-    }
+    const dbUser = await userData.findUserById(user.id);
+    if (!dbUser) return toActionState("ERROR", "User not found");
+    
 
     if (dbUser.email === token.email) {
-      await prisma.user.update({
-        where: { id: dbUser.id },
-        data: { emailVerified: new Date() },
-      });
+      await userData.updateUser(dbUser.id);
     } else {
-      const emailTaken = await prisma.user.findUnique({
-        where: { email: token.email },
-        select: { id: true },
-      });
-      if (emailTaken) {
-        return toActionState("ERROR", "That email is already in use");
-      }
-
-      await prisma.user.update({
-        where: { id: dbUser.id },
-        data: {
-          email: token.email,
-          emailVerified: new Date(),
-        },
-      });
+      const emailTaken = await userData.findUserByEmail(token.email)
+      if (emailTaken) return toActionState("ERROR", "That email is already in use");
+    
+      await userData.updateUser(dbUser.id, token.email);
     }
 
-    await prisma.emailVerificationToken.delete({
-      where: { id: token.id },
-    });
+    await userData.deleteToken(token.id);
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }

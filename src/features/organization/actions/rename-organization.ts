@@ -24,7 +24,6 @@ export const renameOrganization = async (
   try {
     const { name } = schema.parse({ name: formData.get("name") });
 
-    // rename organization
     await prisma.organization.update({
       where: { id: organizationId },  
       data:  { name },                 
@@ -33,10 +32,6 @@ export const renameOrganization = async (
     revalidatePath(organizationPath());
     return toActionState("SUCCESS", "Organization renamed");
 
-    // return {
-    //   ...toActionState("SUCCESS", "Organization renamed"),
-    //   data: { redirectTo: organizationPath() },
-    // };
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&

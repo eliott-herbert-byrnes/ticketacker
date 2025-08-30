@@ -5,64 +5,42 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { getAuth } from "@/features/auth/queries/get-auth";
-import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/utils/crypto";
+import * as invitationData from "../data";
 
 export const acceptInvitation = async (tokenId: string) => {
   try {
     const tokenHash = hashToken(tokenId);
     const auth = await getAuth();
 
-    const invitation = await prisma.invitation.findUnique({
-      where: {
-        tokenHash,
-      },
-    });
+    const invitation = await invitationData.findInvitation(tokenHash);
 
     if (!invitation) {
       return toActionState("ERROR", "Revoked or invalid verification token");
     }
 
-    if(auth.user){
-        if (
-            auth.user.email &&
-            auth.user.email.toLowerCase() !== invitation.email.toLocaleLowerCase()
-        ) {
-            return toActionState("ERROR", "You're signed in as a different account. Please switch accounts")
-        }
+    if (auth.user) {
+      if (
+        auth.user.email &&
+        auth.user.email.toLowerCase() !== invitation.email.toLocaleLowerCase()
+      ) {
+        return toActionState(
+          "ERROR",
+          "You're signed in as a different account. Please switch accounts"
+        );
+      }
     }
 
-    const user = await prisma.user.findUnique({
-      where: {
-        email: invitation.email,
-      },
-    });
+    const user = await invitationData.findUser(invitation.email);
 
     if (user) {
-      await prisma.$transaction([
-        prisma.invitation.delete({
-          where: {
-            tokenHash,
-          },
-        }),
-        prisma.membership.create({
-          data: {
-            organizationId: invitation.organizationId,
-            userId: user.id,
-            membershipRole: "MEMBER",
-            isActive: false,
-          },
-        }),
-      ]);
+      await invitationData.acceptInvitationForExistingUser(
+        tokenHash,
+        invitation.organizationId,
+        user.id
+      );
     } else {
-        await prisma.invitation.update({
-            where: {
-                tokenHash,
-            },
-            data: {
-                status: "ACCEPTED_WITHOUT_ACCOUNT"
-            }
-        })
+      await invitationData.markInvitationAcceptedWithoutAccount(tokenHash);
     }
 
     return {

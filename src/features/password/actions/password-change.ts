@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import {
   ActionState,
   fromErrorToActionState,
@@ -8,23 +7,10 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { prisma } from "@/lib/prisma";
+import { ChangeSchema } from "../schema/files";
 import { hashPassword, verifyPasswordHash } from "../utils/hash-and-verify";
 
-const passwordChangeSchema = z
-  .object({
-    currentPassword: z.string().min(6).max(191),
-    password: z.string().min(6).max(191),
-    confirmPassword: z.string().min(6).max(191),
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (password !== confirmPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      });
-    }
-  });
+const passwordChangeSchema = ChangeSchema
 
 export const passwordChange = async (
   _actionState: ActionState,

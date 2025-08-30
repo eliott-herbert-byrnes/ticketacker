@@ -9,7 +9,7 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { inngest } from "@/lib/inngest";
-import { prisma } from "@/lib/prisma";
+import * as userData from "../data"
 import { getAuthOrRedirect } from "../queries/get-auth-or-redirect";
 import { generateEmailVerificationCode } from "../utils/generate-email-verification-code";
 
@@ -23,20 +23,14 @@ export async function emailChange(
 ): Promise<ActionState> {
   try {
     const auth = await getAuthOrRedirect({ checkEmailVerified: false });
+    if(!auth.user){
+      return toActionState("ERROR", "Not authorized", formData)
+    }
 
     const { email } = emailChangeSchema.parse(Object.fromEntries(formData));
     const newEmail = email.trim().toLowerCase();
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: auth.user?.id,
-      },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-      },
-    });
+    const user = await userData.findUserById(auth.user.id)
 
     if (!user) {
       return toActionState("ERROR", "User not found", formData);
@@ -50,11 +44,9 @@ export async function emailChange(
       );
     }
 
-    const existingEmail = await prisma.user.findUnique({
-      where: { email: newEmail },
-    });
+    const existingUser = await userData.findUserByEmail(newEmail)
 
-    if (existingEmail) {
+    if (existingUser) {
       return toActionState("ERROR", "That email is already in use", formData);
     }
 
@@ -64,7 +56,7 @@ export async function emailChange(
       name: "app/auth.email-change-request",
       data: {
         userId: user.id,
-        username: user.username,
+        username: user.username ?? "",
         email: newEmail,
         code,
       },

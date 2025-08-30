@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { setCookieByKey } from "@/app/actions/cookies";
 import {
   ActionState,
@@ -9,22 +8,10 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/utils/crypto";
+import { ResetSchema } from "../schema/files";
 import { hashPassword } from "../utils/hash-and-verify";
 
-const passwordResetSchema = z
-  .object({
-    password: z.string().min(6).max(191),
-    confirmPassword: z.string().min(6).max(191),
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (password !== confirmPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-      });
-    }
-  });
+const passwordResetSchema = ResetSchema
 
 export const passwordReset = async (
   tokenId: string,
@@ -82,7 +69,7 @@ export const passwordReset = async (
       timestamp: Date.now(),
       data: {
         email: user.email,
-        password, // needed for client to sign in
+        password,
       },
     } as ActionState;
   } catch (error) {

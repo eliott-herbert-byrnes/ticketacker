@@ -20,8 +20,6 @@ export const updateMembershipRole = async ({
 
   const memberships = await getMemberships(organizationId);
 
-  // Check if membership exists
-
   const targetMembership = (memberships ?? []).find(
     (membership) => membership.userId === userId
   );
@@ -29,8 +27,6 @@ export const updateMembershipRole = async ({
   if (!targetMembership) {
     return toActionState("ERROR", "Membership not found");
   }
-
-  // Check if user is deleting last admin
 
   const adminMemberships = (memberships ?? []).filter(
     (membership) => membership.membershipRole === "ADMIN"
@@ -45,8 +41,6 @@ export const updateMembershipRole = async ({
       "You cannot delete the last admin of an organization"
     );
   }
-
-  // Okay: Everything checked ...
 
   await prisma.membership.update({
     where: {

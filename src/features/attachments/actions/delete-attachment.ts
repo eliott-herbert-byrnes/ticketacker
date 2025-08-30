@@ -1,64 +1,51 @@
-'use server'
+"use server";
 
-import { fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state"
-import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect"
-import { isOwner } from "@/features/auth/utils/is-owner"
-import { inngest } from "@/lib/inngest"
-import { prisma } from "@/lib/prisma"
-import { getOrganizationIdByAttachment } from "../utils/attachment-helper"
+import {
+  fromErrorToActionState,
+  toActionState,
+} from "@/components/form/utils/to-action-state";
+import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
+import { isOwner } from "@/features/auth/utils/is-owner";
+import { inngest } from "@/lib/inngest";
+import * as attachmentData from "../data"
+import { getOrganizationIdByAttachment } from "../utils/attachment-helper";
 
 export const deleteAttachment = async (id: string) => {
-    const {user} = await getAuthOrRedirect()
+  const { user } = await getAuthOrRedirect();
 
-    const attachment = await prisma.attachment.findUniqueOrThrow({
-        where: {
-            id,
-        },
-        include: {
-            ticket: true,
-            comment: {
-                include: {
-                    ticket: true,
-                }
-            }
-        }
-    })
+  const attachment = await attachmentData.OrganizationIdByAttachment(id)
 
-    const subject = attachment.ticket ?? attachment.comment
+  const subject = attachment.ticket ?? attachment.comment;
 
-    if(!subject){
-        return toActionState("ERROR", "Subject not found")
-    }
+  if (!subject) {
+    return toActionState("ERROR", "Subject not found");
+  }
 
-    if(!isOwner(user, subject)){
-        return toActionState("ERROR", "Not authorised")
-    }
+  if (!isOwner(user, subject)) {
+    return toActionState("ERROR", "Not authorised");
+  }
 
-    try {
-        await prisma.attachment.delete({
-            where: {
-                id,
-            }
-        })
+  try {
+    await attachmentData.deleteAttachment(id);
 
     const organizationId = getOrganizationIdByAttachment(
-        attachment.entity,
-        subject
-    )
+      attachment.entity,
+      subject
+    );
 
-        await inngest.send({
-            name: "app/attachment.deleted",
-            data: {
-                organizationId,
-                entityId: subject.id,
-                entity: attachment.entity,
-                fileName: attachment.name,
-                attachmentId: attachment.id,
-            }
-        })
-    } catch (error) {
-        fromErrorToActionState(error)
-    }
-    
-    return toActionState("SUCCESS", "Attachment deleted")
-}
+    await inngest.send({
+      name: "app/attachment.deleted",
+      data: {
+        organizationId,
+        entityId: subject.id,
+        entity: attachment.entity,
+        fileName: attachment.name,
+        attachmentId: attachment.id,
+      },
+    });
+  } catch (error) {
+   return fromErrorToActionState(error);
+  }
+
+  return toActionState("SUCCESS", "Attachment deleted");
+};
