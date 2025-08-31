@@ -1,6 +1,6 @@
 import { inngest } from "@/lib/inngest";
-import { prisma } from "@/lib/prisma";
 import { sendEmailInvitation } from "../emails/send-email-invitation";
+import * as membershipData from "./data";
 
 export type InvitationCreateEventArgs = {
   data: {
@@ -17,17 +17,9 @@ export const invitationCreateEvent = inngest.createFunction(
   async ({ event }) => {
     const { userId, organizationId, email, emailInvitationLink } = event.data;
 
-    const user = await prisma.user.findUniqueOrThrow({
-      where: {
-        id: userId,
-      },
-    });
+    const user = await membershipData.findUser(userId);
 
-    const organization = await prisma.organization.findUniqueOrThrow({
-      where: {
-        id: organizationId,
-      },
-    });
+    const organization = await membershipData.findOrganization(organizationId);
 
     const result = await sendEmailInvitation(
       user.username,

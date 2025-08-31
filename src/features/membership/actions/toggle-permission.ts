@@ -5,11 +5,10 @@ import { membershipsPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { PERMISSION_KEYS, PermissionKey } from "@/features/ticket/permissions/keys/permission-keys"; 
 import { prisma } from "@/lib/prisma";
+import * as membershipData from "../data"
 import { getAdminOrRedirect } from "../queries/get-admin-or-redirect";
 
-// toggle of membership permissions
-// const PERMISSION_KEYS = ["canDeleteTicket", "canUpdateTicket"] as const;
-// type PermissionKey = (typeof PERMISSION_KEYS)[number];
+
 const PermissionKeySchema = z.enum(PERMISSION_KEYS);
 
 export const togglePermission = async ({
@@ -35,13 +34,8 @@ export const togglePermission = async ({
     },
   };
 
-  const membership = await prisma.membership.findUnique({
-    where,
-    select: {
-      canDeleteTicket: true,
-      canUpdateTicket: true,
-    },
-  });
+  const membership = await membershipData.findMembership(where)
+
 
   if (!membership) {
     return toActionState("ERROR", "Membership not found");

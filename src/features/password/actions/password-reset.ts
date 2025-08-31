@@ -6,12 +6,12 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/utils/crypto";
+import * as passwordData from "../data";
 import { ResetSchema } from "../schema/files";
 import { hashPassword } from "../utils/hash-and-verify";
 
-const passwordResetSchema = ResetSchema
+const passwordResetSchema = ResetSchema;
 
 export const passwordReset = async (
   tokenId: string,
@@ -26,9 +26,7 @@ export const passwordReset = async (
 
     const tokenHash = hashToken(tokenId);
 
-    const passwordResetToken = await prisma.passwordResetToken.findUnique({
-      where: { tokenHash },
-    });
+    const passwordResetToken = await passwordData.findUnique(tokenHash);
 
     if (
       !passwordResetToken ||
@@ -42,24 +40,19 @@ export const passwordReset = async (
       } as ActionState;
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: passwordResetToken.userId },
-    });
+    const user = await passwordData.findUser(passwordResetToken.userId);
 
     if (!user) {
       return toActionState("ERROR", "User not found");
     }
 
-    await prisma.passwordResetToken.delete({ where: { tokenHash } });
+    await passwordData.deleteToken(tokenHash);
 
-    await prisma.session.deleteMany({ where: { userId: user.id } });
+    await passwordData.deleteMany(user.id);
 
     const passwordHash = await hashPassword(password);
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { passwordHash },
-    });
+    await passwordData.updateUser(user.id, passwordHash);
 
     await setCookieByKey("toast", "Successfully reset password");
 

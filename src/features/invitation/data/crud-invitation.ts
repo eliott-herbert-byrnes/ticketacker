@@ -22,13 +22,57 @@ export const acceptInvitationForExistingUser = async (
   ]);
 };
 
-export const markInvitationAcceptedWithoutAccount = async (tokenHash: string) => {
+export const markInvitationAcceptedWithoutAccount = async (
+  tokenHash: string
+) => {
   return prisma.invitation.update({
     where: {
       tokenHash,
     },
     data: {
       status: "ACCEPTED_WITHOUT_ACCOUNT",
+    },
+  });
+};
+
+export const createInvitation = async (
+  tokenHash: string,
+  invitedByUserId: string,
+  organizationId: string,
+  email: string
+) => {
+  return await prisma.invitation.create({
+    data: {
+      tokenHash,
+      invitedByUserId,
+      organizationId,
+      email,
+    },
+  });
+};
+
+export const deleteInvitation = async (
+  email: string,
+  organizationId: string
+) => {
+  return await prisma.invitation.delete({
+    where: {
+      invitationId: {
+        email,
+        organizationId,
+      },
+    },
+  });
+};
+
+export const deleteManyInvitation = async (
+  email: string,
+  organizationId: string
+) => {
+  return await prisma.invitation.deleteMany({
+    where: {
+      email,
+      organizationId,
     },
   });
 };

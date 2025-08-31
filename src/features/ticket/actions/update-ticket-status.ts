@@ -7,34 +7,28 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { prisma } from "@/lib/prisma";
 import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
-// import { isOwner } from "../../auth/utils/is-owner";
+import * as ticketData from "../data";
 import { getTicketPermissions } from "../permissions/get-ticket-permissions";
 
 export const updateTicketStatus = async (id: string, status: TicketStatus) => {
   const { user } = await getAuthOrRedirect();
 
   try {
-    const ticket = await prisma.ticket.findUnique({
-      where: {
-        id,
-      },
-    });
+    const ticket = await ticketData.findTicket(id);
 
-    if(!ticket){
-      return toActionState("ERROR", "Unable to locate ticket")
+    if (!ticket) {
+      return toActionState("ERROR", "Unable to locate ticket");
     }
 
-    // const owner = isOwner(user, ticket);
-    const perms = await getTicketPermissions({ organizationId: ticket.organizationId, userId: user!.id });
+    const perms = await getTicketPermissions({
+      organizationId: ticket.organizationId,
+      userId: user!.id,
+    });
     const canUpdate = !!perms.canUpdateTicket;
     if (!canUpdate) return toActionState("ERROR", "Not authorized");
 
-    await prisma.ticket.update({
-      where: { id },
-      data: { status },
-    });
+    await ticketData.updateTicketStatusById(id, status);
   } catch (error) {
     return fromErrorToActionState(error);
   }

@@ -7,8 +7,7 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { inngest } from "@/lib/inngest";
-import { prisma } from "@/lib/prisma";
-
+import * as passwordData from "../data"
 
 const passwordForgotSchema = z.object({
   email: z.string().min(1, { message: "Is Required" }).max(191).email(),
@@ -21,7 +20,8 @@ export const passwordForgot = async (
   try {
     const { email } = passwordForgotSchema.parse(Object.fromEntries(formData));
 
-    const user = await prisma.user.findUnique({ where: { email } });
+  
+    const user = await passwordData.findUser(email)
 
     if (!user) {
       return toActionState("ERROR", "Password reset link sent", formData);

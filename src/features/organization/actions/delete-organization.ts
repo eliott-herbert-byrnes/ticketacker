@@ -5,7 +5,7 @@ import {  organizationPath } from "@/app/paths";
 import { fromErrorToActionState } from "@/components/form/utils/to-action-state";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
-import { prisma } from "@/lib/prisma";
+import * as organizationData from "../data"
 import { getOrganizationsByUser } from "../queries/get-organization-by-user";
 
 export const deleteOrganization = async (organizationId: string) => {
@@ -22,11 +22,8 @@ export const deleteOrganization = async (organizationId: string) => {
       return toActionState("ERROR", "Not a member of this organization");
     }
 
-    await prisma.organization.delete({
-      where: {
-        id: organizationId,
-      },
-    });
+    await organizationData.deleteOrganization(organizationId)
+
   } catch (error) {
     return fromErrorToActionState(error);
   }

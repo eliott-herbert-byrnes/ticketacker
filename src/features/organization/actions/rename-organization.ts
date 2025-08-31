@@ -10,7 +10,7 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
-import { prisma } from "@/lib/prisma";
+import * as organizationData from "../data"
 
 const schema = z.object({ name: z.string().min(6).max(191) });
 
@@ -24,10 +24,7 @@ export const renameOrganization = async (
   try {
     const { name } = schema.parse({ name: formData.get("name") });
 
-    await prisma.organization.update({
-      where: { id: organizationId },  
-      data:  { name },                 
-    });
+    await organizationData.updateOrganization(organizationId, name)
 
     revalidatePath(organizationPath());
     return toActionState("SUCCESS", "Organization renamed");

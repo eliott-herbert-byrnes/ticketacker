@@ -8,15 +8,16 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
-import { prisma } from "@/lib/prisma";
 import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
+import * as ticketData from "../data";
 import { getTicketPermissions } from "../permissions/get-ticket-permissions";
 
 export const deleteTicket = async (id: string) => {
   const { user } = await getAuthOrRedirect();
 
   try {
-    const ticket = await prisma.ticket.findUnique({ where: { id } });
+    const ticket = await ticketData.findTicket(id);
+
     if (!ticket) return toActionState("ERROR", "Ticket not found");
 
     const perms = await getTicketPermissions({
@@ -29,7 +30,7 @@ export const deleteTicket = async (id: string) => {
       return toActionState("ERROR", "Not authorized");
     }
 
-    await prisma.ticket.delete({ where: { id } });
+    await ticketData.deleteTicket(id);
   } catch (error) {
     return fromErrorToActionState(error);
   }

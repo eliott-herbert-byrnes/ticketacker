@@ -1,9 +1,9 @@
-'use server'
+"use server";
 import { MembershipRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { membershipsPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";
-import { prisma } from "@/lib/prisma";
+import * as membershipData from "../data";
 import { getAdminOrRedirect } from "../queries/get-admin-or-redirect";
 import { getMemberships } from "../queries/get-memberships";
 
@@ -42,17 +42,7 @@ export const updateMembershipRole = async ({
     );
   }
 
-  await prisma.membership.update({
-    where: {
-      membershipId: {
-        userId,
-        organizationId,
-      },
-    },
-    data: {
-      membershipRole,
-    },
-  });
+  await membershipData.updateMembership(userId, organizationId, membershipRole);
 
   revalidatePath(membershipsPath(organizationId));
 

@@ -2,7 +2,7 @@
 
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import { prisma } from "@/lib/prisma";
+import * as membershipData from "../data";
 import { getMemberships } from "../queries/get-memberships";
 
 export const deleteMembership = async ({
@@ -58,14 +58,7 @@ export const deleteMembership = async ({
     );
   }
 
-  await prisma.membership.delete({
-    where: {
-      membershipId: {
-        userId,
-        organizationId,
-      },
-    },
-  });
+  await membershipData.deleteMembership(userId, organizationId);
 
   return toActionState(
     "SUCCESS",

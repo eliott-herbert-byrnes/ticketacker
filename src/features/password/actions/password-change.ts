@@ -6,7 +6,7 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import { prisma } from "@/lib/prisma";
+import * as passwordData from "../data"
 import { ChangeSchema } from "../schema/files";
 import { hashPassword, verifyPasswordHash } from "../utils/hash-and-verify";
 
@@ -29,9 +29,7 @@ export const passwordChange = async (
       confirmPassword: formData.get("confirmPassword"),
     });
 
-    const user = await prisma.user.findUnique({
-      where: { email: auth.user.email },
-    });
+    const user = await passwordData.findUser(auth.user.email)
 
     if (!user) {
       return toActionState("ERROR", "User not found", formData);
@@ -43,12 +41,9 @@ export const passwordChange = async (
     }
 
     const newHash = await hashPassword(password);
-    
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { passwordHash: newHash },
-    });
 
+    await passwordData.updateUser(user.id, newHash)
+    
     return toActionState("SUCCESS", "Password changed successfully");
   } catch (error) {
     return fromErrorToActionState(error, formData);

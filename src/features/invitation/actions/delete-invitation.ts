@@ -1,6 +1,6 @@
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
-import { prisma } from "@/lib/prisma";
+import * as invitiationData from "../data";
 
 type DeleteInvitationProps = {
   email: string;
@@ -13,27 +13,16 @@ export const deleteInvitation = async ({
 }: DeleteInvitationProps) => {
   await getAdminOrRedirect(organizationId);
 
-  const invitiation = await prisma.invitation.findUnique({
-    where: {
-      invitationId: {
-        email,
-        organizationId,
-      },
-    },
-  });
+  const invitiation = await invitiationData.findEmailInvitiation(
+    email,
+    organizationId
+  );
 
   if (!invitiation) {
     return toActionState("ERROR", "Invitation not found");
   }
 
-  await prisma.invitation.delete({
-    where: {
-      invitationId: {
-        email,
-        organizationId,
-      },
-    },
-  });
+  await invitiationData.deleteInvitation(email, organizationId);
 
   return toActionState("SUCCESS", "Invitation delete");
 };

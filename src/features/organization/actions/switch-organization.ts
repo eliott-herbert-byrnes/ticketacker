@@ -5,13 +5,17 @@ import { organizationPath } from "@/app/paths";
 import { fromErrorToActionState } from "@/components/form/utils/to-action-state";
 import { toActionState } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import { prisma } from "@/lib/prisma";
+import * as organizationData from "../data"
 import { getOrganizationsByUser } from "../queries/get-organization-by-user";
 
 export const switchOrganization = async (organizationId: string) => {
   const { user } = await getAuthOrRedirect({
     checkActiveOrganization: false,
   });
+
+  if(!user){
+    return toActionState("ERROR", "You are not authorized to perform this action")
+  }
 
   try {
     const organizations = await getOrganizationsByUser();
@@ -24,31 +28,10 @@ export const switchOrganization = async (organizationId: string) => {
       return toActionState("ERROR", "Organization not found");
     }
 
-    await prisma.$transaction([
-      prisma.membership.updateMany({
-        where: {
-          userId: user!.id,
-          organizationId: {
-            not: organizationId,
-          },
-        },
-        data: {
-          isActive: false,
-        },
-      }),
 
-      prisma.membership.update({
-        where: {
-          membershipId: {
-            organizationId,
-            userId: user!.id,
-          },
-        },
-        data: {
-          isActive: true,
-        },
-      }),
-    ]);
+    await organizationData.updateMembershipByOrganization(user.id, organizationId)
+
+
   } catch (error) {
     return fromErrorToActionState(error);
   }

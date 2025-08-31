@@ -15,3 +15,14 @@ export const findUser = async (email: string) => {
     },
   });
 };
+
+export const findEmailInvitiation = async (email: string, organizationId: string) => {
+  return await prisma.invitation.findUnique({
+    where: {
+      invitationId: {
+        email,
+        organizationId,
+      },
+    },
+  });
+}

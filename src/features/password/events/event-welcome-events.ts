@@ -1,6 +1,6 @@
 import { EmailWelcomeEmail } from "@/features/auth/emails/send-email-welcome";
 import { inngest } from "@/lib/inngest";
-import { prisma } from "@/lib/prisma";
+import * as passwordData from "../data"
 
 export type WelcomeEmailEventArgs = {
   data: {
@@ -19,7 +19,7 @@ export const welcomeEventFunction = inngest.createFunction(
   async ({ event, step }) => {
     const { userId, welcomeUrl }  = (event as unknown as WelcomeEmailEventArgs).data;
 
-    const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const user = await passwordData.findOrThrow(userId)
 
     const url = welcomeUrl ?? "https://www.ticketacker.com/tickets";
 

@@ -5,10 +5,10 @@ import { z } from "zod";
 import { setCookieByKey } from "@/app/actions/cookies";
 import { homePath, ticketsPath } from "@/app/paths";
 import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
-import { prisma } from "@/lib/prisma";
 import { toCent } from "@/utils/currency";
 import { getAuthOrRedirect } from "../../auth/queries/get-auth-or-redirect";
 import { isOwner } from "../../auth/utils/is-owner";
+import * as ticketData from "../data"
 
 const UpsertTicketSchema = z.object({
   title: z.string().min(1).max(191),
@@ -39,19 +39,13 @@ try {
     };
 
     if (id) {
-      const existing = await prisma.ticket.findUnique({
-        where: { id },
-        select: { userId: true },
-      });
+      const existing = await ticketData.findUniqueTicket(id)
 
       if (!existing || !isOwner(user, existing)) {
         return toActionState("ERROR", "Not authorized");
       }
 
-      await prisma.ticket.update({
-        where: { id },
-        data: dbData,
-      });
+      await ticketData.updateTicket(id, dbData)
 
       revalidatePath(ticketsPath());
       await setCookieByKey("toast", "Ticket updated");
@@ -64,15 +58,9 @@ try {
         );
       }
 
-      await prisma.ticket.create({
-        data: {
-          ...dbData,
-          organizationId: activeOrganization.id,
-        },
-      });
+      await ticketData.createTicket(dbData, activeOrganization.id)
 
       revalidatePath(ticketsPath());
-      // await setCookieByKey("toast", "Ticket created");
       return toActionState("SUCCESS", "Ticket Created");
     }
   } catch (error) {
