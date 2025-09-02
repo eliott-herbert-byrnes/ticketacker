@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/tooltip";
 import { deleteTicket } from "@/features/ticket/actions/delete-ticket";
 import { updateTicketStatus } from "@/features/ticket/actions/update-ticket-status";
-import { TicketWithMetadata } from "../../types";
+import { TicketWithMetadata } from "../types";
 import { TICKET_ICONS_LABELS } from "./constants";
 
 type TicketMoreMenuProps = {

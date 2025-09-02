@@ -1,6 +1,6 @@
 'use server'
-import { prisma } from "@/lib/prisma";
 import { AttachmentEntity } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 
 export const getAttachments = async (
   entity: AttachmentEntity,

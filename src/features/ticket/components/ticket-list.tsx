@@ -1,7 +1,7 @@
 import { Placeholder } from "@/components/Placeholder";
 import { TicketOrgFilterButton } from "@/components/ticket-org-filter-button";
-import { getTickets } from "../get-tickets";
-import { ParsedSearchParams } from "../search-params";
+import { getTickets } from "../queries/get-tickets";
+import { ParsedSearchParams } from "../queries/search-params";
 import { TicketItem } from "./ticket-item";
 import { TicketPagination } from "./ticket-pagination";
 import { TicketSearchInput } from "./ticket-search-input";

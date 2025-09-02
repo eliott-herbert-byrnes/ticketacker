@@ -162,22 +162,27 @@ enum AttachmentEntity {
 }
 
 model Ticket {
-    id          String          @id @default(cuid())
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
-    title       String
-    content     String          @db.VarChar(1024)
-    status      TicketStatus    @default(OPEN)
-    deadline    String          
-    bounty      Int             
-    userId      String
-    user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    organizationId  String
-    attachments Attachment[]
+    id                  String          @id @default(cuid())
+    createdAt           DateTime        @default(now())
+    updatedAt           DateTime        @updatedAt
+    title               String
+    content             String          @db.VarChar(1024)
+    status              TicketStatus    @default(OPEN)
+    deadline            String          
+    bounty              Int             
+    userId              String
+    user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    organization        Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    organizationId      String
+    attachments         Attachment[]
+    referencedTicketId String?
+    referencedTicket   Ticket?      @relation("ReferencedTickets", fields: [referencedTicketId], references: [id], onDelete: SetNull, onUpdate: SetNull)
+    referencedTickets  Ticket[]     @relation("ReferencedTickets")
+
 
     @@index([userId])
     @@index([organizationId])
+    @@index([referencedTicketId])
     comments Comment[]
 }
 

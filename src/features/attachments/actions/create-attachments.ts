@@ -9,10 +9,8 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import { isOwner } from "@/features/auth/utils/is-owner";
 import { fileSchema } from "../schema/files";
 import * as attachmentService from "../service";
-import { AttachmentSubject, isComment, isTicket } from "../types";
 
 const createAttachmentsSchema = z.object({
   files: fileSchema.refine((files) => files.length !== 0, "File is required"),
@@ -30,17 +28,18 @@ export const createAttachments = async (
 ) => {
   const { user } = await getAuthOrRedirect();
 
-  const subject = (await attachmentService.getAttachmentSubject(
-    entityId,
-    entity
-  )) as AttachmentSubject | null;
+  if(!user){
+    return toActionState("ERROR", "You are not authorized")
+  }
+
+  const subject = await attachmentService.getAttachmentSubject(entityId, entity)
 
   if (!subject) {
     return toActionState("ERROR", "Subject not found");
   }
 
-  if (!isOwner(user, subject)) {
-    return toActionState("ERROR", "Not the owner of this subject");
+  if (subject.userId && subject.userId !== user.id){
+    return toActionState("ERROR", "Not the owner of this subject")
   }
 
   try {
@@ -60,14 +59,10 @@ export const createAttachments = async (
 
 switch (entity) {
   case AttachmentEntity.TICKET:
-    if (isTicket(subject)) {
-      revalidatePath(ticketPath(subject.id));
-    }
+      revalidatePath(ticketPath(subject.ticketId));
     break;
   case AttachmentEntity.COMMENT:
-    if (isComment(subject)) {
-      revalidatePath(ticketPath(subject.ticket.id));
-    }
+      revalidatePath(ticketPath(subject.ticketId));
     break;
 }
 

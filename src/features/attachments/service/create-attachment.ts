@@ -3,11 +3,10 @@ import { AttachmentEntity } from "@prisma/client";
 import { fileStorage } from "@/infra/storage/s3-file-storage";
 import { prisma } from "@/lib/prisma";
 import * as attachmentData from "../data/";
-import { AttachmentSubject } from "../types";
-import { getOrganizationIdByAttachment } from "../utils/attachment-helper";
+import * as attachmentSubjectDTO from "../dto/attachment-subject-dto"
 
 type CreateAttachmentsArgs = {
-    subject: AttachmentSubject;
+    subject: attachmentSubjectDTO.Type;
     entity: AttachmentEntity;
     entityId: string;
     files: File[];
@@ -26,7 +25,7 @@ export const createAttachments = async ({
 
   try {
     for (const file of files) {
-      const body = Buffer.from(await file.arrayBuffer());
+    const body = Buffer.from(await file.arrayBuffer());
 
       attachment = await attachmentData.createAttachment({
         name: file.name,
@@ -36,7 +35,7 @@ export const createAttachments = async ({
 
       attachments.push(attachment);
 
-      const organizationId = getOrganizationIdByAttachment(entity, subject);
+      const organizationId = subject.organizationId
 
       await fileStorage.put({
         organizationId,

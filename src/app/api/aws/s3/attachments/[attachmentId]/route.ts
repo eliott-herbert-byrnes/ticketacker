@@ -1,11 +1,11 @@
-import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import { prisma } from "@/lib/prisma";
-import { NextRequest } from "next/server";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { s3 } from "@/lib/aws";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { NextRequest } from "next/server";
+import * as attachmentData from "@/features/attachments/data"
+import * as attachmentSubjectDTO from "@/features/attachments/dto/attachment-subject-dto"
 import { generateS3Key } from "@/features/attachments/utils/generate-s3-key";
-import { getOrganizationIdByAttachment } from "@/features/attachments/utils/attachment-helper";
+import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
+import { s3 } from "@/lib/aws";
 
 export async function GET(
   request: NextRequest,
@@ -15,21 +15,24 @@ export async function GET(
 
   const { attachmentId } = await params;
 
-  const attachment = await prisma.attachment.findUniqueOrThrow({
-    where: {
-      id: attachmentId,
-    },
-    include: {
+  const attachment = await attachmentData.getAttachmentUnique(attachmentId, {
       ticket: true,
-      comment: {
-        include: {
-          ticket: true,
-        },
-      },
-    },
-  });
+      comment: {include: {ticket: true}},
+    })
 
-  const subject = attachment.ticket ?? attachment.comment;
+    if(!attachment){
+      throw new Error("Attachment not found")
+    }
+
+    let subject = null as ReturnType<typeof attachmentSubjectDTO.fromTicket> | ReturnType<typeof attachmentSubjectDTO.fromComment>
+    switch (attachment.entity) {
+      case "TICKET":
+        subject = attachmentSubjectDTO.fromTicket(attachment.ticket);
+        break;
+      case "COMMENT":
+        subject = attachmentSubjectDTO.fromComment(attachment.comment);
+        break;
+    }
 
   if (!subject) {
     throw new Error("Subject not found");
@@ -40,11 +43,8 @@ export async function GET(
     new GetObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: generateS3Key({
-        organizationId: getOrganizationIdByAttachment(
-          attachment.entity,
-          subject
-        ),
-        entityId: subject.id,
+        organizationId: subject.organizationId,
+        entityId: subject.entityId,
         entity: attachment.entity,
         fileName: attachment.name,
         attachmentId: attachment.id,

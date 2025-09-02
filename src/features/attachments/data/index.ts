@@ -1,3 +1,5 @@
+export * from "./attachment"
 export * from "./create-attachment"
 export * from "./delete-attachment"
+export * from "./get-attachments"
 export * from "./organization-id-by-attachment"

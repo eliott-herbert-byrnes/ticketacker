@@ -1,25 +1,34 @@
 import { AttachmentEntity } from "@prisma/client";
 import { prisma, } from "@/lib/prisma";
+import * as AttachmentSubjectDTO from "../dto/attachment-subject-dto"
 
-export async function getAttachmentSubject(
+export const getAttachmentSubject = async (
   entityId: string,
-  entity: AttachmentEntity
-) {
-  if (entity === AttachmentEntity.TICKET) {
-    return prisma.ticket.findUnique({
-      where: { id: entityId },
-      select: { id: true, organizationId: true, userId: true }, 
-    });
-  }
+  entity: AttachmentEntity,
+): Promise<AttachmentSubjectDTO.Type | null> => {
+  switch (entity) {
+    case "TICKET": {
+      const ticket = await prisma.ticket.findUnique({
+        where: {
+          id: entityId,
+        },
+      });
 
-  if (entity === AttachmentEntity.COMMENT) {
-    return prisma.comment.findUnique({
-      where: { id: entityId },
-      include: {
-        ticket: { select: { id: true, organizationId: true } },
-      },
-    });
-  }
+      return AttachmentSubjectDTO.fromTicket(ticket);
+    }
+    case "COMMENT": {
+      const comment = await prisma.comment.findUnique({
+        where: {
+          id: entityId,
+        },
+        include: {
+          ticket: true,
+        },
+      });
 
-  return null;
-}
+      return AttachmentSubjectDTO.fromComment(comment);
+    }
+    default:
+      return null;
+  }
+};

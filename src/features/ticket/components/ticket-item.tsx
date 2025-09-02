@@ -7,21 +7,22 @@ import {
   LucidePencil,
 } from "lucide-react";
 import Link from "next/link";
+import React from "react";
 import { editPath, ticketPath } from "@/app/paths";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toCurrencyFromCent } from "@/utils/currency";
-import { TicketWithMetadata } from "../../types";
+import { TicketWithMetadata } from "../types";
 import { TICKET_ICONS } from "./constants";
 import { TicketMoreMenu } from "./ticket-more-menu";
-import React from "react";
 
 type TicketItemProps = {
   ticket: TicketWithMetadata;
   isDetail?: boolean;
   comments?: React.ReactNode;
   attachments?: React.ReactNode;
+  referencedTickets?: React.ReactNode;
 };
 
 const TicketItem = ({
@@ -29,6 +30,7 @@ const TicketItem = ({
   isDetail,
   comments,
   attachments,
+  referencedTickets,
 }: TicketItemProps) => {
   const buttonElement = (
     <Button variant="outline" asChild size="icon">
@@ -109,6 +111,7 @@ const TicketItem = ({
       <Separator />
 
       {attachments}
+      {referencedTickets}
       {comments}
     </div>
   );

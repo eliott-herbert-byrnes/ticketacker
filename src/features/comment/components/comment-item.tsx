@@ -1,8 +1,8 @@
 import { format } from "date-fns";
-import { Card } from "@/components/ui/card";
-import { CommentWithMetadata } from "../types";
 import React from "react";
+import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { CommentWithMetadata } from "../types";
 
 type CommentItemProps = {
   comment: CommentWithMetadata;

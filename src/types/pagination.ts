@@ -3,6 +3,6 @@ export type PaginatedData<T, C = string> = {
   metadata: {
     count: number;
     hasNextPage: boolean;
-    cursor: C | undefined;
+    cursor?: C | undefined;
   };
 };

@@ -8,9 +8,12 @@ import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
+import * as attachmentSubjectDTO from "@/features/attachments/dto/attachment-subject-dto"
 import { fileSchema } from "@/features/attachments/schema/files";
 import * as attachmentService from "@/features/attachments/service";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
+import * as ticketData from "@/features/ticket/data"
+import { findTicketIdsFromText } from "@/utils/find-ids-from-text";
 import * as commentData from "../data"
 
 const createCommentSchema = z.object({
@@ -51,12 +54,20 @@ export const createComment = async (
       }
     })
 
+    const subject = attachmentSubjectDTO.fromComment(comment)
+
+    if(!subject){
+      return toActionState("ERROR", "Comment not created")
+    }
+
     await attachmentService.createAttachments({
-      subject: comment,
+      subject: subject,
       entity: "COMMENT",
       entityId: comment.id,
       files,
     })
+
+    await ticketData.connectReferencedTickets(ticketId, findTicketIdsFromText("tickets", content))
 
     revalidatePath(ticketPath(ticketId));
     

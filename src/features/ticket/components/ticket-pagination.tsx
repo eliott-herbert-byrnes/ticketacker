@@ -4,12 +4,12 @@ import { useQueryState, useQueryStates } from "nuqs";
 import { useEffect, useRef } from "react";
 import { Pagination } from "@/components/pagination";
 import { PaginatedData } from "@/types/pagination";
-import { TicketWithMetadata } from "../../types";
 import {
   paginationOptions,
   paginationParser,
   searchParser,
-} from "../search-params";
+} from "../queries/search-params";
+import { TicketWithMetadata } from "../types";
 
 type TicketPaginationProps = {
   paginatedTicketMetadata: PaginatedData<TicketWithMetadata>["metadata"]

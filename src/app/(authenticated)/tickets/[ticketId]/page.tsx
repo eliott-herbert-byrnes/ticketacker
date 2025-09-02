@@ -5,7 +5,8 @@ import { Heading } from "@/components/Heading";
 import { Attachments } from "@/features/attachments/components/attachments";
 import { Comments } from "@/features/comment/components/comments/comments";
 import { getComments } from "@/features/comment/queries/get-comments";
-import { TicketItem } from "@/features/ticket/queries/components/ticket-item";
+import { ReferencedTickets } from "@/features/ticket/components/referenced-tickets";
+import { TicketItem } from "@/features/ticket/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 
 type TicketPageProps = {
@@ -51,6 +52,7 @@ const TicketPage = async ({ params }: TicketPageProps) => {
         <TicketItem
           ticket={ticket}
           isDetail={true}
+          referencedTickets={<ReferencedTickets ticketId={ticket.id} />}
           comments={
             <Comments
               ticketId={ticket.id}

@@ -2,7 +2,7 @@ import { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 import { Heading } from "@/components/Heading";
 import { Spinner } from "@/components/spinner";
-import { TicketList } from "@/features/ticket/queries/components/ticket-list";
+import { TicketList } from "@/features/ticket/components/ticket-list";
 import { searchParamsCache } from "@/features/ticket/queries/search-params";
 
 type HomePageProps = {

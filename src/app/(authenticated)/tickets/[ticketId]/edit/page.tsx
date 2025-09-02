@@ -3,7 +3,7 @@ import { homePath, ticketsPath } from "@/app/paths";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CardCompact } from "@/components/card-compact";
 import { Separator } from "@/components/ui/separator";
-import { TicketUpsertForm } from "@/features/ticket/queries/components/ticket-upsert-form";
+import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 import { Heading } from "@/components/Heading";
 
