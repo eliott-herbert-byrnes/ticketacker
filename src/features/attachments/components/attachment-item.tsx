@@ -1,7 +1,7 @@
-import { attachmentDownloadPath } from "@/app/paths";
 import { Attachment } from "@prisma/client";
 import { LucideArrowUpRightFromSquare } from "lucide-react";
 import Link from "next/link";
+import { attachmentDownloadPath } from "@/app/paths";
 
 type AttachmentItemProps = {
   attachment: Attachment;

@@ -2,8 +2,8 @@
 
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { useActionState } from "@/components/hooks/use-action-state";
-import { createInvitiation } from "../actions/create-invitation";
 import { InvitationDialog } from "@/components/invitation-dialog";
+import { createInvitiation } from "../actions/create-invitation";
 
 type InvitationCreateButtonProps = {
   organizationId: string;

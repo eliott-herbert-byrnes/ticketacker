@@ -1,4 +1,5 @@
 import {EventSchemas, Inngest} from 'inngest'
+import { AttachmentDeleteEventArgs } from '@/features/attachments/events/event-attachment-deleted';
 import { EmailVerificationForEmailChangeArgs } from '@/features/auth/events/event-email-change';
 import { EmailVerificationEventArgs } from '@/features/auth/events/event-email-verification';
 import { WeeklyUserRoundupEventArgs } from '@/features/background-jobs/events/weekly-user-roundup';
@@ -7,7 +8,6 @@ import { InvitationCreateEventArgs } from '@/features/invitation/events/event-in
 import { ProcessInvitationsEvent } from '@/features/membership/events/event-process-invitations';
 import { PasswordResetEventArgs } from '@/features/password/events/event-password-event'
 import { WelcomeEmailEventArgs } from '@/features/password/events/event-welcome-events';
-import { AttachmentDeleteEventArgs } from '@/features/attachments/events/event-attachment-deleted';
 
 type Events = {
     "app/password.password-reset": PasswordResetEventArgs;

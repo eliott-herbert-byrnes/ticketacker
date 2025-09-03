@@ -1,6 +1,7 @@
 "use client";
 import { AttachmentEntity } from "@prisma/client";
 import { X } from "lucide-react";
+import Image from "next/image";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
@@ -87,7 +88,7 @@ const AttachmentCreateForm = ({
       setFiles([])
       if (inputRef.current) inputRef.current.value = "";
     }
-  }, [actionState.status])
+  }, [actionState.status, previews])
 
   return (
     <Form action={action} actionState={actionState} onSuccess={onSuccess}>
@@ -131,7 +132,7 @@ const AttachmentCreateForm = ({
                 </Button>
 
                 {isImage(p.type) ? (
-                  <img
+                  <Image
                     src={p.url}
                     alt={p.name}
                     className="h-full w-full object-cover rounded border bg-none"

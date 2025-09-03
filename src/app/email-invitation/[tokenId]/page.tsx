@@ -1,11 +1,10 @@
-import { setCookieByKey } from "@/app/actions/cookies";
+import { redirect } from "next/navigation";
 import { organizationPath } from "@/app/paths";
 import { CardCompact } from "@/components/card-compact";
 import { getAuth } from "@/features/auth/queries/get-auth";
 import { InvitationAcceptForm } from "@/features/invitation/components/invitation-accept-form";
 import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/utils/crypto";
-import { redirect } from "next/navigation";
 
 type EmailInvitiationPageProps = {
   params: Promise<{
