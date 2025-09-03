@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import React from "react";
+import { CommentContent } from "@/components/comment-content";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CommentWithMetadata } from "../types";
@@ -27,7 +28,10 @@ const CommentItem = ({ comment, buttons, sections }: CommentItemProps) => {
             {format(comment.createdAt, "yyyy-MM-dd, HH:mm")}
           </p>
         </div>
-        <p className="whitespace-pre-line">{comment.content}</p>
+
+        <CommentContent titleMap={comment.mentions as Record<string, string> | null}>
+          {comment.content}
+        </CommentContent>
 
         {sections.map((section) => (
           <div className="space-y-2 mt-2" key={section.label}>

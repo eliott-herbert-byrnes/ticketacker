@@ -31,3 +31,6 @@ export const accountPasswordPath = () => "/account/password"
 
 // Attachments
 export const attachmentDownloadPath = (attachmentId: string) => `/api/aws/s3/attachments/${attachmentId}`
+
+// Credentials
+export const credentialsPath = (organizationId: string) => `/organization/${organizationId}/credentials`

@@ -7,19 +7,21 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { isOwner } from "@/features/auth/utils/is-owner";
-import * as commentData from "../data"
+import * as ticketService from "@/features/ticket/service/disconnect-referenced-tickets-via-comment";
+import * as commentData from "../data";
 
 const deleteComment = async (id: string) => {
   const { user } = await getAuthOrRedirect();
 
-  const comment = await commentData.findComment(id)
+  const comment = await commentData.findComment(id);
 
   if (!comment || !isOwner(user, comment)) {
     return toActionState("ERROR", "Not authorized");
   }
 
   try {
-    await commentData.deleteComment(id)
+    await commentData.deleteComment(id);
+    await ticketService.disconnectReferencedTicketsViaComment(comment);
   } catch (error) {
     fromErrorToActionState(error);
   }

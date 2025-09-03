@@ -5,6 +5,7 @@ type CreateCommentArgs<T> = {
     userId: string;
     ticketId: string;
     content: string;
+    mentions?: Record<string, string>;
     include: Prisma.Subset<T, Prisma.CommentInclude>;
 }
 
@@ -12,6 +13,7 @@ export const createComment = async <T extends Prisma.CommentInclude>({
     userId,
     ticketId,
     content,
+    mentions,
     include,
 }: CreateCommentArgs<T>) => {
     return await prisma.comment.create({
@@ -19,6 +21,7 @@ export const createComment = async <T extends Prisma.CommentInclude>({
             userId,
             ticketId: ticketId,
             content,
+            mentions,
           },
           include,
         });

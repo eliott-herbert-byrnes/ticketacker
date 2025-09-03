@@ -3,6 +3,11 @@
 import { prisma } from "@/lib/prisma"
 
 export const getReferencedTickets = async (ticketId: string) => {
+
+    if(!ticketId){
+        return [];
+    }
+
     const ticket = await prisma.ticket.findUnique({
         where: {id: ticketId},
         include: {
@@ -11,7 +16,7 @@ export const getReferencedTickets = async (ticketId: string) => {
     })
 
     if(!ticket){
-        return null;
+        return [];
     }
 
     return ticket?.referencedTickets ?? [];

@@ -38,6 +38,18 @@ model User {
   @@index([createdAt])
 }
 
+model Credential {
+  id                String      @id @default(cuid())
+  createdAt         DateTime    @default(now())
+  secretHash        String      @unique
+  name              String
+  lastUsed          DateTime?
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId    String
+
+  @@index([organizationId])
+}
+
 model Organization {
     id                String      @id @default(cuid())
     createdAt         DateTime    @default(now())
@@ -46,6 +58,7 @@ model Organization {
     memberships       Membership[]    
     tickets           Ticket[]
     invitations       Invitation[]
+    credentials       Credential[]
 }
 
 model Invitation {
@@ -151,7 +164,6 @@ model Attachment {
   comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String?
 
-
   @@index([ticketId])
   @@index([commentId])
 }
@@ -179,7 +191,6 @@ model Ticket {
     referencedTicket   Ticket?      @relation("ReferencedTickets", fields: [referencedTicketId], references: [id], onDelete: SetNull, onUpdate: SetNull)
     referencedTickets  Ticket[]     @relation("ReferencedTickets")
 
-
     @@index([userId])
     @@index([organizationId])
     @@index([referencedTicketId])
@@ -191,6 +202,7 @@ model Comment {
   createdAt   DateTime     @default(now())
   content     String       @db.VarChar(1024)
   ticket      Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  mentions    Json?
   ticketId    String
   user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId      String?

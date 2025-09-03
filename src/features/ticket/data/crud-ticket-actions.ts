@@ -1,4 +1,5 @@
 import { TicketStatus } from "@prisma/client";
+import { FieldRef } from "@prisma/client/runtime/library";
 import { prisma } from "@/lib/prisma";
 
 export const createTicket = (
@@ -77,3 +78,40 @@ export const updateTicketData = async (
     data: dbData,
   });
 };
+
+
+export const findManyTickets = async (unique: string[] | FieldRef<"Ticket", "String[]"> | undefined) => {
+  return await prisma.ticket.findMany({
+        where: {id: {in: unique}},
+        select: {id: true}
+    })
+}
+
+export const updateDeletedTickets = async (id: string, connect: { id: string; }[]) => {
+  return await prisma.ticket.update({
+        where: {id},
+        data: {
+            referencedTickets: {
+                connect,
+            }
+        }
+    })
+}
+
+export const findManyComments = async (ticketId: string, not: string) => {
+  return await prisma.comment.findMany({
+    where: {
+      ticketId,
+      id: {
+        not,
+      },
+    },
+  });
+}
+
+export const findTicketIdTitle = async (ids: string[]) => {
+  return await prisma.ticket.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, title: true },
+  });
+}

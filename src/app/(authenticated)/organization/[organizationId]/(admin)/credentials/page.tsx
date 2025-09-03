@@ -1,17 +1,17 @@
 import { Suspense } from "react";
-import { AdminButton } from "@/components/admin-button";
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/spinner";
-import { InvitationList } from "@/features/invitation/components/invitation-list";
+import { CredentialCreateButton } from "@/features/credentials/components/credential-create-button";
+import { CredentialList } from "@/features/credentials/components/credential-list";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
 import { OrganizationBreadcrumbs } from "../_navigation/tabs";
 
-type InvitationPageProps = {
+type CredentialsPageProps = {
   params: Promise<{
     organizationId: string;
   }>;
 };
-const InvitationsPage = async ({ params }: InvitationPageProps) => {
+
+const CredentialsPage = async ({ params }: CredentialsPageProps) => {
   const { organizationId } = await params;
 
   const organization = await getOrganizationsByUser();
@@ -28,17 +28,18 @@ const InvitationsPage = async ({ params }: InvitationPageProps) => {
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
-        title="Invitations"
-        description="Manage your organizations invitations"
-        actions={<AdminButton organizationId={organizationId} />}
+        title="Credentials"
+        description="Manage your organization's API secrets"
         tabs={breadcrumbs}
+        actions={<CredentialCreateButton organizationId={organizationId} />}
       />
-
-      <Suspense fallback={<Spinner />}>
-        <InvitationList organizationId={organizationId} />
-      </Suspense>
+      <div className="flex items-center justify-center px-14">
+        <Suspense>
+          <CredentialList organizationId={organizationId} />
+        </Suspense>
+      </div>
     </div>
   );
 };
 
-export default InvitationsPage;
+export default CredentialsPage;
