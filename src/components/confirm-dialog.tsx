@@ -56,7 +56,7 @@ const useConfirmDialog = ({
 
   useEffect(() => {
     if (isPending) {
-      toastRef.current = toast.loading("Deleting ...");
+      toastRef.current = toast.loading("Processing ...");
     } else if (toastRef.current) {
       toast.dismiss(toastRef.current);
     } 

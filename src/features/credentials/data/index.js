@@ -1,1 +1,1 @@
-export * from "./create-credential"
+export * from "./crud-credential-actions"

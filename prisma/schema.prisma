@@ -34,6 +34,7 @@ model User {
   role               Role                 @default(USER)
 
   comments           Comment[]
+  credentials         Credential[]
 
   @@index([createdAt])
 }
@@ -46,8 +47,22 @@ model Credential {
   lastUsed          DateTime?
   organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId    String
+  revokedAt         DateTime?
+  createdBy         User?         @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdByUserId   String?
+  scopes            CredentialScope[]
 
   @@index([organizationId])
+  @@index([createdByUserId])
+}
+
+model CredentialScope {
+  credential        Credential  @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+  credentialId      String
+  scope             String
+
+  @@id([credentialId, scope])
+  @@index([scope])
 }
 
 model Organization {

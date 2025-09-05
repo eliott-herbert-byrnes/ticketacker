@@ -115,3 +115,26 @@ export const findTicketIdTitle = async (ids: string[]) => {
     select: { id: true, title: true },
   });
 }
+
+export const findMinimalUniqueTicket = async (id: string) => {
+  return await prisma.ticket.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
+export const findUniqueTicketUser = async (id: string) => {
+  return await prisma.ticket.findUnique({
+        where: {
+            id, 
+        },
+        include: {
+            user: {
+                select: {
+                    username: true,
+                }
+            }
+        }
+    })
+}
