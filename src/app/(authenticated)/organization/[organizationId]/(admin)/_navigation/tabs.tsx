@@ -5,6 +5,7 @@ import {
   invitationsPath,
   membershipsPath,
   organizationPath,
+  subscriptionPath,
 } from "@/app/paths";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
@@ -22,8 +23,9 @@ const OrganizationBreadcrumbs = ({
     memberships: "Memberships" as const,
     invitations: "Invitations" as const,
     credentials: "Credentials" as const,
+    subscription: "Subscription" as const,
   }[
-    pathName.split("/").at(-1) as "memberships" | "invitations" | "credentials"
+    pathName.split("/").at(-1) as "memberships" | "invitations" | "credentials" | "subscription"
   ];
 
   if (!organizationName) {
@@ -49,6 +51,10 @@ const OrganizationBreadcrumbs = ({
             {
               title: "Credentials",
               href: credentialsPath(params.organizationId),
+            },
+            {
+              title: "Subscription",
+              href: subscriptionPath(params.organizationId),
             },
           ],
         },

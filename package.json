@@ -11,6 +11,8 @@
     "type": "tsc --noEmit",
     "postinstall": "prisma generate",
     "prisma-seed": "tsx prisma/seed.ts",
+    "stripe-seed": "tsx src/lib/stripe/seed.ts",
+    "seed": "npm run prisma-seed && npm run stripe-seed",
     "email": "email dev --dir src/emails"
   },
   "dependencies": {
@@ -35,6 +37,9 @@
     "@react-email/components": "0.5.0",
     "@tanstack/react-query": "^5.84.0",
     "@types/big.js": "^6.2.2",
+    "@upstash/ratelimit": "^2.0.6",
+    "@vercel/edge": "^1.2.2",
+    "@vercel/kv": "^3.0.0",
     "base32-encoding": "^1.0.0",
     "big.js": "^7.0.1",
     "class-variance-authority": "^0.7.1",
@@ -58,6 +63,7 @@
     "resend": "^5.0.0",
     "rfc4648": "^1.5.4",
     "sonner": "^2.0.6",
+    "stripe": "^18.5.0",
     "tailwind-merge": "^3.3.1",
     "use-debounce": "^10.0.5",
     "zod": "^3.25.76",

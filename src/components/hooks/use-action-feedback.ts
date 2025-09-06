@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useRef } from "react";
 import { ActionState } from "@/components/form/utils/to-action-state";
 

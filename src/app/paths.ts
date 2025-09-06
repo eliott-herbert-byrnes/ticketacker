@@ -34,3 +34,7 @@ export const attachmentDownloadPath = (attachmentId: string) => `/api/aws/s3/att
 
 // Credentials
 export const credentialsPath = (organizationId: string) => `/organization/${organizationId}/credentials`
+
+// Stripe
+export const pricingPath = () => "/pricing"
+export const subscriptionPath =  (organizationId: string) => `/organization/${organizationId}/subscription`

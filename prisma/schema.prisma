@@ -64,7 +64,26 @@ model CredentialScope {
   @@id([credentialId, scope])
   @@index([scope])
 }
+model StripeCustomer {
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customerId     String       @unique
+  subscription   String?
+  subscriptionStatus  StripeSubscriptionStatus?
+  productId     String?
+  priceId       String?
+}
 
+enum StripeSubscriptionStatus {
+    active
+    incomplete
+    incomplete_expired
+    past_due
+    canceled
+    unpaid
+    trialing
+    paused
+}
 model Organization {
     id                String      @id @default(cuid())
     createdAt         DateTime    @default(now())
@@ -74,6 +93,8 @@ model Organization {
     tickets           Ticket[]
     invitations       Invitation[]
     credentials       Credential[]
+    stripeCustomerId  String?
+    stripeCustomer    StripeCustomer?
 }
 
 model Invitation {
@@ -122,6 +143,7 @@ enum MembershipRole {
 model EmailVerificationToken {
   id          String    @id             @default(cuid())
   code        String
+  createdAt   DateTime  @default(now())
   expiresAt   DateTime
   email       String
   userId      String

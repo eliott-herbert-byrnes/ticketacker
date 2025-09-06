@@ -1,9 +1,13 @@
 // src/components/account-dropdown.tsx
 "use client";
 
-import { LucideLock, LucideLogOut, LucideUser } from "lucide-react";
+import { LucideGem, LucideLock, LucideLogOut, LucideUser } from "lucide-react";
 import Link from "next/link";
-import { accountPasswordPath, accountProfilePath } from "@/app/paths";
+import {
+  accountPasswordPath,
+  accountProfilePath,
+  pricingPath,
+} from "@/app/paths";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -50,6 +54,14 @@ const AccountDropdown = ({ user }: AccountDropdownProps) => {
             <span>Password</span>
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href={pricingPath()}>
+            <LucideGem className="mr-2 h-4 w-4" />
+            <span>Pricing</span>
+          </Link>
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
         <form action={signOutAction}>
           <DropdownMenuItem asChild>

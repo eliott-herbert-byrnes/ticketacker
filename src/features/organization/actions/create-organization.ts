@@ -1,19 +1,24 @@
 // src/features/organization/actions/create-organization.ts
-'use server'
+"use server";
 
 import { z } from "zod";
 import { organizationPath } from "@/app/paths";
-import { ActionState, fromErrorToActionState, toActionState } from "@/components/form/utils/to-action-state";
+import {
+  ActionState,
+  fromErrorToActionState,
+  toActionState,
+} from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import * as organizationData from "../data"
+import { inngest } from "@/lib/inngest";
+import * as organizationData from "../data";
 
 const createOrganizationSchema = z.object({
-  name: z.string().min(6).max(191)
-})
+  name: z.string().min(6).max(191),
+});
 
 export async function createOrganization(
   _actionState: ActionState,
-  formData: FormData,
+  formData: FormData
 ): Promise<ActionState> {
   const { user } = await getAuthOrRedirect({
     checkOrganization: false,
@@ -29,7 +34,16 @@ export async function createOrganization(
       name: formData.get("name"),
     });
 
-    await organizationData.createOrganizationUpdateMembership(data, user.id)
+    const { organization } =
+      await organizationData.createOrganizationUpdateMembership(data, user.id);
+
+    await inngest.send({
+      name: "app/organization.created",
+      data: {
+        organizationId: organization.id,
+        byEmail: user.email ?? undefined,
+      },
+    });
 
     return {
       ...toActionState("SUCCESS", "Organization created"),

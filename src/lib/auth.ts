@@ -31,8 +31,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-    updateAge: 24 * 60 * 60, // 24 hours
+    maxAge: 30 * 24 * 60 * 60, 
+    updateAge: 24 * 60 * 60, 
   },
 
   providers: [
@@ -72,15 +72,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             },
           });
 
-          if (!user) {
-            throw new AuthorizationError("User not found");
-          }
+          // if (!user) {
+          //   throw new AuthorizationError("User not found");
+          // }
+          
+          const isValidPassword = await verify(user!.passwordHash, password);
 
-          const isValidPassword = await verify(user.passwordHash, password);
-          if (!isValidPassword) {
-            throw new AuthorizationError("Invalid password");
-          }
 
+          if (!user || !isValidPassword) {
+            throw new AuthorizationError("Incorrect email or password");
+          }
+          
           return {
             id: String(user.id),
             name: user.username,
@@ -96,65 +98,64 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     }),
   ],
 
-events: {
-  async signIn({ user }) {
-    if (user?.id) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { lastSignedIn: new Date() },
-      });
-    }
+  events: {
+    async signIn({ user }) {
+      if (user?.id) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { lastSignedIn: new Date() },
+        });
+      }
+    },
+    async createUser({ user }) {
+      if (user?.id) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            emailVerified: null,
+            lastSignedIn: new Date(),
+          },
+        });
+      }
+    },
+    async linkAccount({ user }) {
+      if (user?.id) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { emailVerified: new Date() },
+        });
+      }
+    },
   },
-  async createUser({ user }) {
-    if (user?.id) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          // make the "not verified" state explicit
-          emailVerified: null,
-          lastSignedIn: new Date(),
-        },
-      });
-    }
-  },
-  async linkAccount({ user }) {
-    if (user?.id) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { emailVerified: new Date() },
-      });
-    }
-  },
-},
 
- callbacks: {
+  callbacks: {
     async jwt({ token, user, trigger, session }) {
-      // Allow client-side session.update(...) merges; then normalize dates
       if (trigger === "update" && session?.user) {
         const merged: JWT = { ...token, ...session.user } as JWT;
-        const rawEV = (merged as unknown as { emailVerified?: unknown }).emailVerified;
-        const rawLS = (merged as unknown as { lastSignedIn?: unknown }).lastSignedIn;
+        const rawEV = (merged as unknown as { emailVerified?: unknown })
+          .emailVerified;
+        const rawLS = (merged as unknown as { lastSignedIn?: unknown })
+          .lastSignedIn;
         merged.emailVerified = toDateOrNull(rawEV);
         merged.lastSignedIn = toDateOrUndef(rawLS);
         return merged;
       }
 
-      // On initial sign-in, write Dates straight from the DB user
       if (user) {
         token.id = user.id;
-        token.emailVerified = user.emailVerified ?? null;         // Date | null
-        token.lastSignedIn = user.lastSignedIn ?? undefined;       // Date | undefined
+        token.emailVerified = user.emailVerified ?? null; 
+        token.lastSignedIn = user.lastSignedIn ?? undefined; 
         token.username = user.name ?? undefined;
         return token;
       }
 
-      // On subsequent requests, JWT-decoded fields might be strings — normalize.
-      const rawEV = (token as unknown as { emailVerified?: unknown }).emailVerified;
-      const rawLS = (token as unknown as { lastSignedIn?: unknown }).lastSignedIn;
+      const rawEV = (token as unknown as { emailVerified?: unknown })
+        .emailVerified;
+      const rawLS = (token as unknown as { lastSignedIn?: unknown })
+        .lastSignedIn;
       token.emailVerified = toDateOrNull(rawEV);
       token.lastSignedIn = toDateOrUndef(rawLS);
 
-      // One-time DB hydrate after email verification
       if (!token.emailVerified && token.id) {
         const dbUser = await prisma.user.findUnique({
           where: { id: token.id as string },
@@ -173,8 +174,8 @@ events: {
     async session({ session, token }) {
       if (session.user && token) {
         session.user.id = token.id as string;
-        // Keep these as Dates to match your type augmentation
-        session.user.emailVerified = (token.emailVerified as Date | null) ?? null;
+        session.user.emailVerified =
+          (token.emailVerified as Date | null) ?? null;
         session.user.username = token.username as string | undefined;
         session.user.lastSignedIn = token.lastSignedIn as Date | undefined;
       }
