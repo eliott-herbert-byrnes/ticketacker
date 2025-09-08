@@ -77,4 +77,3 @@ export const deleteManyInvitation = async (
   });
 };
 
-// TODO https://chatgpt.com/share/68b2fa73-1aa0-8005-bf5f-92076467566a

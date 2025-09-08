@@ -8,6 +8,7 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
+import { getStripeProvisioningByOrganization } from "@/features/stripe/queries/get-stripe-provisioning";
 import { inngest } from "@/lib/inngest";
 import * as invitationData from "../data";
 import { generateInvitationLink } from "../utils/generate-invitiation-link";
@@ -25,6 +26,12 @@ export const createInvitiation = async (
 
   if (!user) {
     return toActionState("ERROR", "User not verified");
+  }
+
+  const {allowedMembers, currentMembers} = await getStripeProvisioningByOrganization(organizationId)
+
+  if(allowedMembers <= currentMembers){
+    return toActionState("ERROR", "Upgrade your subscription to invite more members.")
   }
 
   try {

@@ -39,9 +39,14 @@ const seed = async () => {
     },
   });
 
+  const testClock = await stripe.testHelpers.testClocks.create({
+    frozen_time: Math.round(new Date().getTime() / 1000)
+  })
+
   const customer = await stripe.customers.create({
     name: organization.name,
     email: organization.memberships[0].user.email,
+    test_clock: testClock.id,
   });
 
   await prisma.stripeCustomer.create({
@@ -58,16 +63,31 @@ const seed = async () => {
       {
         name: "Cancel anytime",
       },
+      {
+        name: "Unlimited members"
+      },
+      {
+        name: "Create private tickets"
+      }
     ],
   });
 
   const productTwo = await stripe.products.create({
     name: "Startup Plan",
     description: "Your startup plan.",
+    metadata: {
+      allowedMembers: 3,
+    },
     marketing_features: [
       {
         name: "Cancel anytime",
       },
+      {
+        name: "Up to 3 members"
+      },
+      {
+        name: "Create private tickets"
+      }
     ],
   });
 

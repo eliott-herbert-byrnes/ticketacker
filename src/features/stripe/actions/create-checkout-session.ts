@@ -1,3 +1,4 @@
+'use server'
 import { redirect } from "next/navigation";
 import { pricingPath, signInPath, subscriptionPath } from "@/app/paths";
 import { toActionState } from "@/components/form/utils/to-action-state";

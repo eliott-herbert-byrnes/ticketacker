@@ -1,4 +1,4 @@
-import { LucideCheck } from "lucide-react";
+import { LucideBadgeCheck, LucideDot } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -9,29 +9,31 @@ import {
 } from "@/components/ui/card";
 import { stripe } from "@/lib/stripe";
 import { toCurrencyFromCent } from "@/utils/currency";
+import { getStripeCustomerByOrganization } from "../queries/get-stripe-customer";
 import { CheckoutSessionForm } from "./checkout-session-form";
 
 type PricesProps = {
+  activePriceId: string | null | undefined;
   organizationId: string | null | undefined;
   productId: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Prices = async ({ organizationId, productId }: PricesProps) => {
+const Prices = async ({ organizationId, productId, activePriceId }: PricesProps) => {
   const prices = await stripe.prices.list({
     active: true,
     product: productId,
   });
 
   return (
-    <div className="flex gap-x-2">
+    <div className="flex flex-col gap-y-2">
       {prices.data.map((price) => (
         <CheckoutSessionForm
           key={price.id}
           organizationId={organizationId}
           priceId={price.id}
+          activePriceId={activePriceId}
         >
-          <span className="font-bold text-lg">
+          <span className="text-lg">
             {toCurrencyFromCent(price.unit_amount || 0, price.currency)}
           </span>
           &nbsp;/&nbsp;<span>{price.recurring?.interval}</span>
@@ -46,27 +48,42 @@ type ProductsProps = {
 };
 
 const Products = async ({ organizationId }: ProductsProps) => {
+  
+  const stripeCustomer = await getStripeCustomerByOrganization(organizationId);
+  
+  const subscriptionStatus = stripeCustomer?.subscriptionStatus;
+  const activeSubscription = subscriptionStatus === "active";
+  const activeProductId = activeSubscription ? stripeCustomer?.productId : null;
+  const activePriceId = activeSubscription ? stripeCustomer?.priceId : null;
+
   const products = await stripe.products.list({
     active: true,
   });
 
   return (
-    <div className="flex-1 flex flex-col items-center gap-y-4">
+    <div className="flex-1 flex items-center flex-col sm:flex-row justify-center gap-4">
       {products.data.map((product) => (
-        <Card key={product.id} className="w-[300px] max-w-[350px]">
-          <CardHeader>
-            <CardTitle>{product.name}</CardTitle>
+        <Card key={product.id} className="w-[250px] items-center">
+          <CardHeader className="flex flex-col w-[200px]">
+            <CardTitle className="flex flex-row gap-x-2 items-center justify-between">
+              {product.name}
+              {activeProductId === product.id ? <LucideBadgeCheck /> : null}
+            </CardTitle>
             <CardDescription>{product.description}</CardDescription>
           </CardHeader>
           <CardContent>
             {product.marketing_features.map((feature) => (
               <div key={feature.name} className="flex gap-x-2">
-                <LucideCheck /> {feature.name}
+                <LucideDot/> {feature.name}
               </div>
             ))}
           </CardContent>
           <CardFooter>
-            <Prices organizationId={organizationId} productId={product.id} />
+            <Prices
+              organizationId={organizationId}
+              productId={product.id}
+              activePriceId={activePriceId}
+            />
           </CardFooter>
         </Card>
       ))}

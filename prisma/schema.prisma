@@ -65,13 +65,14 @@ model CredentialScope {
   @@index([scope])
 }
 model StripeCustomer {
-  organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  customerId     String       @unique
-  subscription   String?
-  subscriptionStatus  StripeSubscriptionStatus?
-  productId     String?
-  priceId       String?
+  organizationId     String                    @unique
+  organization       Organization              @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customerId         String                    @unique
+  subscriptionId     String?
+  subscriptionStatus StripeSubscriptionStatus?
+  productId          String?
+  priceId            String?
+  eventAt            Int?
 }
 
 enum StripeSubscriptionStatus {
@@ -227,6 +228,7 @@ model Ticket {
     referencedTicketId String?
     referencedTicket   Ticket?      @relation("ReferencedTickets", fields: [referencedTicketId], references: [id], onDelete: SetNull, onUpdate: SetNull)
     referencedTickets  Ticket[]     @relation("ReferencedTickets")
+    private            Boolean      @default(false)
 
     @@index([userId])
     @@index([organizationId])

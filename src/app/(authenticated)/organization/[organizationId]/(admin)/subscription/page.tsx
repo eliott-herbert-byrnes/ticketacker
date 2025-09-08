@@ -1,40 +1,42 @@
-import Link from "next/link";
-import { pricingPath } from "@/app/paths";
+import { LucideSettings } from "lucide-react";
+import { Suspense } from "react";
 import { Heading } from "@/components/Heading";
-import { Placeholder } from "@/components/Placeholder";
-import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/spinner";
+import { CustomerPortalForm } from "@/features/stripe/components/customer-portal-form";
+import { Products } from "@/features/stripe/components/product";
 import { OrganizationBreadcrumbs } from "../_navigation/tabs";
 
 type SubscriptionPageProps = {
-    params: Promise<{
-        organizationId: string;
-    }>
-}
+  params: Promise<{
+    organizationId: string;
+  }>;
+};
 
-const SubscriptionPage = async ({params}: SubscriptionPageProps) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {organizationId} = await params;
+const SubscriptionPage = async ({ params }: SubscriptionPageProps) => {
+  const { organizationId } = await params;
 
-    return (
-        <div className="flex-1 flex flex-col gap-y-8">
-            <Heading 
-                title="Subscription"
-                description="Manage your subscriptions"
-                tabs={<OrganizationBreadcrumbs />}
-            />
+  return (
+    <div className="flex-1 flex flex-col gap-y-8">
+      <Heading
+        title="Subscription"
+        description="Manage your subscriptions"
+        tabs={<OrganizationBreadcrumbs />}
+        actions={
+          <CustomerPortalForm organizationId={organizationId}>
+            <>
+              <LucideSettings className="w-4 h-4" />
+              Manage Subscriptions
+            </>
+          </CustomerPortalForm>
+        }
+      />
 
-            <Placeholder 
-                label="No subsciption for this organization"
-                button={
-                    <Button asChild variant="outline">
-                        <Link href={pricingPath()}>
-                        Go to Pricing
-                        </Link>
-                    </Button>
-                }
-            />
-        </div>
-    )
-}
+      <Suspense fallback={<Spinner />}>
+        <Products organizationId={organizationId} />
+      </Suspense>
+
+    </div>
+  );
+};
 
 export default SubscriptionPage;

@@ -9,6 +9,7 @@ export const createTicket = (
     title: string;
     content: string;
     deadline: string;
+    private: boolean;
   },
   organizationId: string
 ) => {
@@ -41,6 +42,7 @@ export const updateTicket = async (
     title: string;
     content: string;
     deadline: string;
+    private: boolean;
   }
 ) => {
   return prisma.ticket.update({

@@ -1,9 +1,7 @@
 "use client";
 import { TicketStatus } from "@prisma/client";
-import { LucideTrash } from "lucide-react";
-// import { useRouter } from "next/navigation";
+import { LucideLock, LucideTrash, LucideUnlock } from "lucide-react";
 import { toast } from "sonner";
-// import { ticketsPath } from "@/app/paths";
 import { useConfirmDialog } from "@/components/confirm-dialog";
 import {
   DropdownMenu,
@@ -20,12 +18,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { deleteTicket } from "@/features/ticket/actions/delete-ticket";
+import { updateTicketPrivacy } from "@/features/ticket/actions/update-ticket-privacy";
 import { updateTicketStatus } from "@/features/ticket/actions/update-ticket-status";
 import { TicketWithMetadata } from "../types";
 import { TICKET_ICONS_LABELS } from "./constants";
 
 type TicketMoreMenuProps = {
-  ticket: TicketWithMetadata;
+  ticket: TicketWithMetadata; 
   trigger: React.ReactNode;
 };
 
@@ -37,7 +36,7 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
         className="cursor-pointer"
         disabled={!ticket.permission?.canDeleteTicket}
       >
-        <LucideTrash className="h-4 w-4 mr-2 " />
+        <LucideTrash className="h-4 w-4 mr-2" />
         <span>Delete</span>
       </DropdownMenuItem>
     ),
@@ -45,27 +44,69 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
 
   const handleUpdateTicketStatus = async (value: string) => {
     const promise = updateTicketStatus(ticket.id, value as TicketStatus);
-
-    toast.promise(promise, {
-      loading: "Updating status...",
-    });
-
+    toast.promise(promise, { loading: "Updating status..." });
     const result = await promise;
-
-    if ((result.status === "ERROR")) {
-      toast.error(result.message);
-    } else if (result.status === "SUCCESS") {
-      toast.success(result.message);
-    }
+    if (result.status === "ERROR") toast.error(result.message);
+    else toast.success(result.message);
   };
 
-  const ticketStatusRadioGroupItems = (
-    <DropdownMenuRadioGroup
-      value={ticket.status}
-      onValueChange={handleUpdateTicketStatus}
+  const canUpdate = !!ticket.permission?.canUpdateTicket;
+  const canMakePrivate = !!ticket.features?.canMakePrivateTickets;
+
+  const handleTogglePrivacy = async () => {
+    const wantPrivate = !ticket.private;
+    const promise = updateTicketPrivacy(ticket.id, wantPrivate);
+    toast.promise(promise, {
+      loading: wantPrivate ? "Making private..." : "Making public...",
+    });
+    const result = await promise;
+    if (result.status === "ERROR") toast.error(result.message);
+    else toast.success(result.message);
+  };
+
+  const wouldMakePrivate = !ticket.private;
+  const disableForSubscription = wouldMakePrivate && !canMakePrivate;
+  const privacyItemCore = (
+    <DropdownMenuItem
+      className="cursor-pointer"
+      disabled={!canUpdate || disableForSubscription}
+      onSelect={(e) => {
+        e.preventDefault();
+        if (!canUpdate || disableForSubscription) return;
+        void handleTogglePrivacy();
+      }}
     >
+      {ticket.private ? (
+        <LucideUnlock className="h-4 w-4 mr-2" />
+      ) : (
+        <LucideLock className="h-4 w-4 mr-2" />
+      )}
+      <span>{ticket.private ? "Make public" : "Make private"}</span>
+    </DropdownMenuItem>
+  );
+
+  const privacyItem = disableForSubscription ? (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div>{privacyItemCore}</div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>You need to subscribe to activate this feature</p>
+      </TooltipContent>
+    </Tooltip>
+  ) : (
+    privacyItemCore
+  );
+
+  const ticketStatusRadioGroupItems = (
+    <DropdownMenuRadioGroup value={ticket.status} onValueChange={handleUpdateTicketStatus}>
       {(Object.keys(TICKET_ICONS_LABELS) as Array<TicketStatus>).map((key) => (
-        <DropdownMenuRadioItem className="cursor-pointer" key={key} value={key} disabled={!ticket.permission?.canUpdateTicket}>
+        <DropdownMenuRadioItem
+          className="cursor-pointer"
+          key={key}
+          value={key}
+          disabled={!canUpdate}
+        >
           {TICKET_ICONS_LABELS[key]}
         </DropdownMenuRadioItem>
       ))}
@@ -77,10 +118,12 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
       {deleteDialog}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
-        <DropdownMenuContent side="right" className="w-42 ">
-          {!ticket.permission?.canUpdateTicket ? (
+        <DropdownMenuContent side="right" className="w-42">
+          {!canUpdate ? (
             <Tooltip>
-              <TooltipTrigger>{ticketStatusRadioGroupItems}</TooltipTrigger>
+              <TooltipTrigger asChild>
+                <div>{ticketStatusRadioGroupItems}</div>
+              </TooltipTrigger>
               <TooltipContent>
                 <p>You do not have permission to update tickets</p>
               </TooltipContent>
@@ -88,10 +131,18 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
           ) : (
             ticketStatusRadioGroupItems
           )}
+
           <DropdownMenuSeparator />
+
+          {privacyItem}
+
+          <DropdownMenuSeparator />
+
           {!ticket.permission?.canDeleteTicket ? (
             <Tooltip>
-              <TooltipTrigger>{deleteButton}</TooltipTrigger>
+              <TooltipTrigger asChild>
+                <div>{deleteButton}</div>
+              </TooltipTrigger>
               <TooltipContent>
                 <p>You do not have permission to delete tickets</p>
               </TooltipContent>
@@ -106,5 +157,3 @@ const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
 };
 
 export { TicketMoreMenu };
-
-

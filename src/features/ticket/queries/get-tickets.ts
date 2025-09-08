@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { PAGE_SIZES } from "@/components/pagination/constants";
 import { getAuth } from "@/features/auth/queries/get-auth";
 import { isOwner } from "@/features/auth/utils/is-owner";
+import { getOrgStripeFeatures } from "@/features/stripe/queries/get-org-features";
 import { prisma } from "@/lib/prisma";
 import { getTicketPermissions } from "../permissions/get-ticket-permissions";
 import { ParsedSearchParams } from "./search-params";
@@ -44,7 +45,7 @@ export const getTickets = async (
 ) => {
   const { user } = await getAuth();
 
-  if(!PAGE_SIZES.includes(searchParams.size)) {
+  if (!PAGE_SIZES.includes(searchParams.size)) {
     throw new Error("Invalid page size");
   }
 
@@ -57,26 +58,43 @@ export const getTickets = async (
   };
 
   const org = (searchParams.org ?? "all") as "all" | "active" | "none";
-  const where: Prisma.TicketWhereInput =
+  const orgFilter: Prisma.TicketWhereInput =
     userId && org !== "all"
       ? {
-          ...baseWhere,
           organization:
             org === "active"
               ? { memberships: { some: { userId, isActive: true } } }
               : { memberships: { none: { userId, isActive: true } } },
         }
-      : baseWhere;
+      : {};
+
+  const viewerId = user?.id;
+  const privacyFilter: Prisma.TicketWhereInput = viewerId
+    ? {
+        OR: [
+          { private: false },
+          { userId: viewerId },
+          {
+            organization: {
+              memberships: { some: { userId: viewerId, isActive: true } },
+            },
+          },
+        ],
+      }
+    : { private: false };
+
+  const where: Prisma.TicketWhereInput = {
+    AND: [baseWhere, orgFilter, privacyFilter],
+  };
 
   const skip = (searchParams.page ?? 0) * (searchParams.size ?? 5);
   const take = searchParams.size ?? 5;
-
   const orderBy = buildOrderBy(
     searchParams.sortKey,
     searchParams.sortValue as SortDir
   );
 
-const [tickets, count] = await prisma.$transaction([
+  const [tickets, count] = await prisma.$transaction([
     prisma.ticket.findMany({
       where,
       skip,
@@ -91,10 +109,24 @@ const [tickets, count] = await prisma.$transaction([
   ]);
 
   const permsList = await Promise.all(
-    tickets.map(t =>
-      getTicketPermissions({ organizationId: t.organizationId, userId: user?.id })
+    tickets.map((t) =>
+      getTicketPermissions({
+        organizationId: t.organizationId,
+        userId: user?.id,
+      })
     )
   );
+
+  const uniqueOrgIds = Array.from(
+    new Set(tickets.map((t) => t.organizationId))
+  );
+  const featuresEntries = await Promise.all(
+    uniqueOrgIds.map(async (orgId) => {
+      const f = await getOrgStripeFeatures(orgId);
+      return [orgId, f] as const;
+    })
+  );
+  const featuresByOrg = Object.fromEntries(featuresEntries);
 
   return {
     list: tickets.map((ticket, i) => {
@@ -103,10 +135,11 @@ const [tickets, count] = await prisma.$transaction([
       return {
         ...ticket,
         isOwner: owner,
-        permission: {                                     
-          canDeleteTicket: owner || !!p.canDeleteTicket,   
-          canUpdateTicket: owner || !!p.canUpdateTicket,   
+        permission: {
+          canDeleteTicket: owner || !!p.canDeleteTicket,
+          canUpdateTicket: owner || !!p.canUpdateTicket,
         },
+        features: featuresByOrg[ticket.organizationId],
       };
     }),
     metadata: { count, hasNextPage: count > skip + take },
