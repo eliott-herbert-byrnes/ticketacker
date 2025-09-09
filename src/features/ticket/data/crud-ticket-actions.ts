@@ -136,6 +136,12 @@ export const findUniqueTicketUser = async (id: string) => {
                 select: {
                     username: true,
                 }
+            },
+            organization: {
+                select: {
+                    id: true,
+                    name: true,
+                }
             }
         }
     })

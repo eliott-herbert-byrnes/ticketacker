@@ -12,6 +12,9 @@ type SubscriptionPageProps = {
   }>;
 };
 
+export const revalidate = 0;
+export const dynamic = "force-dynamic"
+
 const SubscriptionPage = async ({ params }: SubscriptionPageProps) => {
   const { organizationId } = await params;
 

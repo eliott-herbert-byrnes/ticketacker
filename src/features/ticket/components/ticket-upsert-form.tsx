@@ -26,7 +26,7 @@ import { fromCent } from "@/utils/currency";
 
 type TicketUpsertFormProps = {
   ticket?: Ticket;
-  canMakePrivateTickets: boolean;
+  canMakePrivateTickets?: boolean;
 };
 
 const TicketUpsertForm = ({

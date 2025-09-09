@@ -3,6 +3,8 @@ import { homePath, ticketsPath } from "@/app/paths";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { CardCompact } from "@/components/card-compact";
 import { Heading } from "@/components/Heading";
+import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
+import { getOrgStripeFeatures } from "@/features/stripe/queries/get-org-features";
 import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 
@@ -19,6 +21,11 @@ const TicketEditPage = async ({ params }: TicketEditPageProps) => {
   if (!ticket || !ticket.isOwner) {
     notFound();
   }
+
+  const orgs = ticket.user ? await getOrganizationsByUser() : [];
+  const activeOrg = orgs.find(o => o.membershipByUser.isActive) ?? null;
+
+  const {canMakePrivateTickets} = await getOrgStripeFeatures(activeOrg?.id)
 
   const breadcrumbs = (
     <div className="mb-2">
@@ -44,7 +51,7 @@ const TicketEditPage = async ({ params }: TicketEditPageProps) => {
         <CardCompact
           title="Edit Ticket"
           description="Edit an existing ticket"
-          content={<TicketUpsertForm ticket={ticket} />}
+          content={<TicketUpsertForm ticket={ticket} canMakePrivateTickets={canMakePrivateTickets} />}
           className="w-full max-w-[420px] animate-fade-from-top"
         />
       </div>

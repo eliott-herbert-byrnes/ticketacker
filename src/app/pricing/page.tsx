@@ -2,6 +2,9 @@ import { Heading } from "@/components/Heading";
 import { getActiveOrganization } from "@/features/organization/queries/get-active-organization";
 import { Products } from "@/features/stripe/components/product";
 
+export const revalidate = 0;
+export const dynamic = "force-dynamic"
+
 const pricingPage = async () => {
   const activeOrganization = await getActiveOrganization();
 
