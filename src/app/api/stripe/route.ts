@@ -1,17 +1,9 @@
-// import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import * as stripeData from "@/features/stripe/data";
 import { onSubscriptionCreated } from "@/features/stripe/webhooks/on-subscription-created";
 import { onSubscriptionUpdated } from "@/features/stripe/webhooks/on-subscription-updated";
 import { stripe } from "@/lib/stripe";
-
-// const handleSubscriptionDeleted = async (
-//   subscription: Stripe.Subscription,
-//   eventAt: number
-// ) => {
-//   await stripeData.deleteStripeSubscription(subscription, eventAt);
-// };
 
 export const runtime = "nodejs";
 
@@ -42,6 +34,9 @@ export async function POST(req: Request) {
   }
 
   try {
+
+    console.log("[stripe] event", {id: event.id, type: event.type, created: event.created});
+
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
