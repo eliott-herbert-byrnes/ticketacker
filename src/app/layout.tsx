@@ -7,6 +7,7 @@ import { Header } from "@/app/_navigation/Header";
 import { Sidebar } from "@/app/_navigation/sidebar/components/sidebar";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { OnboardingGuide } from "@/features/onboarding/components/onboarding-guide";
 import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { ReactQueryProvider } from "./_providers/react-query/react-query-provider";
@@ -46,13 +47,14 @@ export default async function RootLayout({
                   className={cn(
                     "flex-1 overflow-y-auto overflow-x-hidden bg-secondary/20 flex flex-col",
                     "duration-200",
-                    "px-8 pt-20 pb-8",
-                    "md:px-0 md:pt-24",
+                    "px-8 pt-20 pb-24",
+                    "md:px-0 md:pt-24 md:pb-0",
                   )}
                 >
                   {children}
                 </main>
               </div>
+              <OnboardingGuide />
               <Toaster expand />
               </ReactQueryProvider>
             </ThemeProvider>

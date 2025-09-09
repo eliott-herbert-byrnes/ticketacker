@@ -21,7 +21,6 @@ export async function signUpAction(
     const email = parsed.email.toLowerCase().trim();
     const password = parsed.password;
 
-
     const result = await InvitationService.signUp({
       username, email, password,
     })

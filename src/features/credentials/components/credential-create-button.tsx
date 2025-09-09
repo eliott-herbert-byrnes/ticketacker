@@ -42,7 +42,7 @@ const CredentialCreateButton = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="text-xs h-8">
           <LucidePlus className="w-4 h-4" />
           Create Credential
         </Button>

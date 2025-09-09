@@ -1,13 +1,5 @@
 import { format } from "date-fns";
-import {
-  LucideArrowLeftRight,
-  LucideArrowUpRightFromSquare,
-  LucidePen,
-} from "lucide-react";
-import Link from "next/link";
-import { membershipsPath } from "@/app/paths";
-import { SubmitButton } from "@/components/form/submit-button";
-import { Button } from "@/components/ui/button";
+import { CardCompact } from "@/components/card-compact";
 import {
   Table,
   TableBody,
@@ -16,130 +8,116 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MembershipDeleteButton } from "@/features/membership/components/membership-delete-button";
 import { getOrganizationsByUser } from "../queries/get-organization-by-user";
-import { OrganizationDeleteButton } from "./organization-delete-button";
-import { OrganizationRenameButtton } from "./organization-rename-button";
-import { OrganizationSwitchButton } from "./organization-switch-button";
+import { OrganizationRowActions } from "./organization-row-actions";
 
-type OrganizationListProps = {
-  limitedAccess?: boolean;
-};
-
-export const OrganizationList = async ({
-  limitedAccess,
-}: OrganizationListProps) => {
+export const OrganizationList = async () => {
   const organizations = await getOrganizationsByUser();
   const hasActive = organizations.some(
     (organization) => organization.membershipByUser.isActive
   );
 
   return (
-    <div className="overflow-hidden px-14">
-      <Table className="">
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Joined At</TableHead>
-            <TableHead>Members</TableHead>
-            <TableHead>Admin</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {organizations.map((organization) => {
-            const isActive = organization.membershipByUser.isActive;
-            const isAdmin =
-              organization.membershipByUser.membershipRole === "ADMIN";
+    <>
+      {/* Mobile: stacked cards */}
+      <div className="md:hidden px-4 space-y-3">
+        {organizations.map((organization) => {
+          const isActive = organization.membershipByUser.isActive;
+          const isAdmin =
+            organization.membershipByUser.membershipRole === "ADMIN";
 
-            const switchButton = (
-              <OrganizationSwitchButton
-                organizationId={organization.id}
-                trigger={
-                  <SubmitButton
-                    variant={
-                      !hasActive
-                        ? "secondary"
-                        : isActive
-                          ? "default"
-                          : "outline"
-                    }
-                    label={
-                      !hasActive ? "Active" : isActive ? "Active" : "Switch"
-                    }
-                    icon={<LucideArrowLeftRight className="w-4 h-4" />}
-                  ></SubmitButton>
-                }
-              />
-            );
+          return (
+            <CardCompact
+              key={organization.id}
+              title={organization.name}
+              description={`ID: ${organization.id}`}
+              content={
+                <div className="flex flex-col gap-1.5 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Joined At</span>
+                    <span>
+                      {format(
+                        organization.membershipByUser.joinedAt,
+                        "yyyy-MM-dd, HH:mm"
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Members</span>
+                    <span>{organization._count.memberships}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Admin</span>
+                    <span>{organization.membershipByUser.membershipRole}</span>
+                  </div>
+                </div>
+              }
+              footer={
+                <div className="pl-55">
+                <OrganizationRowActions
+                  organizationId={organization.id}
+                  organizationName={organization.name}
+                  membershipUserId={organization.membershipByUser.userId}
+                  isAdmin={isAdmin}
+                  hasActive={hasActive}
+                  isActive={isActive}
+                  />
+                </div>
+              }
+              className="w-full"
+            />
+          );
+        })}
+      </div>
 
-            const detailButton = (
-              <Button variant="outline" className="cursor-pointer" asChild>
-                <Link href={membershipsPath(organization.id)}>
-                  <LucideArrowUpRightFromSquare className="w-4 h-4" />
-                </Link>
-              </Button>
-            );
+      {/* Desktop: table */}
+      <div className="hidden md:block overflow-hidden px-14">
+        <Table className="">
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Joined At</TableHead>
+              <TableHead>Members</TableHead>
+              <TableHead>Admin</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {organizations.map((organization) => {
+              const isActive = organization.membershipByUser.isActive;
+              const isAdmin =
+                organization.membershipByUser.membershipRole === "ADMIN";
 
-            const editButton = (
-              <Button variant="outline" className="cursor-pointer">
-                <LucidePen className="w-4 h-4" />
-              </Button>
-            );
-
-            const leaveButton = (
-              <MembershipDeleteButton
-                organizationId={organization.id}
-                userId={organization.membershipByUser.userId}
-              />
-            );
-
-            const deleteButton = (
-              <OrganizationDeleteButton organizationId={organization.id} />
-            );
-
-            const renameButton = (
-              <OrganizationRenameButtton
-                organizationName={organization.name}
-                organizationId={organization.id}
-              />
-            );
-
-            const placeholder = (
-              <Button size="icon" disabled className="disabled:opacity-0" />
-            );
-
-            const buttons = (
-              <div className="flex gap-2">
-                {switchButton}
-                {limitedAccess ? null : isAdmin ? detailButton : placeholder}
-                {limitedAccess ? null : isAdmin ? editButton : placeholder}
-                {limitedAccess ? null : isAdmin ? renameButton : placeholder}
-                {limitedAccess ? null : leaveButton}
-                {limitedAccess ? null : isAdmin ? deleteButton : placeholder}
-              </div>
-            );
-
-            return (
-              <TableRow key={organization.id}>
-                <TableCell>{organization.id}</TableCell>
-                <TableCell>{organization.name}</TableCell>
-                <TableCell>
-                  {format(
-                    organization.membershipByUser.joinedAt,
-                    "yyyy-MM-dd, HH:mm"
-                  )}
-                </TableCell>
-                <TableCell>{organization._count.memberships}</TableCell>
-                <TableCell>
-                  {organization.membershipByUser.membershipRole}
-                </TableCell>
-                <TableCell>{buttons}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+              return (
+                <TableRow key={organization.id}>
+                  <TableCell>{organization.id}</TableCell>
+                  <TableCell>{organization.name}</TableCell>
+                  <TableCell>
+                    {format(
+                      organization.membershipByUser.joinedAt,
+                      "yyyy-MM-dd, HH:mm"
+                    )}
+                  </TableCell>
+                  <TableCell>{organization._count.memberships}</TableCell>
+                  <TableCell>
+                    {organization.membershipByUser.membershipRole}
+                  </TableCell>
+                  <TableCell>
+                    <OrganizationRowActions
+                      organizationId={organization.id}
+                      organizationName={organization.name}
+                      membershipUserId={organization.membershipByUser.userId}
+                      isAdmin={isAdmin}
+                      hasActive={hasActive}
+                      isActive={isActive}
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   );
 };

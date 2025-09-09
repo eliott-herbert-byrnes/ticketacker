@@ -14,7 +14,7 @@ const Placeholder = ({
 }: placeholderType) => {
   return (
     <div className="flex-1 flex flex-row">
-        <div className="flex-1 self-center flex flex-col items-center justify-center gap-y-2">
+        <div className="flex-1 flex flex-col items-center justify-center gap-y-2">
             {cloneElement(icon, {
                 className: 'w-16 h-16'
             })}

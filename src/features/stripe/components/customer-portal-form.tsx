@@ -8,11 +8,13 @@ import { createCustomerPortal } from "../actions/create-customer-portal";
 type CustomerPortalFormProps = {
   organizationId: string | null | undefined;
   children: React.ReactNode;
+  className?: string;
 };
 
 const CustomerPortalForm = ({
   organizationId,
   children,
+  className,
 }: CustomerPortalFormProps) => {
   const [actionState, action] = useActionState(
     createCustomerPortal.bind(null, organizationId),
@@ -21,7 +23,7 @@ const CustomerPortalForm = ({
 
   return (
     <Form action={action} actionState={actionState}>
-      <Button type="submit">{children}</Button>
+      <Button type="submit" className={className}>{children}</Button>
     </Form>
   );
 };

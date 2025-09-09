@@ -5,9 +5,10 @@ import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { useActionState } from "@/components/hooks/use-action-state";
 import { switchOrganization } from "../actions/switch-organization";
 
+
 type OrganizationSwitchButtonTypes = {
   organizationId: string;
-  trigger: React.ReactElement;
+  trigger: React.ReactNode;
 };
 
 const OrganizationSwitchButton = ({

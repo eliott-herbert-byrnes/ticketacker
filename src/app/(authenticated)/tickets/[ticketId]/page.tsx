@@ -48,7 +48,7 @@ const TicketPage = async ({ params }: TicketPageProps) => {
         tabs={breadcrumbs}
       />
 
-      <div className="flex justify-center animate-fade-from-top">
+      <div className="flex justify-center animate-fade-from-top pr-4 md:pr-0">
         <TicketItem
           ticket={ticket}
           isDetail={true}

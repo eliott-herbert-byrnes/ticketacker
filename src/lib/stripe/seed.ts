@@ -93,7 +93,7 @@ const seed = async () => {
 
   await stripe.prices.create({
     product: productTwo.id,
-    unit_amount: 11000,
+    unit_amount: 9900,
     currency: "usd",
     recurring: {
       interval: "year",
@@ -102,7 +102,7 @@ const seed = async () => {
 
   await stripe.prices.create({
     product: productTwo.id,
-    unit_amount: 1000,
+    unit_amount: 999,
     currency: "usd",
     recurring: {
       interval: "month",
@@ -111,7 +111,7 @@ const seed = async () => {
 
   await stripe.prices.create({
     product: productOne.id,
-    unit_amount: 45000,
+    unit_amount: 49999,
     currency: "usd",
     recurring: {
       interval: "year",
@@ -120,7 +120,7 @@ const seed = async () => {
 
   await stripe.prices.create({
     product: productOne.id,
-    unit_amount: 5000,
+    unit_amount: 4999,
     currency: "usd",
     recurring: {
       interval: "month",

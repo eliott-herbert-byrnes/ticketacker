@@ -66,15 +66,15 @@ const TicketItem = ({
         "max-w-[420px]": !isDetail,
       })}
     >
-      <div className="w-full flex gap-x-2">
+      <div className="w-full flex gap-x-2 pb-3">
         <Card className="w-full">
-          <CardTitle className="flex flex-row gap-x-2 px-4 items-center justify-between">
+          <CardTitle className="flex flex-row gap-x-2 px-6 items-center justify-between">
             <div className="flex flex-row gap-x-2 items-center">
-              <span>{TICKET_ICONS[ticket.status]}</span>
               <span className="truncate">{ticket.title}</span>
             </div>
-            <span className="truncate text-xs text-muted-foreground">
-              {ticket.status.replace("_", " ")}
+            <span className="text-muted-foreground">
+              {TICKET_ICONS[ticket.status]}
+              {/* {ticket.status.replace("_", " ")} */}
             </span>
           </CardTitle>
 
@@ -108,7 +108,9 @@ const TicketItem = ({
         </div>
       </div>
 
+      <div className="pb-3">
       <Separator />
+      </div>
 
       {attachments}
       {referencedTickets}

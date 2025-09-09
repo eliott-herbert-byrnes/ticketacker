@@ -54,8 +54,6 @@ export const passwordReset = async (
 
     await passwordData.updateUser(user.id, passwordHash);
 
-    await setCookieByKey("toast", "Successfully reset password");
-
     return {
       status: "SUCCESS",
       fieldErrors: {},
