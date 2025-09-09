@@ -31,3 +31,8 @@ export const deleteMany = async (userId: string) => {
 export const findOrThrow = async (id: string) => {
     return await prisma.user.findUniqueOrThrow({ where: { id, } });
 }
+
+export const findById = async (id: string) => {
+    if (!id) return null;
+    return await prisma.user.findUnique({ where: { id } });
+}

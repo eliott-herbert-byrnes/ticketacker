@@ -19,7 +19,10 @@ export const welcomeEventFunction = inngest.createFunction(
   async ({ event, step }) => {
     const { userId, welcomeUrl }  = (event as unknown as WelcomeEmailEventArgs).data;
 
-    const user = await passwordData.findOrThrow(userId)
+    const user = await passwordData.findById(userId)
+    if (!user) {
+      return { event, body: { skipped: true, reason: "user-not-found" } };
+    }
 
     const url = welcomeUrl ?? "https://www.ticketacker.com/tickets";
 

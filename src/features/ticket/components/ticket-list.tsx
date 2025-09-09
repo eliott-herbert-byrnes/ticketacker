@@ -66,7 +66,7 @@ const TicketList = async ({
               <TicketPagination paginatedTicketMetadata={ticketMetaData} />
             </div>
 
-      )};
+      )}
     </div>
   );
 };

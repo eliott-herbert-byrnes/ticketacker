@@ -30,7 +30,7 @@ type TicketMoreMenuProps = {
 
 const TicketMoreMenu = ({ ticket, trigger }: TicketMoreMenuProps) => {
   const [deleteButton, deleteDialog] = useConfirmDialog({
-    action: deleteTicket.bind(null, ticket.id),
+    action: () => deleteTicket(ticket.id),
     trigger: (
       <DropdownMenuItem
         className="cursor-pointer"

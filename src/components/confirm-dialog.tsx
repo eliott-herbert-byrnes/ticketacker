@@ -37,8 +37,13 @@ const useConfirmDialog = ({
 }: UseConfirmDialogArgs) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Wrap provided zero-arg action so React's useActionState signature doesn't leak prevState/formData
+  const actionAdapter = async (_prev: ActionState, _formData: FormData) => {
+    return action();
+  };
+
   const [actionState, formAction, isPending] = useActionState(
-    action,
+    actionAdapter,
     EMPTY_ACTION_STATE
   );
 

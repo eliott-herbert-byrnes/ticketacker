@@ -22,7 +22,8 @@ export const createCredential = async (
   });
 };
 
-export const findCredential = async (id: string, organizationId: string) => {
+export const findCredential = async (id: unknown, organizationId: string) => {
+  if (typeof id !== "string" || !id) return null;
   return await prisma.credential.findFirst({
     where: { id, organizationId },
     select: { createdAt: true, revokedAt: true },
