@@ -1,5 +1,7 @@
 # TickeTacker
 
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io/) [![Stripe](https://img.shields.io/badge/Stripe-API-626CD9?logo=stripe&logoColor=white)](https://stripe.com/) [![AWS S3](https://img.shields.io/badge/AWS-S3-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/s3/) [![Inngest](https://img.shields.io/badge/Inngest-Events-000000)](https://www.inngest.com/)
+
 A modern, full‑stack SaaS starter built with Next.js App Router that showcases product‑grade architecture: authentication, organizations and memberships, ticketing with comments and attachments hosted on s3, subscriptions and billing with Stripe, background jobs with Inngest, transactional emails, and a polished UI powered by Tailwind and shadcn/ui.
 
 ## Highlights
@@ -13,6 +15,10 @@ A modern, full‑stack SaaS starter built with Next.js App Router that showcases
 - **Transactional emails**: React Email + Resend for consistent, type‑safe email templates.
 - **Modern UI/UX**: Tailwind CSS v4, shadcn/ui components, theme support, responsive layout, and nuanced motion.
 - **DX**: TypeScript everywhere, Prisma typed SQL, React Query, and modular feature folders.
+
+## Live demo
+
+- `https://ticketacker.com`
 
 ## Tech stack
 
