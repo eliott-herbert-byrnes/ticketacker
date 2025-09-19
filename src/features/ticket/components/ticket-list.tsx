@@ -62,7 +62,7 @@ const TicketList = async ({
         <Placeholder label="No tickets found" />
       )}
       {tickets.length > 0 && (
-            <div className="w-full md:w-5/6 md:max-w-[420px] mt-2">
+            <div className="w-full md:w-5/6 md:max-w-[420px] mt-2 mb-4">
               <TicketPagination paginatedTicketMetadata={ticketMetaData} />
             </div>
 
