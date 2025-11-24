@@ -35,8 +35,9 @@ const InvitationDialog = ({title, description, action, actionState}: InvitationD
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8 w-8">
+        <Button variant="outline" className="h-8">
           <LucidePlus className="w-4 h-4" />
+          Invite Member
         </Button>
       </DialogTrigger>
       <DialogContent>

@@ -1,7 +1,10 @@
 "use client";
 
 import { Ticket } from "@prisma/client";
-import { useRef, useState } from "react";
+import { LucideLoaderCircle } from "lucide-react";
+import { redirect } from "next/navigation";
+import { useRef, useState, useTransition } from "react";
+import { homePath } from "@/app/paths";
 import {
   DatePicker,
   ImperativeHandleFromDatePicker,
@@ -11,6 +14,7 @@ import { Form } from "@/components/form/form";
 import { SubmitButton } from "@/components/form/submit-button";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { useActionState } from "@/components/hooks/use-action-state";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,12 +43,18 @@ const TicketUpsertForm = ({
   );
 
   const [isPrivate, setIsPrivate] = useState<boolean>(!!ticket?.private);
+  const [pending, startTransition] = useTransition();
 
   const datePickerImperativeHandleRef =
     useRef<ImperativeHandleFromDatePicker>(null);
 
   const handleSuccess = () => {
     datePickerImperativeHandleRef.current?.reset();
+  };
+  const handleCancel = () => {
+    startTransition(() => {
+      redirect(homePath());
+    });
   };
 
   const checkbox = (
@@ -152,6 +162,19 @@ const TicketUpsertForm = ({
         </TooltipProvider>
       )}
 
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={handleCancel}
+        className="w-full"
+        disabled={pending}
+      >
+        {pending ? (
+          <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+        ) : (
+          "Cancel"
+        )}
+      </Button>
       <SubmitButton label={ticket ? "Edit" : "Create"} />
     </Form>
   );

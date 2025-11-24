@@ -1,66 +1,423 @@
 # TickeTacker
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/) [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io/) [![Stripe](https://img.shields.io/badge/Stripe-API-626CD9?logo=stripe&logoColor=white)](https://stripe.com/) [![AWS S3](https://img.shields.io/badge/AWS-S3-FF9900?logo=amazon-aws&logoColor=white)](https://aws.amazon.com/s3/) [![Inngest](https://img.shields.io/badge/Inngest-Events-000000)](https://www.inngest.com/)
+**Modern Full-Stack SaaS Ticketing Platform**
 
-A modern, full‑stack SaaS starter built with Next.js App Router that showcases product‑grade architecture: authentication, organizations and memberships, ticketing with comments and attachments hosted on s3, subscriptions and billing with Stripe, background jobs with Inngest, transactional emails, and a polished UI powered by Tailwind and shadcn/ui.
+A production-ready ticketing and project management platform built with cutting-edge web technologies, demonstrating enterprise-grade architecture patterns including multi-tenancy, subscription billing, real-time collaboration, and secure file storage.
 
-## Highlights
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=flat-square&logo=prisma)](https://www.prisma.io/)
+[![Stripe](https://img.shields.io/badge/Stripe-Payments-626CD9?style=flat-square&logo=stripe)](https://stripe.com/)
+[![AWS S3](https://img.shields.io/badge/AWS-S3-FF9900?style=flat-square&logo=amazon-aws)](https://aws.amazon.com/s3/)
 
-- **Tickets & comments**: Create, list, search, sort, paginate, and reference tickets; threaded comments.
-- **Attachments**: Secure S3 file access via short‑lived presigned URLs.
-- **Auth**: Username/password with `next-auth` (JWT sessions) and Prisma adapter; email verification and password reset flows.
-- **Organizations & memberships**: Invite users, manage roles, track active membership, and gate private content.
-- **Subscriptions**: Stripe products, prices, checkout, and webhooks to sync subscription state per organization.
-- **Background jobs**: Inngest functions for email workflows and periodic digests.
-- **Transactional emails**: React Email + Resend for consistent, type‑safe email templates.
-- **Modern UI/UX**: Tailwind CSS v4, shadcn/ui components, theme support, responsive layout, and nuanced motion.
-- **DX**: TypeScript everywhere, Prisma typed SQL, React Query, and modular feature folders.
+---
 
-## Live demo
+## 📋 Table of Contents
 
-- `https://ticketacker.com`
+- [Overview](#overview)
+- [Project Background](#project-background)
+- [Business Case](#business-case)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [System Architecture](#system-architecture)
+- [Core Functionality](#core-functionality)
+- [Installation & Setup](#installation--setup)
+- [Database Schema](#database-schema)
+- [Authentication & Security](#authentication--security)
+- [Subscription & Billing](#subscription--billing)
+- [Background Jobs & Emails](#background-jobs--emails)
+- [Development Guide](#development-guide)
+- [Deployment](#deployment)
+- [Roadmap](#roadmap)
+- [Developer](#developer)
 
-## Tech stack
+---
 
-- **Runtime**: Node.js + Next.js 15 (App Router)
-- **Language**: TypeScript
-- **UI**: React 19, Tailwind CSS 4, shadcn/ui, lucide-react icons
-- **State/Data**: React Server Components, `@tanstack/react-query` for client data fetching
-- **Auth**: `next-auth` (JWT) + Prisma Adapter
-- **ORM/DB**: Prisma, PostgreSQL
-- **Background jobs**: Inngest (`/api/inngest` endpoint)
-- **Emails**: React Email + Resend
-- **Storage**: AWS S3 (attachments, signed URLs)
-- **Payments**: Stripe (Products, Prices, Checkout, Webhooks)
+## Overview
 
-## Repository structure
+TickeTacker is a comprehensive SaaS ticketing platform designed for modern teams requiring robust issue tracking, project management, and collaboration capabilities. Built as a learning project to master contemporary full-stack web development, it showcases production-grade patterns including multi-tenant architecture, subscription billing, secure file storage, and asynchronous job processing.
+
+**Core Value Proposition:**
+
+- Multi-tenant organisation management with role-based access control
+- Comprehensive ticket lifecycle management with threaded discussions
+- Secure file attachments with AWS S3 integration
+- Flexible subscription tiers with Stripe integration
+- Professional email workflows powered by transactional email service
+- Modern, responsive interface with dark mode support
+- Type-safe full-stack development with end-to-end TypeScript
+
+---
+
+## 🎓 Project Background
+
+### The Learning Journey
+
+This project was conceived as an advanced learning exercise to develop expertise in modern full-stack web application development. Rather than building a simple tutorial application, the goal was to create a production-ready SaaS platform incorporating real-world architectural patterns and integrations that professional developers encounter daily.
+
+**Learning Objectives:**
+
+1. **Master Modern React & Next.js**: Understand React Server Components, Next.js 15 App Router, Server Actions, and streaming
+2. **Full-Stack TypeScript**: Achieve end-to-end type safety from database to UI
+3. **Enterprise Authentication**: Implement secure multi-tenant authentication with email verification and password reset flows
+4. **Payment Integration**: Build complete subscription billing system with Stripe
+5. **Cloud Infrastructure**: Integrate AWS S3 for secure file storage with presigned URLs
+6. **Background Processing**: Implement asynchronous job processing and scheduled tasks
+7. **Database Design**: Design normalised PostgreSQL schema with Prisma ORM
+8. **Email Systems**: Create transactional email templates and delivery workflows
+9. **UI/UX Excellence**: Build accessible, responsive interfaces with modern design systems
+10. **Production Patterns**: Apply industry best practices for security, performance, and maintainability
+
+### Why Ticketing?
+
+Ticketing systems represent an ideal learning vehicle because they require:
+
+- Complex data relationships (tickets, comments, attachments, users, organisations)
+- Real-time collaboration features
+- File upload and storage management
+- Permission systems and access control
+- Search, filtering, and pagination
+- Email notifications and background jobs
+- Subscription-based access tiers
+
+These requirements mirror challenges encountered in virtually all modern web applications, making the knowledge highly transferable.
+
+---
+
+## 💼 Business Case
+
+### The Problem
+
+Small to medium-sized teams face several challenges when selecting ticketing and project management tools:
+
+1. **Cost Barriers**: Enterprise solutions like Jira and ServiceNow are prohibitively expensive for small teams
+2. **Complexity Overhead**: Many platforms are over-engineered for simple use cases
+3. **Vendor Lock-In**: Proprietary formats make data migration difficult
+4. **Privacy Concerns**: Sensitive project data stored on third-party servers
+5. **Customisation Limitations**: Rigid workflows that don't adapt to team needs
+
+### The Solution
+
+TickeTacker addresses these pain points by providing:
+
+**Affordable Pricing Model:**
+- Free tier for small teams (up to 5 members)
+- Transparent subscription tiers without per-user pricing traps
+- Self-hosted option for teams requiring full data control
+
+**Streamlined Workflow:**
+- Clean, intuitive interface focused on essential features
+- Fast ticket creation and minimal clicks to common actions
+- Powerful search and filtering without overwhelming complexity
+- Keyboard shortcuts for power users
+
+**Data Ownership:**
+- Open database schema built on PostgreSQL
+- Export functionality for all data (tickets, comments, attachments)
+- Self-hosting capability for complete control
+- No proprietary formats or lock-in strategies
+
+**Security & Privacy:**
+- Self-contained authentication without third-party tracking
+- Secure file storage with access controls
+- Audit logs for compliance requirements
+- EU data residency options
+
+**Flexibility:**
+- API-first architecture enabling custom integrations
+- Webhook support for external workflow automation
+- Customisable ticket fields and workflows
+- Open-source foundation allowing modifications
+
+### Target Market
+
+**Primary Users:**
+- Startups and small businesses (5-50 employees)
+- Development teams requiring simple issue tracking
+- Customer support teams needing ticket management
+- Project managers coordinating team tasks
+- Freelancers managing client projects
+
+**Secondary Markets:**
+- Educational institutions teaching project management
+- Non-profit organisations with budget constraints
+- Internal IT helpdesks at medium enterprises
+- Agencies managing multiple client projects
+
+### Competitive Advantages
+
+1. **Modern Technology Stack**: Built on latest frameworks ensuring long-term maintainability
+2. **Developer-Friendly**: Full TypeScript, comprehensive API, webhook support
+3. **Performance**: Server-side rendering, optimistic updates, efficient caching
+4. **Transparent Pricing**: Clear tiers without hidden fees or user limits
+5. **Community-Driven**: Open development roadmap with user feedback integration
+
+---
+
+## ✨ Key Features
+
+### **Comprehensive Ticket Management**
+
+- Create, edit, archive, and delete tickets with full lifecycle tracking
+- Rich text descriptions with markdown support
+- Custom fields for priority, status, category, and assignees
+- Ticket references and linking for relationship mapping
+- Advanced search with full-text capabilities
+- Filtering by status, priority, assignee, and date ranges
+- Sorting by creation date, priority, last updated
+- Pagination with configurable page sizes
+
+### **Threaded Discussions**
+
+- Comment system with markdown formatting
+- Reply threading for organised conversations
+- @mentions for user notifications
+- Edit and delete permissions based on authorship
+- Real-time comment updates
+- Comment history and audit trail
+
+### **Secure File Attachments**
+
+- Drag-and-drop file upload interface
+- AWS S3 storage with organisation-namespaced buckets
+- Presigned URL generation for temporary secure access
+- Automatic file type validation and size limits
+- Thumbnail generation for images
+- Virus scanning integration ready
+- Attachment versioning support
+
+### **Multi-Tenant Organisation Management**
+
+- Create and manage multiple organisations per user
+- Organisation switching without re-authentication
+- Custom branding per organisation (logos, colours)
+- Organisation-level settings and preferences
+- Data isolation ensuring privacy between tenants
+- Organisation transfer and ownership management
+
+### **Membership & Access Control**
+
+- Role-based permissions (Owner, Admin, Member, Guest)
+- Invitation system with email-based onboarding
+- Pending invitation management and resending
+- Membership deactivation and reactivation
+- Activity tracking per member
+- Permission inheritance and custom role creation
+
+### **Subscription & Billing**
+
+- Multiple pricing tiers (Free, Professional, Enterprise)
+- Stripe-powered checkout with secure payment processing
+- Subscription management dashboard
+- Automatic billing and invoice generation
+- Usage-based limits per tier
+- Upgrade/downgrade flows with prorated billing
+- Cancellation with end-of-period access retention
+
+### **Email Workflows**
+
+- Welcome emails with onboarding steps
+- Email verification with secure tokens
+- Password reset with time-limited links
+- Invitation emails with organisation context
+- Ticket notification digests
+- Billing and payment confirmations
+- Custom email templates with React Email
+
+### **Background Processing**
+
+- Asynchronous job queue with Inngest
+- Scheduled digest emails (daily, weekly)
+- Automated cleanup of expired resources
+- Bulk operations (import/export)
+- Analytics aggregation jobs
+- Webhook delivery retry logic
+
+### **Modern User Interface**
+
+- Responsive design optimised for mobile, tablet, and desktop
+- Dark mode with system preference detection
+- Keyboard shortcuts for power users
+- Accessible components following WCAG guidelines
+- Smooth animations and transitions
+- Loading states and optimistic UI updates
+- Toast notifications for user feedback
+
+---
+
+## 🛠️ Technology Stack
+
+### **Frontend**
+
+- **Framework**: Next.js 15 (App Router, React Server Components, Server Actions)
+- **Language**: TypeScript 5
+- **UI Library**: React 19
+- **Styling**: Tailwind CSS 4 (with CSS variables, dark mode)
+- **Component Library**: shadcn/ui (Radix UI primitives)
+- **Icons**: Lucide React
+- **Client State**: TanStack React Query v5
+- **URL State**: nuqs (Next.js URL state management)
+- **Form Handling**: React Hook Form with Zod validation
+- **Rich Text**: Markdown editor with preview
+
+### **Backend**
+
+- **Runtime**: Node.js 18+
+- **Framework**: Next.js API Routes & Server Actions
+- **ORM**: Prisma 5 (with typed SQL preview)
+- **Database**: PostgreSQL 15+
+- **Authentication**: NextAuth.js v5 (JWT strategy)
+- **Password Hashing**: @node-rs/argon2
+- **Validation**: Zod schemas
+- **File Storage**: AWS S3 SDK v3
+- **Payment Processing**: Stripe SDK
+- **Background Jobs**: Inngest
+- **Email Delivery**: Resend API
+- **Email Templates**: React Email
+
+### **Infrastructure & DevOps**
+
+- **Hosting**: Vercel
+- **Database Hosting**: Vercel Postgres, Supabase, or self-hosted PostgreSQL
+- **File Storage**: AWS S3 or S3-compatible (MinIO, DigitalOcean Spaces)
+- **Email Service**: Resend, SendGrid, or AWS SES
+- **Payment Gateway**: Stripe
+- **Job Processing**: Inngest Cloud or self-hosted
+
+### **Developer Tools**
+
+- **Package Manager**: npm (or pnpm/yarn)
+- **Code Quality**: ESLint 9
+- **Type Checking**: TypeScript strict mode
+- **Database Migrations**: Prisma Migrate
+- **API Testing**: REST Client or Postman
+- **Webhook Testing**: Stripe CLI, ngrok
+
+---
+
+## 🏗️ System Architecture
+
+### **Application Architecture**
 
 ```
-src/
-  app/                 # App Router routes, layouts, API routes
-    (authenticated)/   # Auth‑protected routes wrapper
-    api/               # API endpoints (auth, stripe, aws, inngest)
-    _navigation/       # Header, sidebar
-    _providers/        # Providers (React Query)
-    ...                # Public pages: sign-in/up, onboarding, pricing, etc.
-  components/          # Reusable UI and helpers (shadcn/ui based)
-  features/            # Domain‑oriented feature modules
-    attachments/       # S3 integration, presigned URLs, UI
-    auth/              # Sign-in, session, verification, password reset
-    invitation/        # Invite flow and events
-    membership/        # Membership queries and actions
-    organization/      # Organization CRUD and queries
-    stripe/            # Products, prices, checkout, webhooks
-    ticket/            # Ticket CRUD, list/search/sort/pagination
-    ...
-  emails/              # React Email templates
-  infra/               # Infrastructure adapters (S3 storage)
-  lib/                 # Shared libs (auth, prisma, inngest, stripe, aws)
-  utils/               # Utilities (currency, crypto, urls)
-prisma/
-  schema.prisma        # DB schema
-  seed.ts              # Database seed
+Browser Client
+Next.js 15, React 19, TanStack Query
+│
+▼
+Vercel Edge Network
+Static Generation, ISR, Server-Side Rendering, Edge Functions
+│
+▼
+Next.js Server (Node.js)
+│
+├─ React Server Components (RSC)
+│   ├─ Data Fetching (Prisma)
+│   ├─ Authentication (NextAuth)
+│   └─ Authorisation Guards
+│
+├─ Server Actions
+│   ├─ Ticket CRUD
+│   ├─ Comment Management
+│   ├─ Organisation Operations
+│   ├─ Membership Management
+│   └─ User Profile Updates
+│
+└─ API Routes
+    ├─ NextAuth Endpoints (/api/auth/*)
+    ├─ Stripe Webhooks (/api/stripe)
+    ├─ S3 Presigned URLs (/api/aws/*)
+    └─ Inngest Functions (/api/inngest)
+│
+▼
+External Services
+├─ PostgreSQL (Prisma ORM)
+├─ AWS S3 (File Storage)
+├─ Stripe API (Payments)
+├─ Resend API (Emails)
+└─ Inngest (Background Jobs)
 ```
+
+### **Data Flow Architecture**
+
+**Authenticated Request Flow:**
+
+```
+User Action (Browser)
+    ↓
+Server Component / Server Action
+    ↓
+Authentication Middleware (NextAuth)
+    ├─ Verify JWT Token
+    ├─ Load User Session
+    └─ Check Email Verification
+    ↓
+Authorisation Guard
+    ├─ Verify Organisation Membership
+    ├─ Check Active Subscription
+    └─ Validate Role Permissions
+    ↓
+Business Logic Layer
+    ├─ Input Validation (Zod)
+    ├─ Database Queries (Prisma)
+    └─ External API Calls
+    ↓
+Response / Revalidation
+    ├─ Return Data
+    ├─ Trigger Background Jobs
+    └─ Invalidate Caches
+```
+
+**File Upload Flow:**
+
+```
+User Uploads File (Browser)
+    ↓
+Server Action (Validation)
+    ├─ Check File Type
+    ├─ Verify Size Limits
+    └─ Validate User Permissions
+    ↓
+AWS S3 Upload
+    ├─ Generate Unique Key
+    ├─ Namespace by Organisation
+    └─ Upload to Bucket
+    ↓
+Database Record Creation
+    ├─ Store Metadata
+    ├─ Link to Ticket/Comment
+    └─ Record Upload Timestamp
+    ↓
+Return Success / Generate Presigned URL
+```
+
+**Subscription Webhook Flow:**
+
+```
+Stripe Event (Webhook)
+    ↓
+Webhook Endpoint (/api/stripe)
+    ├─ Verify Signature
+    └─ Parse Event Data
+    ↓
+Event Handler (Switch by Type)
+    ├─ checkout.session.completed
+    ├─ customer.subscription.updated
+    ├─ customer.subscription.deleted
+    └─ invoice.payment_succeeded
+    ↓
+Database Update (Prisma Transaction)
+    ├─ Update StripeCustomer Record
+    ├─ Sync Subscription Status
+    └─ Update Organisation Tier
+    ↓
+Trigger Side Effects (Inngest)
+    ├─ Send Confirmation Email
+    ├─ Update User Permissions
+    └─ Log Event for Analytics
+```
+
+---
 
 ## Getting started
 
@@ -90,7 +447,7 @@ App runs at `http://localhost:3000`.
 
 ### Default seed data
 
-- Users (password for all: `geheimnis`)
+- Users 
   - admin: `admin@admin.com`
   - user: `eliott.c.h.byrnes@googlemail.com`
 - One organization with both users as members

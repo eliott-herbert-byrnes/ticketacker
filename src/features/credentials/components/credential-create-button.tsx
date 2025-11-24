@@ -19,6 +19,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { createCredential } from "../actions/create-credential";
 
 type CredentialCreateButtonProps = {
@@ -42,10 +47,17 @@ const CredentialCreateButton = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="text-xs h-8">
-          <LucidePlus className="w-4 h-4" />
-          Create Credential
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <Button className="text-xs h-8" disabled>
+                <LucidePlus className="w-4 h-4" />
+                Create Credential
+              </Button>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>Disabled for MVP</TooltipContent>
+        </Tooltip>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

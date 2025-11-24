@@ -25,7 +25,7 @@ const Sidebar = () => {
     <nav
       className={cn(
         "z-50 fixed bottom-0 left-0 right-0 h-16 border-t bg-background/95",
-        "md:sticky md:top-0 md:left-0 md:h-screen md:border-t-0 md:border-r md:w-[78px] md:pt-24",
+        "md:sticky md:top-0 md:left-0 md:h-screen md:border-t-0 md:border-r md:w-[68px] md:pt-24",
         "flex md:flex-col w-full",
         isTransition && "duration-200",
         isOpen && "md:w-60"

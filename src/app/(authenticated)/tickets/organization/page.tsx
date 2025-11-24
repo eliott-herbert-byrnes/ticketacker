@@ -2,7 +2,7 @@ import { SearchParams } from "nuqs";
 import { Suspense } from "react";
 import { CardCompact } from "@/components/card-compact";
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getAuth } from "@/features/auth/queries/get-auth";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
 import { getOrgStripeFeatures } from "@/features/stripe/queries/get-org-features";
@@ -17,14 +17,13 @@ type TicketsByOrganizationPageProps = {
 const TicketsByOrganizationPage = async ({
   searchParams,
 }: TicketsByOrganizationPageProps) => {
-
   const { user } = await getAuth();
 
   const orgs = user ? await getOrganizationsByUser() : [];
-  const activeOrg = orgs.find(o => o.membershipByUser.isActive) ?? null;
+  const activeOrg = orgs.find((o) => o.membershipByUser.isActive) ?? null;
 
-  const {canMakePrivateTickets} = await getOrgStripeFeatures(activeOrg?.id)
-  
+  const { canMakePrivateTickets } = await getOrgStripeFeatures(activeOrg?.id);
+
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
@@ -32,20 +31,22 @@ const TicketsByOrganizationPage = async ({
         description="All tickets related to my organization"
       />
 
-      <CardCompact
-        title="Create Ticket"
-        description="A new ticket will be created"
-        className="w-full max-w-[420px] self-center"
-        content={<TicketUpsertForm canMakePrivateTickets={canMakePrivateTickets} />}
-      />
-
-      <Suspense fallback={<Spinner />}>
-        <TicketList
-          byOrganization
-          searchParams={searchParamsCache.parse(await searchParams)}
+        <CardCompact
+          title="Create Ticket"
+          description="A new ticket will be created"
+          className="w-full max-w-[420px] self-center"
+          content={
+            <TicketUpsertForm canMakePrivateTickets={canMakePrivateTickets} />
+          }
         />
-      </Suspense>
-    </div>
+
+        <Suspense fallback={<Skeleton />}>
+          <TicketList
+            byOrganization
+            searchParams={searchParamsCache.parse(await searchParams)}
+          />
+        </Suspense>
+      </div>
   );
 };
 

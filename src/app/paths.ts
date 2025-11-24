@@ -4,6 +4,7 @@ export const ticketsPath = () => '/tickets'
 export const ticketPath = (ticketId: string) => `/tickets/${ticketId}`
 export const editPath = (ticketId: string) => `/tickets/${ticketId}/edit`
 export const ticketsOrganizationPath = () => "/tickets/organization"
+export const demoPath = () => "/demo"
 
 // Header
 export const signUpPath = () => "/sign-up"

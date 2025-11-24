@@ -1,7 +1,7 @@
 import { LucideSettings } from "lucide-react";
 import { Suspense } from "react";
 import { Heading } from "@/components/Heading";
-import { Spinner } from "@/components/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organization-by-user";
 import { CustomerPortalForm } from "@/features/stripe/components/customer-portal-form";
 import { Products } from "@/features/stripe/components/product";
@@ -46,7 +46,7 @@ const SubscriptionPage = async ({ params }: SubscriptionPageProps) => {
         }
       />
 
-      <Suspense fallback={<Spinner />}>
+      <Suspense fallback={<Skeleton />}>
         <Products organizationId={organizationId} />
       </Suspense>
 

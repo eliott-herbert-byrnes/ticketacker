@@ -63,7 +63,7 @@ const Products = async ({ organizationId }: ProductsProps) => {
   return (
     <div className="flex-1 flex items-center flex-col sm:flex-row justify-center gap-4">
       {products.data.map((product) => (
-        <Card key={product.id} className="w-[250px] items-center">
+        <Card key={product.id} className="w-[250px] h-[350px] items-center">
           <CardHeader className="flex flex-col w-[200px]">
             <CardTitle className="flex flex-row gap-x-2 items-center justify-between">
               {product.name}

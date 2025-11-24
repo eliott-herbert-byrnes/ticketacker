@@ -54,11 +54,14 @@ export const usePaginatedComments = (
     hasNextPage,
     isFetchingNextPage,
     onCreateComment: async (c?: CommentWithMetadata) => {
-      if (c) prependComment(c);
+      if (c) {
+        prependComment(c);
+      }
       await queryClient.invalidateQueries({ queryKey });
-      await queryClient.refetchQueries({ queryKey, type: "active" });
     },
-    onDeleteComment: () => queryClient.invalidateQueries({ queryKey }),
+    onDeleteComment: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+    },
     onCreateAttachment: () => queryClient.invalidateQueries({ queryKey }),
     onDeleteAttachment: () => queryClient.invalidateQueries({ queryKey }),
   };

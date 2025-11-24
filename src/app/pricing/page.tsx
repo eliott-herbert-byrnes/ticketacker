@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { Heading } from "@/components/Heading";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getActiveOrganization } from "@/features/organization/queries/get-active-organization";
 import { Products } from "@/features/stripe/components/product";
 
@@ -14,8 +16,9 @@ const pricingPage = async () => {
         title="Pricing Plans"
         description="Explore the pricing plans for Ticketacker"
       />
-
+      <Suspense fallback={<Skeleton />}>
       <Products organizationId={activeOrganization?.id} />
+      </Suspense>
     </div>
   );
 };

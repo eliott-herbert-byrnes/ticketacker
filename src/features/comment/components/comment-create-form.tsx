@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { Form } from "@/components/form/form";
@@ -22,6 +23,7 @@ const CommentCreateForm = ({
   ticketId,
   onCreateComment,
 }: CommentCreateFormProps) => {
+  const router = useRouter();
   const [actionState, action] = useActionState(
     createComment.bind(null, ticketId),
     EMPTY_ACTION_STATE
@@ -31,8 +33,9 @@ const CommentCreateForm = ({
     actionState: ActionState<CommentWithMetadata | undefined>
   ) => {
     if (actionState.data) {
-      onCreateComment?.(actionState.data);
-    }
+        onCreateComment?.(actionState.data);
+        router.refresh();
+      }
   };
 
   return (

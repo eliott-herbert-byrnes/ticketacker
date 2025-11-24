@@ -27,7 +27,7 @@ const MembershipList = async ({ organizationId }: MembershipListProps) => {
   return (
     <>
       {/* Mobile: cards */}
-      <div className="md:hiddenpx-4 space-y-3">
+      <div className="md:hidden px-4 space-y-3">
         {memberships.map((membership) => {
           const username =
             membership.userId === currentUserId ? (
