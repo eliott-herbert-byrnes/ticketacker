@@ -9,6 +9,8 @@ import { ReferencedTickets } from "@/features/ticket/components/referenced-ticke
 import { TicketItem } from "@/features/ticket/components/ticket-item";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 
+export const dynamic = "force-dynamic";
+
 type TicketPageProps = {
   params: Promise<{
     ticketId: string;
