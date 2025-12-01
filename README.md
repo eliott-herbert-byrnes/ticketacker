@@ -470,7 +470,7 @@ Stripe:
 
 AWS S3:
 - `AWS_BUCKET_NAME`=your-bucket
-- `AWS_BUCKET_REGION`=eu-west-1 (example)
+- `AWS_REGION`=eu-west-1 (example)
 - `AWS_ACCESS_KEY`=...
 - `AWS_SECRET_ACCESS_KEY`=...
 

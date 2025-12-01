@@ -3,7 +3,7 @@
 import { Ticket } from "@prisma/client";
 import { LucideLoaderCircle } from "lucide-react";
 import { redirect } from "next/navigation";
-import { useRef, useState, useTransition } from "react";
+import { useMemo,useRef, useState, useTransition } from "react";
 import { homePath } from "@/app/paths";
 import {
   DatePicker,
@@ -37,10 +37,10 @@ const TicketUpsertForm = ({
   ticket,
   canMakePrivateTickets,
 }: TicketUpsertFormProps) => {
-  const [actionState, action] = useActionState(
-    UpsertTicket.bind(null, ticket?.id),
-    EMPTY_ACTION_STATE
-  );
+
+  const boundAction = useMemo(() => UpsertTicket.bind(null, ticket?.id), [ticket?.id]);
+  
+  const [actionState, action] = useActionState(boundAction, EMPTY_ACTION_STATE);
 
   const [isPrivate, setIsPrivate] = useState<boolean>(!!ticket?.private);
   const [pending, startTransition] = useTransition();

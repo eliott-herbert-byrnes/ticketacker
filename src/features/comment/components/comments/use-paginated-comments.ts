@@ -22,7 +22,7 @@ export const usePaginatedComments = (
       initialPageParam: undefined as string | undefined,
       getNextPageParam: (lastPage) =>
         lastPage.metadata.hasNextPage ? lastPage.metadata.cursor : undefined,
-      initialData: {
+      placeholderData: {
         pages: [
           {
             list: paginatedComments.list,
@@ -33,7 +33,7 @@ export const usePaginatedComments = (
       },
     });
 
-  const comments = data.pages.flatMap((page) => page.list);
+  const comments = data?.pages.flatMap((page) => page.list);
 
   const queryClient = useQueryClient();
 
