@@ -1,6 +1,8 @@
 "use server";
 
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { revalidatePath } from "next/cache";
+import { ticketPath } from "@/app/paths";
 import {
   fromErrorToActionState,
   toActionState,
@@ -11,8 +13,6 @@ import { s3 } from "@/lib/aws";
 import * as attachmentData from "../data";
 import * as attachmentSubjectDTO from "../dto/attachment-subject-dto";
 import { generateS3Key } from "../utils/generate-s3-key";
-import { ticketPath } from "@/app/paths";
-import { revalidatePath } from "next/cache";
 
 export const deleteAttachment = async (id: string) => {
   const { user } = await getAuthOrRedirect();
