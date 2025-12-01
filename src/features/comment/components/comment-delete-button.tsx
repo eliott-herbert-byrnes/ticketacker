@@ -1,5 +1,6 @@
 "use client";
 import { LucideLoaderCircle, LucideTrash } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { deleteComment } from "../actions/delete-comment";
@@ -13,6 +14,7 @@ const CommentDeleteButton = ({
   id,
   onDeleteComment,
 }: CommentDeleteButtonProps) => {
+  const router = useRouter();
   const [deleteButton, deleteDialog] = useConfirmDialog({
     action: deleteComment.bind(null, id),
     trigger: (isPending) => (
@@ -24,7 +26,10 @@ const CommentDeleteButton = ({
         )}
       </Button>
     ),
-    onSuccess: () => onDeleteComment?.(id),
+    onSuccess: () => {
+      onDeleteComment?.(id)
+      router.refresh();
+    },
   });
 
   return (

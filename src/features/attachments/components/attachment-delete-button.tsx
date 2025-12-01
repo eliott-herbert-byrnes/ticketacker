@@ -26,7 +26,7 @@ const AttachmentDeleteButton = ({ id, onDeleted }: AttachmentDeleteButtonProps) 
     ),
     onSuccess: () => {
       if (onDeleted) onDeleted();
-      else router.refresh();
+      router.refresh();
     },
   });
 
