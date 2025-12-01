@@ -51,7 +51,7 @@ const Comments = ({ ticketId, paginatedComments }: CommentsProps) => {
       />
       <div className="flex flex-col gap-y-2 ">
         <CommentList
-          comments={comments}
+          comments={comments ?? []}
           onDeleteComment={onDeleteComment}
           onAttachmentsChanged={invalidateComments}
         />
