@@ -52,7 +52,7 @@ const Header = () => {
           className={buttonVariants({ variant: "ghost" })}
         >
           <LucideSquirrel />
-          <h1 className="text-lg font-semibold">TickeTacker Test</h1>
+          <h1 className="text-lg font-semibold">TickeTacker</h1>
         </Link>
       </div>
 
