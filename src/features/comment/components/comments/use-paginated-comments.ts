@@ -48,6 +48,20 @@ export const usePaginatedComments = (
     });
   };
 
+  const removeComment = (commentId: string) => {
+    queryClient.setQueryData<InfiniteData<CommentsPage>>(queryKey, (prev) => {
+      if (!prev) return prev;
+      
+      return {
+        ...prev,
+        pages: prev.pages.map((page) => ({
+          ...page,
+          list: page.list.filter((c) => c.id !== commentId),
+        })),
+      };
+    });
+  };
+
   return {
     comments,
     fetchNextPage,
@@ -59,7 +73,8 @@ export const usePaginatedComments = (
       }
       await queryClient.invalidateQueries({ queryKey });
     },
-    onDeleteComment: async () => {
+    onDeleteComment: async (id: string) => {
+      removeComment(id);
       await queryClient.invalidateQueries({ queryKey });
     },
     onCreateAttachment: () => queryClient.invalidateQueries({ queryKey }),

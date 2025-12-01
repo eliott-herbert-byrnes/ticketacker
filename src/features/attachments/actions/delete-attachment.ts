@@ -1,14 +1,18 @@
 "use server";
 
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import {
   fromErrorToActionState,
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { isOwner } from "@/features/auth/utils/is-owner";
-import { inngest } from "@/lib/inngest";
+import { s3 } from "@/lib/aws";
 import * as attachmentData from "../data";
 import * as attachmentSubjectDTO from "../dto/attachment-subject-dto";
+import { generateS3Key } from "../utils/generate-s3-key";
+import { ticketPath } from "@/app/paths";
+import { revalidatePath } from "next/cache";
 
 export const deleteAttachment = async (id: string) => {
   const { user } = await getAuthOrRedirect();
@@ -45,16 +49,28 @@ export const deleteAttachment = async (id: string) => {
   try {
     await attachmentData.deleteAttachment(id);
 
-    await inngest.send({
-      name: "app/attachment.deleted",
-      data: {
-        organizationId: subject.organizationId,
-        entityId: subject.entityId,
-        entity: attachment.entity,
-        fileName: attachment.name,
-        attachmentId: attachment.id,
-      },
-    });
+    // Delete from S3 directly instead of using Inngest event
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: generateS3Key({
+          organizationId: subject.organizationId,
+          entityId: subject.entityId,
+          entity: attachment.entity,
+          fileName: attachment.name,
+          attachmentId: attachment.id,
+        }),
+      })
+    );
+
+    switch (attachment.entity) {
+      case "TICKET":
+        revalidatePath(ticketPath(subject.ticketId));
+        break;
+      case "COMMENT":
+        revalidatePath(ticketPath(subject.ticketId));
+        break;
+    }
   } catch (error) {
     return fromErrorToActionState(error);
   }

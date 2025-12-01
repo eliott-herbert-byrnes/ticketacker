@@ -88,7 +88,8 @@ const AttachmentCreateForm = ({
       setFiles([])
       if (inputRef.current) inputRef.current.value = "";
     }
-  }, [actionState.status, previews])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionState.status])
 
   return (
     <Form action={action} actionState={actionState} onSuccess={onSuccess}>
@@ -135,6 +136,8 @@ const AttachmentCreateForm = ({
                   <Image
                     src={p.url}
                     alt={p.name}
+                    width={100}
+                    height={100}
                     className="h-full w-full object-cover rounded border bg-none"
                   />
                 ) : (

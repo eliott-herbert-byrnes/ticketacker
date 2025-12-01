@@ -11,24 +11,23 @@ import * as ticketService from "@/features/ticket/service/disconnect-referenced-
 import * as commentData from "../data";
 
 const deleteComment = async (id: string) => {
-  const { user } = await getAuthOrRedirect();
-
-  const comment = await commentData.findComment(id);
-
-  if (!comment || !isOwner(user, comment)) {
-    return toActionState("ERROR", "Not authorized");
-  }
-
   try {
+    const { user } = await getAuthOrRedirect();
+
+    const comment = await commentData.findComment(id);
+
+    if (!comment || !isOwner(user, comment)) {
+      return toActionState("ERROR", "Not authorized");
+    }
     await commentData.deleteComment(id);
     await ticketService.disconnectReferencedTicketsViaComment(comment);
+
+    revalidatePath(ticketPath(comment.ticketId));
+
+    return toActionState("SUCCESS", "Comment deleted");
   } catch (error) {
-    fromErrorToActionState(error);
+    return fromErrorToActionState(error);
   }
-
-  revalidatePath(ticketPath(comment.ticketId));
-
-  return toActionState("SUCCESS", "Comment deleted");
 };
 
 export { deleteComment };

@@ -1,6 +1,5 @@
 'use client'
 import { LucideLoaderCircle, LucideTrash } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { deleteAttachment } from "../actions/delete-attachment";
@@ -11,7 +10,6 @@ type AttachmentDeleteButtonProps = {
 };
 
 const AttachmentDeleteButton = ({ id, onDeleted }: AttachmentDeleteButtonProps) => {
-  const router = useRouter();
 
   const [deleteButton, deleteDialog] = useConfirmDialog({
     action: deleteAttachment.bind(null, id),
@@ -26,7 +24,6 @@ const AttachmentDeleteButton = ({ id, onDeleted }: AttachmentDeleteButtonProps) 
     ),
     onSuccess: () => {
       if (onDeleted) onDeleted();
-      router.refresh();
     },
   });
 
